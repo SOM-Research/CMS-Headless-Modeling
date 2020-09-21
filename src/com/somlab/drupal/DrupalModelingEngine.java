@@ -1,0 +1,422 @@
+package com.somlab.drupal;
+
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+
+/**
+ * This class provides methods for building Dynamically Drupal Modeled API based on OpenApi Documentation
+ * 
+ */
+
+import java.util.Map;
+import java.util.Map.Entry;
+
+import org.eclipse.emf.common.util.EList;
+import org.eclipse.emf.ecore.EAttribute;
+import org.eclipse.emf.ecore.EClass;
+import org.eclipse.emf.ecore.EPackage;
+import org.eclipse.emf.ecore.EReference;
+import org.eclipse.emf.ecore.EStructuralFeature;
+import org.eclipse.emf.ecore.EClassifier;
+import org.eclipse.emf.ecore.EcoreFactory;
+import org.eclipse.emf.ecore.EcorePackage;
+import java.io.FileReader;
+import java.io.FileNotFoundException;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+import com.google.gson.stream.JsonReader;
+
+import workflowMetamodel.WorkflowMetamodelPackage;
+import workflowMetamodel.WorkflowMetamodelFactory;
+import workflowMetamodel.root;
+
+
+
+
+public class DrupalModelingEngine {
+
+	EcoreFactory _coreFactory;
+	EcorePackage _corePackage;
+	EPackage _dynamicEPackage;
+	EClass _dynamicEClass;
+	EAttribute _dynamicEAttribute;
+	EReference _dynamicEReference;
+	WorkflowMetamodelPackage _MetamodelPackage;
+	
+	
+	
+	Map<String, List<String>> _metaModelHelper = new HashMap<String, List<String>>();
+	String specificactionPath = "./Open_Api_Specifications/drupal2.json";
+	String host;
+	String basePath;
+	List<String> resource_paths = new ArrayList<String>();
+
+	
+	public DrupalModelingEngine() {
+		// Instantiate EcoreFactory and EcorePackage
+		_coreFactory = EcoreFactory.eINSTANCE;
+		_corePackage = EcorePackage.eINSTANCE;
+	}
+	
+	public void modelExtractor() {
+		try {
+			// Read the OpenApi specification in JSON format.
+			JsonObject data = (new JsonParser().parse(new JsonReader(new FileReader(specificactionPath)))).getAsJsonObject();
+			for(Entry<String, JsonElement> entry : data.entrySet()) {
+			  String key = entry.getKey();
+			  JsonElement entryValue = entry.getValue();
+			  switch (key) {
+			  	case("info"): {
+			  	  // Create package with the title
+				  initDynamicEPackage(entryValue);
+				  break;
+			  	}
+			 	case("host"): {	  	  
+				  host = entryValue.toString();
+				  break;
+			  	}
+			 	case("basePath"): {
+			 	  basePath = entryValue.toString();
+				  break;
+	  			}
+			 	case("paths"): {
+			 	  // Get the paths of the resources
+			 	  for(Map.Entry<String,JsonElement> path : entryValue.getAsJsonObject().entrySet()) { 
+			 		 String pather = path.getKey();
+			 		 
+			 	    resource_paths.add(path.getKey());
+			 	  }
+				  break;
+		  		}
+				case("definitions"): {
+				 	  // Generate the entity model extracting de definitions
+				  generateEntityModel(entryValue);
+				  break;
+			  	}
+			  
+			  }
+			}
+				
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	public void generateEntityModel(JsonElement definitions) {
+		
+		  List<String> excludedEntities = new ArrayList<String>();
+		  // Iterate over definitions and create Classes and Attributes
+		  for(Map.Entry<String,JsonElement> definition : definitions.getAsJsonObject().entrySet()) { 
+			  String definitionKey = definition.getKey().replaceAll("--", "_");
+			  // Get entities
+			  // Is a class that is a extension of the metamodel. 
+			  // Check if the class is extension of the metamodel
+			  // get list attributes form de metamodel helper
+			  boolean isFromMetamodel = false;
+			  boolean hasAttributes = false;
+			  List<String> excludedAttributes = null;
+			  for (Map.Entry<String, List<String>> metamodelClasses : _metaModelHelper.entrySet()) {
+				    if (definitionKey.startsWith(metamodelClasses.getKey())) {
+				    	isFromMetamodel = true;
+				    	excludedAttributes = metamodelClasses.getValue();
+				    } else if (definitionKey.startsWith("contact_") && metamodelClasses.getKey().startsWith("contact_")) {
+				    	isFromMetamodel = true;
+				    	excludedAttributes = metamodelClasses.getValue();
+				    }
+			  }
+			  // Create Classes with title 
+			  EClass dynamicEClass = createDynamicEClass(definitionKey);
+			  // Create Attributes
+			  JsonObject attributes = definition.getValue().getAsJsonObject().get("properties").getAsJsonObject().get("data").getAsJsonObject().get("properties").getAsJsonObject().get("attributes").getAsJsonObject().get("properties").getAsJsonObject();
+			  for(Map.Entry<String,JsonElement> singleAttr : attributes.entrySet()) {
+				  // the Attribute is present in the metamodel, or is an id of the entity?
+				  // TODO; identify when "yes" and no call the following function
+				  String attrName = singleAttr.getKey();
+				  JsonObject attrValues = singleAttr.getValue().getAsJsonObject();
+				  if (isFromMetamodel) {
+					  if (excludedAttributes.contains(singleAttr.getKey().replaceAll("drupal_internal__", ""))) {
+						  // If it is present, is a attributes inherit form the metamodel.
+						  System.out.println("******************* this is not included: " + singleAttr.getKey());
+					  } else {
+						  // If it is not present, is a specific attributes form de class
+						  EStructuralFeature attribute = createDynamicEstructuralFeatures (attrName, attrValues, dynamicEClass, false, false);
+						  dynamicEClass.getEStructuralFeatures().add(attribute);
+						  hasAttributes = true;
+					  }
+				  } else {
+					  EStructuralFeature attribute = createDynamicEstructuralFeatures (attrName, attrValues, dynamicEClass, false, false);
+					  dynamicEClass.getEStructuralFeatures().add(attribute);
+					  hasAttributes = true;
+				  }
+			  }
+			  // if the class does not have new attributes, no need to create the class.
+			  if ((hasAttributes && definitionKey != "shortcut_default") || definitionKey.startsWith("contact_")) {
+				  _dynamicEPackage.getEClassifiers().add(dynamicEClass);
+			  } else {
+				  excludedEntities.add(definitionKey);
+			  }
+		  };
+		  // Iterate again over definitions and create EReferences.
+		  String classTitle = "";
+		  for(Map.Entry<String,JsonElement> defRelation : definitions.getAsJsonObject().entrySet()) {
+			String definitionKey = defRelation.getKey().replaceAll("--", "_");
+			if (excludedEntities.contains(definitionKey)) {
+				// If we have not created this entites, we does not have to create relationships
+			} else {
+			  // Get entities
+			  // Is a class that is a extension of the metamodel. 
+			  // Check if the class is extension of the metamodel
+			  // get list attributes form de metamodel helper
+			  boolean isFromMetamodel = false;
+			  List<String> excludedReferences = null;
+			  String metaModelClass = null;
+			  for (Map.Entry<String, List<String>> metamodelClasses : _metaModelHelper.entrySet()) {
+				    if (definitionKey.startsWith(metamodelClasses.getKey())){
+				    	isFromMetamodel = true;
+				    	excludedReferences = metamodelClasses.getValue();
+				    	metaModelClass = metamodelClasses.getKey();
+				    } else if (definitionKey.startsWith("contact_") && metamodelClasses.getKey().startsWith("contact_")) {
+				    	isFromMetamodel = true;
+				    	excludedReferences= metamodelClasses.getValue();
+				    	metaModelClass = metamodelClasses.getKey();
+				    }
+			  }
+			// Class are a extension from the metamodel
+			
+			  classTitle = defRelation.getKey().replaceAll("--", "_");
+			  EClass parentClass = (EClass)_dynamicEPackage.getEClassifier(classTitle);
+			  JsonObject propertiesJson = defRelation.getValue().getAsJsonObject().get("properties").getAsJsonObject().get("data").getAsJsonObject().get("properties").getAsJsonObject().get("relationships").getAsJsonObject();
+			  if (propertiesJson.has("properties")){
+				JsonObject properties = propertiesJson.getAsJsonObject("properties");
+				for(Map.Entry<String,JsonElement> singleProp : properties.entrySet()) { 
+				  String referencedClass;			 						 
+				  JsonObject referencedClass_temp = singleProp.getValue().getAsJsonObject().getAsJsonObject("properties").getAsJsonObject("data");
+				  if (referencedClass_temp.get("type").getAsString().startsWith("array")) {
+				    referencedClass = referencedClass_temp.get("items").getAsJsonObject().get("properties").getAsJsonObject().get("type").getAsJsonObject().get("enum").getAsString().replaceAll("--", "_");
+				  } else {
+					referencedClass = referencedClass_temp.get("properties").getAsJsonObject().get("type").getAsJsonObject().get("enum").getAsString().replaceAll("file--", "").replaceAll("user--", "").replaceAll("contact_form--","").replaceAll("--", "_");
+				  }
+				  EClass referencedClassObject = (EClass)_dynamicEPackage.getEClassifier(referencedClass);
+				  System.out.println("Creating Reference: From: " + classTitle + " has a reference: " + singleProp.getKey() + " pointing to:  " + referencedClass);   
+				  // Check if the properties are present in the metamodel
+				  // TODO
+				  JsonObject relationValues = singleProp.getValue().getAsJsonObject();
+				  if (singleProp.getKey().startsWith("bundle") || singleProp.getKey().startsWith("node_type") || singleProp.getKey().startsWith("block_content_type") || singleProp.getKey().startsWith("contact_form")) {
+					// Primitive types nothing to do.
+				  } else if(isFromMetamodel){
+					  if (excludedReferences.contains(singleProp.getKey().replaceAll("drupal_internal_", ""))) {
+						  // Inherent from the metamodel
+					  } else {
+						  EStructuralFeature relationship = createDynamicEstructuralFeatures (singleProp.getKey(), relationValues, referencedClassObject, true, false);
+						  parentClass.getEStructuralFeatures().add(relationship);
+					  }
+				  } else {
+					  EStructuralFeature relationship = createDynamicEstructuralFeatures (singleProp.getKey(), relationValues, referencedClassObject, true, false);
+					  parentClass.getEStructuralFeatures().add(relationship);
+		
+				  }	 
+				}	
+				if (isFromMetamodel) {
+					// Then we have to create a containment relationship with de metamodel class
+					
+					EClass metaModelClassObject = (EClass)_dynamicEPackage.getEClassifier(metaModelClass);
+					EStructuralFeature relationship = createDynamicEstructuralFeatures (metaModelClass, null, metaModelClassObject, true, true);
+					parentClass.getEStructuralFeatures().add(relationship);
+					//createDynamicEReference(classTitle, metaModelClass, metaModelClass, true);
+			      }
+				} else {
+					// Not form metamodel. Nothing to do.
+				}
+
+			  }
+		}
+		
+	}
+	/***
+	 * @param title
+	 * Create EClass dynamically
+	 */
+	public EClass createDynamicEClass(String title) {
+		EClass dynamicEClass = _coreFactory.createEClass();
+		dynamicEClass.setName(title);
+		return dynamicEClass;
+	}
+	public EStructuralFeature createDynamicEstructuralFeatures (String featureName, JsonObject featureValues, EClass referencedClass, boolean isRelationShip, boolean isMetaModel){
+		// Get Attributes type 
+		
+		if (isRelationShip) {
+			EReference EReferenceObject = createDynamicEReference(featureName, referencedClass, isMetaModel);
+			return (EStructuralFeature) EReferenceObject;
+		} else {
+			String featureType = featureValues.get("type").getAsString();	
+			switch (featureType) {
+	        case "object":
+	         	if(featureName.startsWith("langcode") || featureName.startsWith("content_translation_source")) {
+	         		EAttribute  EAttributeObject = createDynamicEAttributes(featureName, featureValues);
+	         		return (EStructuralFeature) EAttributeObject;
+	  	    	} else {
+	  	    		// Is a object with custom DataType.
+	  	    		EClass extraDynamicEClass;
+	  	    		if (_dynamicEPackage.getEClassifier(featureName) == null) {
+	  	    		  extraDynamicEClass = createDynamicEClass(featureName);
+	  	    		  JsonObject attributeProperties = featureValues.get("properties").getAsJsonObject();
+	  	    		  for(Map.Entry<String,JsonElement> singleProperty : attributeProperties.entrySet()) { 
+	  	    			  String propName = singleProperty.getKey();
+	  	    			  JsonObject propValues = singleProperty.getValue().getAsJsonObject();
+		    			  EAttribute ExtraAttribute = createDynamicEAttributes(propName, propValues);
+		    			  extraDynamicEClass.getEStructuralFeatures().add(ExtraAttribute);
+	  	    		  }
+		  	    	  _dynamicEPackage.getEClassifiers().add(extraDynamicEClass);
+	  	    		} else {
+	  	    		  extraDynamicEClass = (EClass)_dynamicEPackage.getEClassifier(featureName);
+	  	    		}
+
+	  	    	
+	  	    		EReference EReferenceObject = createDynamicEReference(featureName, extraDynamicEClass, true);
+	  	    		return (EStructuralFeature) EReferenceObject;
+	  	    	} 
+	        default:
+	       		EAttribute  EAttributeObject = createDynamicEAttributes(featureName, featureValues);
+         		return (EStructuralFeature) EAttributeObject;
+			}
+		}
+		
+	    
+	}
+	/***
+	 * 
+	 * @param attr_key
+	 * @param attr_type
+	 * @param attr_title
+	 * Create EAttribute dynamically.
+	 */
+	public EAttribute createDynamicEAttributes(String attrName, JsonObject singleAttr) {
+		
+		EAttribute dynamicEAttribute = _coreFactory.createEAttribute();
+		dynamicEAttribute.setName(attrName);
+		String attrType = singleAttr.get("type").getAsString();
+		
+		// Check Attribute type
+		if (attrType.startsWith("integer") || attrType.startsWith("number")) {
+			dynamicEAttribute.setEType(_corePackage.getEIntegerObject());
+		} else if (attrType.startsWith("string")) {
+			dynamicEAttribute.setEType(_corePackage.getEString());
+		} else if (attrType.startsWith("boolean")) {
+			dynamicEAttribute.setEType(_corePackage.getEBoolean());
+		} else if (attrType.startsWith("array")) {
+			String arrayTypeOf = singleAttr.get("items").getAsJsonObject().get("type").getAsString();
+			if (arrayTypeOf.startsWith("string")) {
+				dynamicEAttribute.setEType(_corePackage.getEString());
+				dynamicEAttribute.setUpperBound(-1);
+			} else if (arrayTypeOf.startsWith("layout_section")) {
+				// TO DO: Here we have and array of Layout object sections
+				dynamicEAttribute.setEType(_corePackage.getEString());
+			} else {
+				// TO DO: Here we have other types of array.
+				dynamicEAttribute.setEType(_corePackage.getEString());
+			}
+	    } else {
+			 // TO DO. How we can proceed when EAttributes are objects and Arrays????
+	    	dynamicEAttribute.setEType(_corePackage.getEString());
+		}
+		return dynamicEAttribute;
+	}
+	/***
+	 * 
+	 * @param ClassTitle
+	 * @param property_name
+	 * @param ReferencedClass
+	 * Create EREferences dynamically.
+	 */
+	public EReference createDynamicEReference(String propertyName, EClass referencedClass, boolean setContainment) {
+		EReference dynamicEReference = _coreFactory.createEReference();
+		dynamicEReference.setName(propertyName);
+		dynamicEReference.setEType(referencedClass);
+		dynamicEReference.setUpperBound(EStructuralFeature.UNBOUNDED_MULTIPLICITY);
+		// Set containment to true.
+		if (setContainment) {
+			dynamicEReference.setContainment(true); 
+		} else {
+			dynamicEReference.setContainment(false);
+		}
+		return dynamicEReference;
+	}
+	/***
+	 * @param title
+	 * Create EPackage dynamically
+	 */
+	public void initDynamicEPackage(JsonElement entry) {
+		// Instantiate EPackage and provide unique URI to identify the package
+		// instance
+		 JsonObject info = entry.getAsJsonObject();
+		 String title = info.get("title").getAsString().replaceAll("-", "_").replaceAll(" ", "_");
+		 // Package is loaded from metamodel.
+		 // _dynamicEPackage = _coreFactory.createEPackage();
+		_dynamicEPackage.setName(title);
+		_dynamicEPackage.setNsPrefix(title);
+		_dynamicEPackage
+				.setNsURI("http:///com.somlab.drupal");
+	}
+	/***
+	 * Load the Drupal  Metamodel.
+	 */
+	public void loadDrupalMetamodel(DrupalModelSerializer theModelSerializer) {
+		 _dynamicEPackage = theModelSerializer.loadDrupalMetaModel();
+		 EList<EClassifier> metaClasses = _dynamicEPackage.getEClassifiers();
+		 metaClasses.forEach((metaClass) ->  { 
+			 if (metaClass != null && metaClass instanceof EClass) {
+				List<String> listEFeatures = new ArrayList<String>();
+				EList<EStructuralFeature> attributes = ((EClass) metaClass).getEAllStructuralFeatures();
+				attributes.forEach((attribute) -> {
+					System.out.println(attribute.getName());
+					listEFeatures.add(attribute.getName());
+			    });
+				_metaModelHelper.put(metaClass.getName(),listEFeatures);			
+			}
+		 } );
+		 System.out.println(_metaModelHelper);
+	}
+	
+	public root workflowsExtractor(){
+		// Instance of workflowExtracgor class.
+		WorkflowExtractor workflowExtractor = new WorkflowExtractor();
+		root workflowsPackage = workflowExtractor.getWorkflows(host, basePath, resource_paths);
+		return  workflowsPackage;
+	}
+	
+	public static void main(String[] args) {
+		
+		
+		//System.exit(200);
+		// Instance of the own class.
+		DrupalModelingEngine theModelingEngine = new DrupalModelingEngine();
+		// Instance of Serializer class.
+		DrupalModelSerializer theModelSerializer = new DrupalModelSerializer();
+
+
+		
+		// Load Drupal Metamodel.
+		theModelingEngine.loadDrupalMetamodel(theModelSerializer);
+
+		System.out.println("******************* Extracting the model of the site");
+		// Calling the model generator.
+		theModelingEngine.modelExtractor();
+		 
+		System.out.println("******************* Extracting workflow content paths of the site");
+		// Instance of the own class.
+		// Calling the model generator.
+		root metamodelPackage = theModelingEngine.workflowsExtractor();
+		System.out.println("******************* Creating Workflow resource");
+		theModelSerializer.serializeWorkflowModel(metamodelPackage);
+		
+	    System.out.println("******************* Creating Model Resource");
+		// Calling de model serializer.
+		theModelSerializer
+				.serializeDrupalModel(theModelingEngine._dynamicEPackage);
+	}
+
+}

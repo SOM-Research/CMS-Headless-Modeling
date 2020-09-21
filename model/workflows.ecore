@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="ASCII"?>
+<workflowmodel:root xmlns:workflowmodel="http://workflowmodel">
+  <user id="593bbe2d-c876-4ae1-a2c0-9ae9cd28a9ea" name="Samuel Adamson" mail="samuel.adamson@example.com" langocde="en" uid="7" roles="//@role.1 //@role.4 //@role.3" timezone="UTC" status="true"/>
+  <role id="7d1b1e72-21c1-40d8-bf67-476723b04667" label="Anonymous user" drupal_internal__id="anonymous"/>
+  <role id="cf443d95-8b29-4e92-9751-37ffefb8fc24" label="Administrator" drupal_internal__id="administrator"/>
+  <role id="58732b86-87e5-4b5c-908f-28614793203e" label="Authenticated user" drupal_internal__id="authenticated"/>
+  <role id="2f18b2a5-7726-4ba9-9f9b-fdbfba4f6f1b" label="Author" drupal_internal__id="author" permissions="//@permission.3"/>
+  <role id="4dada3fb-5866-4473-bf62-641aae47df59" label="Editor" drupal_internal__id="editor" permissions="//@permission.0 //@permission.1 //@permission.2 //@permission.4"/>
+  <permission permission_code="use editorial transition archive"/>
+  <permission permission_code="use editorial transition archived_draft"/>
+  <permission permission_code="use editorial transition archived_published"/>
+  <permission permission_code="use editorial transition create_new_draft"/>
+  <permission permission_code="use editorial transition publish"/>
+  <workflow workflow_code="editorial" label="Editorial" langocde="en" status="true">
+    <states label="Archived" default_revision="true" code="archived" weight="5"/>
+    <states label="Draft" code="draft" weight="-5"/>
+    <states label="Published" default_revision="true" code="published" published="true"/>
+    <transitions code="archive" label="Archive" weight="2" from="//@workflow.0/@states.2" to="//@workflow.0/@states.0"/>
+    <transitions code="archived_draft" label="Restore to Draft" weight="3" from="//@workflow.0/@states.0" to="//@workflow.0/@states.1"/>
+    <transitions code="archived_published" label="Restore" weight="4" from="//@workflow.0/@states.0" to="//@workflow.0/@states.2"/>
+    <transitions code="create_new_draft" label="Create New Draft" from="//@workflow.0/@states.1 //@workflow.0/@states.2" to="//@workflow.0/@states.1"/>
+    <transitions code="publish" label="Publish" weight="1" from="//@workflow.0/@states.1 //@workflow.0/@states.2" to="//@workflow.0/@states.2"/>
+  </workflow>
+</workflowmodel:root>
