@@ -1,4 +1,4 @@
-package com.somlab.drupal;
+package com.somlab.cmsmodel.drupal;
 
 
 
@@ -19,6 +19,7 @@ import com.google.gson.JsonParser;
 
 import workflowMetamodel.WorkflowMetamodelFactory;
 import workflowMetamodel.WorkflowMetamodelPackage;
+import workflowMetamodel.impl.WorkflowMetamodelPackageImpl;
 import workflowMetamodel.permission;
 import workflowMetamodel.role;
 import workflowMetamodel.root;
@@ -27,15 +28,16 @@ import workflowMetamodel.transition;
 import workflowMetamodel.user;
 import workflowMetamodel.workflow;
 
-public class WorkflowExtractor {
+public class DrupalWorkflowExtractor {
 	
 	WorkflowMetamodelPackage _WorkflowPackage;
 	WorkflowMetamodelFactory _WorkflowFactory;
 	
 	
 	public root getWorkflows(String host, String basePath, List<String> resources_path) {
-		
+		WorkflowMetamodelPackageImpl.init();
 		WorkflowMetamodelPackage.eINSTANCE.eClass();
+
 		//_WorkflowPackage = WorkflowMetamodelPackage.eINSTANCE;
 		_WorkflowFactory = WorkflowMetamodelFactory.eINSTANCE;
 		String baseUrl = host + basePath;

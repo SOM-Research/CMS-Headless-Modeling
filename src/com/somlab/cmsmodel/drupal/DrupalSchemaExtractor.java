@@ -1,70 +1,56 @@
-package com.somlab.drupal;
+package com.somlab.cmsmodel.drupal;
 
-
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-
-/**
- * This class provides methods for building Dynamically Drupal Modeled API based on OpenApi Documentation
- * 
- */
-
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.EStructuralFeature;
-import org.eclipse.emf.ecore.EClassifier;
 import org.eclipse.emf.ecore.EcoreFactory;
 import org.eclipse.emf.ecore.EcorePackage;
-import java.io.FileReader;
-import java.io.FileNotFoundException;
+
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.stream.JsonReader;
 
-import workflowMetamodel.WorkflowMetamodelPackage;
-import workflowMetamodel.WorkflowMetamodelFactory;
-import workflowMetamodel.root;
-
-
-
-
-public class DrupalModelingEngine {
-
+public class DrupalSchemaExtractor {
+	
+	
 	EcoreFactory _coreFactory;
 	EcorePackage _corePackage;
-	EPackage _dynamicEPackage;
-	EClass _dynamicEClass;
-	EAttribute _dynamicEAttribute;
-	EReference _dynamicEReference;
-	WorkflowMetamodelPackage _MetamodelPackage;
-	
-	
-	
-	Map<String, List<String>> _metaModelHelper = new HashMap<String, List<String>>();
-	String specificactionPath = "./Open_Api_Specifications/drupal2.json";
+
+	String _specificationPath;
 	String host;
 	String basePath;
 	List<String> resource_paths = new ArrayList<String>();
-
 	
-	public DrupalModelingEngine() {
-		// Instantiate EcoreFactory and EcorePackage
+	EPackage _dynamicEPackage;
+	Map<String, List<String>> _metaModelHelper = new HashMap<String, List<String>>();
+	
+	public DrupalSchemaExtractor(String specificactionPath) {
+		// TODO Auto-generated constructor stub
+		_specificationPath = specificactionPath;
+		
+		// init Ecore.
 		_coreFactory = EcoreFactory.eINSTANCE;
 		_corePackage = EcorePackage.eINSTANCE;
 	}
+	public EPackage ModelExtractor(EPackage genericEPackage, Map<String, List<String>> genericModelHelper) {
+		
+		_dynamicEPackage = genericEPackage;
+		_metaModelHelper = genericModelHelper;
 	
-	public void modelExtractor() {
 		try {
 			// Read the OpenApi specification in JSON format.
-			JsonObject data = (new JsonParser().parse(new JsonReader(new FileReader(specificactionPath)))).getAsJsonObject();
+			JsonObject data = (new JsonParser().parse(new JsonReader(new FileReader(_specificationPath)))).getAsJsonObject();
 			for(Entry<String, JsonElement> entry : data.entrySet()) {
 			  String key = entry.getKey();
 			  JsonElement entryValue = entry.getValue();
@@ -85,9 +71,8 @@ public class DrupalModelingEngine {
 			 	case("paths"): {
 			 	  // Get the paths of the resources
 			 	  for(Map.Entry<String,JsonElement> path : entryValue.getAsJsonObject().entrySet()) { 
-			 		 String pather = path.getKey();
-			 		 
-			 	    resource_paths.add(path.getKey());
+			 		 String pather = path.getKey(); 
+			 	     resource_paths.add(path.getKey());
 			 	  }
 				  break;
 		  		}
@@ -104,14 +89,18 @@ public class DrupalModelingEngine {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		
+		
+		// TODO Auto-generated method stub
+		return _dynamicEPackage;
 	}
-	
 	public void generateEntityModel(JsonElement definitions) {
 		
 		  List<String> excludedEntities = new ArrayList<String>();
 		  // Iterate over definitions and create Classes and Attributes
 		  for(Map.Entry<String,JsonElement> definition : definitions.getAsJsonObject().entrySet()) { 
-			  String definitionKey = definition.getKey().replaceAll("--", "_");
+			  String definitionKeyLowerCase = definition.getKey().replaceAll("--", "_");
+			  String definitionKey = definitionKeyLowerCase.substring(0, 1).toUpperCase() + definitionKeyLowerCase.substring(1);
 			  // Get entities
 			  // Is a class that is a extension of the metamodel. 
 			  // Check if the class is extension of the metamodel
@@ -161,9 +150,9 @@ public class DrupalModelingEngine {
 			  }
 		  };
 		  // Iterate again over definitions and create EReferences.
-		  String classTitle = "";
 		  for(Map.Entry<String,JsonElement> defRelation : definitions.getAsJsonObject().entrySet()) {
-			String definitionKey = defRelation.getKey().replaceAll("--", "_");
+			String definitionKeyLowerCase = defRelation.getKey().replaceAll("--", "_");
+			String definitionKey = definitionKeyLowerCase.substring(0, 1).toUpperCase() + definitionKeyLowerCase.substring(1);
 			if (excludedEntities.contains(definitionKey)) {
 				// If we have not created this entites, we does not have to create relationships
 			} else {
@@ -187,19 +176,30 @@ public class DrupalModelingEngine {
 			  }
 			// Class are a extension from the metamodel
 			
-			  classTitle = defRelation.getKey().replaceAll("--", "_");
+			  String classTitleLowerCase = defRelation.getKey().replaceAll("--", "_");
+			  String classTitle =  classTitleLowerCase.substring(0, 1).toUpperCase() + classTitleLowerCase.substring(1);
 			  EClass parentClass = (EClass)_dynamicEPackage.getEClassifier(classTitle);
 			  JsonObject propertiesJson = defRelation.getValue().getAsJsonObject().get("properties").getAsJsonObject().get("data").getAsJsonObject().get("properties").getAsJsonObject().get("relationships").getAsJsonObject();
 			  if (propertiesJson.has("properties")){
 				JsonObject properties = propertiesJson.getAsJsonObject("properties");
 				for(Map.Entry<String,JsonElement> singleProp : properties.entrySet()) { 
-				  String referencedClass;			 						 
-				  JsonObject referencedClass_temp = singleProp.getValue().getAsJsonObject().getAsJsonObject("properties").getAsJsonObject("data");
-				  if (referencedClass_temp.get("type").getAsString().startsWith("array")) {
-				    referencedClass = referencedClass_temp.get("items").getAsJsonObject().get("properties").getAsJsonObject().get("type").getAsJsonObject().get("enum").getAsString().replaceAll("--", "_");
-				  } else {
-					referencedClass = referencedClass_temp.get("properties").getAsJsonObject().get("type").getAsJsonObject().get("enum").getAsString().replaceAll("file--", "").replaceAll("user--", "").replaceAll("contact_form--","").replaceAll("--", "_");
+				  String referencedClassLowerCase;	
+				  String referencedClass;
+				  if (singleProp.getKey().startsWith("pid")) {
+					  referencedClass = classTitle;
+				  } else if (singleProp.getKey().startsWith("entity_id")) {
+					  continue;
 				  }
+				  else {
+					  JsonObject referencedClass_temp = singleProp.getValue().getAsJsonObject().getAsJsonObject("properties").getAsJsonObject("data");
+					  if (referencedClass_temp.get("type").getAsString().startsWith("array")) {
+					    referencedClassLowerCase = referencedClass_temp.get("items").getAsJsonObject().get("properties").getAsJsonObject().get("type").getAsJsonObject().get("enum").getAsString().replaceAll("--", "_");
+					  } else {
+						referencedClassLowerCase = referencedClass_temp.get("properties").getAsJsonObject().get("type").getAsJsonObject().get("enum").getAsString().replaceAll("file--", "").replaceAll("user--", "").replaceAll("contact_form--","").replaceAll("--", "_");
+					  }
+					  referencedClass = referencedClassLowerCase.substring(0, 1).toUpperCase() + referencedClassLowerCase.substring(1);
+				  }
+				  
 				  EClass referencedClassObject = (EClass)_dynamicEPackage.getEClassifier(referencedClass);
 				  System.out.println("Creating Reference: From: " + classTitle + " has a reference: " + singleProp.getKey() + " pointing to:  " + referencedClass);   
 				  // Check if the properties are present in the metamodel
@@ -224,8 +224,9 @@ public class DrupalModelingEngine {
 					// Then we have to create a containment relationship with de metamodel class
 					
 					EClass metaModelClassObject = (EClass)_dynamicEPackage.getEClassifier(metaModelClass);
-					EStructuralFeature relationship = createDynamicEstructuralFeatures (metaModelClass, null, metaModelClassObject, true, true);
-					parentClass.getEStructuralFeatures().add(relationship);
+					//EStructuralFeature relationship = createDynamicEstructuralFeatures (metaModelClass, null, metaModelClassObject, true, true);
+					//parentClass.getEStructuralFeatures().add(relationship);
+					parentClass.getESuperTypes().add(metaModelClassObject);
 					//createDynamicEReference(classTitle, metaModelClass, metaModelClass, true);
 			      }
 				} else {
@@ -236,10 +237,6 @@ public class DrupalModelingEngine {
 		}
 		
 	}
-	/***
-	 * @param title
-	 * Create EClass dynamically
-	 */
 	public EClass createDynamicEClass(String title) {
 		EClass dynamicEClass = _coreFactory.createEClass();
 		dynamicEClass.setName(title);
@@ -340,11 +337,13 @@ public class DrupalModelingEngine {
 		// Set containment to true.
 		if (setContainment) {
 			dynamicEReference.setContainment(true); 
+			
 		} else {
 			dynamicEReference.setContainment(false);
 		}
 		return dynamicEReference;
 	}
+
 	/***
 	 * @param title
 	 * Create EPackage dynamically
@@ -361,62 +360,4 @@ public class DrupalModelingEngine {
 		_dynamicEPackage
 				.setNsURI("http:///com.somlab.drupal");
 	}
-	/***
-	 * Load the Drupal  Metamodel.
-	 */
-	public void loadDrupalMetamodel(DrupalModelSerializer theModelSerializer) {
-		 _dynamicEPackage = theModelSerializer.loadDrupalMetaModel();
-		 EList<EClassifier> metaClasses = _dynamicEPackage.getEClassifiers();
-		 metaClasses.forEach((metaClass) ->  { 
-			 if (metaClass != null && metaClass instanceof EClass) {
-				List<String> listEFeatures = new ArrayList<String>();
-				EList<EStructuralFeature> attributes = ((EClass) metaClass).getEAllStructuralFeatures();
-				attributes.forEach((attribute) -> {
-					System.out.println(attribute.getName());
-					listEFeatures.add(attribute.getName());
-			    });
-				_metaModelHelper.put(metaClass.getName(),listEFeatures);			
-			}
-		 } );
-		 System.out.println(_metaModelHelper);
-	}
-	
-	public root workflowsExtractor(){
-		// Instance of workflowExtracgor class.
-		WorkflowExtractor workflowExtractor = new WorkflowExtractor();
-		root workflowsPackage = workflowExtractor.getWorkflows(host, basePath, resource_paths);
-		return  workflowsPackage;
-	}
-	
-	public static void main(String[] args) {
-		
-		
-		//System.exit(200);
-		// Instance of the own class.
-		DrupalModelingEngine theModelingEngine = new DrupalModelingEngine();
-		// Instance of Serializer class.
-		DrupalModelSerializer theModelSerializer = new DrupalModelSerializer();
-
-
-		
-		// Load Drupal Metamodel.
-		theModelingEngine.loadDrupalMetamodel(theModelSerializer);
-
-		System.out.println("******************* Extracting the model of the site");
-		// Calling the model generator.
-		theModelingEngine.modelExtractor();
-		 
-		System.out.println("******************* Extracting workflow content paths of the site");
-		// Instance of the own class.
-		// Calling the model generator.
-		root metamodelPackage = theModelingEngine.workflowsExtractor();
-		System.out.println("******************* Creating Workflow resource");
-		theModelSerializer.serializeWorkflowModel(metamodelPackage);
-		
-	    System.out.println("******************* Creating Model Resource");
-		// Calling de model serializer.
-		theModelSerializer
-				.serializeDrupalModel(theModelingEngine._dynamicEPackage);
-	}
-
 }

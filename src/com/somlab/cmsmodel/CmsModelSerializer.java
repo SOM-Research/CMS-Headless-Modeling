@@ -1,4 +1,4 @@
-package com.somlab.drupal;
+package com.somlab.cmsmodel;
 
 /**
  * This class provides methods to serialize the Ecore-based model and 
@@ -26,18 +26,18 @@ import org.eclipse.emf.ecore.xmi.impl.XMLResourceFactoryImpl;
 
 import workflowMetamodel.root;
 
-public class DrupalModelSerializer {
+public class CmsModelSerializer {
 	
 	ResourceSet _resourceSet;
 	
-	public DrupalModelSerializer() {
+	public CmsModelSerializer() {
 		// Instantiate EcoreFactory and EcorePackage
 		_resourceSet = new ResourceSetImpl();
 
 
 	}
 	
-	public void serializeDrupalModel(EPackage dynamicEPackage) {
+	public void serializeModel(EPackage dynamicEPackage) {
 
 		// Register XML Factory implementation to handle .ecore files
 		_resourceSet.getResourceFactoryRegistry().getExtensionToFactoryMap()
@@ -45,7 +45,7 @@ public class DrupalModelSerializer {
 		
 		// Create empty resource with the given URI
 		Resource resource = _resourceSet.createResource(URI
-				.createURI("./model/metadrupal_test12.ecore"));
+				.createURI("./model/extendedModel.ecore"));
 		 System.out.println("Created resource"); 
 
 		// Add bookStoreEPackage to contents list of the resource
@@ -89,15 +89,12 @@ public class DrupalModelSerializer {
 	 * File: https://api.drupal.org/api/drupal/core%21modules%21file%21src%21Entity%21File.php/function/File%3A%3AbaseFieldDefinitions/8.2.x
 	 * Media: https://api.drupal.org/api/drupal/core%21modules%21media%21src%21Entity%21Media.php/function/Media%3A%3AbaseFieldDefinitions/8.5.x
 	 */
-	public EPackage loadDrupalMetaModel() {
+	public EPackage loadCmsGenericModel() {
 
-		
-		
-		
 		_resourceSet.getResourceFactoryRegistry().getExtensionToFactoryMap().put("ecore", new EcoreResourceFactoryImpl());
 		_resourceSet.getResourceFactoryRegistry().getExtensionToFactoryMap().put("*", new XMIResourceFactoryImpl());
 		
-		Resource drupalMetaModel= _resourceSet.getResource(URI.createFileURI("./model/drupalMetamodel.ecore"), true);
+		Resource drupalMetaModel= _resourceSet.getResource(URI.createFileURI("./model/cmsGenericModel.ecore"), true);
 		EPackage ecorePackage = (EPackage) drupalMetaModel.getContents().get(0);
 
 
