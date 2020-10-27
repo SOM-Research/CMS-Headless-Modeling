@@ -1,5 +1,6 @@
 package com.somlab.cmsmodel.wordpress;
 
+import java.io.Console;
 import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -41,15 +42,15 @@ public class WordpressSchemaExtractor {
 		_metaModelHelper = genericModelHelper;
 		
 		// Get the main Wp JSON Route
-		JsonObject wpJson = ResourceRequest(Api_Url, "wp-json");
-		for(Entry<String, JsonElement> wpEntry : wpJson.entrySet()) {		
+		JsonElement wpJson = ResourceRequest(Api_Url, "", "GET");
+		for(Entry<String, JsonElement> wpEntry : wpJson.getAsJsonObject().entrySet()) {		
 			String key = wpEntry.getKey();
-			JsonObject entryValue = wpEntry.getValue().getAsJsonObject();
+			JsonElement entryValue = wpEntry.getValue();
 			
 			  switch (key) {
 			  	case("name"): {
 			  	  // Create package with the title
-				  name = entryValue.getAsString();
+				  name = entryValue.toString();
 				  break;
 			  	}
 			 	case("description"): {	  	  
@@ -62,15 +63,15 @@ public class WordpressSchemaExtractor {
 	  			}
 			 	case("namespaces"): {
 			 	  // Get the paths of the resources
-			 	  for(Map.Entry<String,JsonElement> single : entryValue.getAsJsonObject().entrySet()) { 
-			 		 String namespace = single.getValue().getAsString();
-			 	     namespaces.add(namespace);
-			 	  }
+			 	  entryValue.getAsJsonArray().forEach((element) -> {  
+			 		 // String namespace = element.getValue().getAsString();
+			 	     namespaces.add(element.getAsString());
+			 	  });
 				  break;
 		  		}
 				case("routes"): {
 				 	  // Generate the entity model extracting de definitions
-				  //generateEntityModel(entryValue);
+				  generateEntityModel(entryValue);
 				  break;
 			  	}
 			  
@@ -90,22 +91,106 @@ public class WordpressSchemaExtractor {
 		return null;
 	}
 	
-	public JsonObject ResourceRequest(String baseUrl, String singleResource) {
+	public void generateEntityModel(JsonElement routes) {
+		
+		// First we extract the Content Types, and the Taxonomies (core and custom ones) from the API and create Classes
+		for(Map.Entry<String,JsonElement> route : routes.getAsJsonObject().entrySet()) { 
+			if (route.getKey().replaceFirst("/","").contains("wp/v2/types")) {
+				JsonElement singleRoute = ResourceRequest(Api_Url, route.getKey(), "GET");
+				JsonObject result = singleRoute.getAsJsonObject();
+				for(Entry<String, JsonElement> innerResult : result.entrySet()) {		
+					String restBase = innerResult.getValue().getAsJsonObject().get("rest_base").getAsString();
+					// ++ Create EClass derived from Post type (or node)
+					// Miren quin camps especials te aquesta classe
+				    /* TO DO: Veure quins supports te el post type activats els suports possibles son 
+						'title'
+						'editor' (content)
+						'author'
+						'thumbnail' (featured image) (current theme must also support Post Thumbnails)
+						'excerpt'
+						'trackbacks'
+						'custom-fields' (see Custom_Fields, aka meta-data)
+						'comments' (also will see comment count balloon on edit screen)
+						'revisions' (will store revisions)
+						'page-attributes' (template and menu order) (hierarchical must be true)
+						'post-formats' (see Post_Formats)
+					
+					*/
+					// Miren quins camps especials te aquesta classe del ACF
+					JsonElement response = ResourceRequest(Api_Url, "/wp/v2/"+restBase, "GET");
+					for(Entry<String, JsonElement> properties : response.getAsJsonObject().entrySet()) {	
+						System.out.println("properties");
+						if(properties.getKey().startsWith("acf") ) {
+							// Attach custom fields to the Content Type.
+							// Aqui farem com si no fossin relacions, nomes camps especialitzats, mes endavant tractarem les relacion entre entitats.
+						}
+					}
+				}
+			}
+			if (route.getKey().replaceFirst("/","").contains("wp/v2/taxonomies")) {
+				JsonElement singleRoute = ResourceRequest(Api_Url, route.getKey(), "GET");
+				JsonObject result = singleRoute.getAsJsonObject();
+				for(Entry<String, JsonElement> innerResult : result.entrySet()) {		
+					String restBase = innerResult.getValue().getAsJsonObject().get("rest_base").getAsString();
+					// Create EClass derived from taxonomy
+					// Then
+					JsonElement response = ResourceRequest(Api_Url, "/wp/v2/"+restBase, "GET");
+					for(Entry<String, JsonElement> properties : response.getAsJsonObject().entrySet()) {	
+						if(properties.getKey().startsWith("acf") ) {
+							// camps especialitzats de la taxonomia
+							// Aqui farem com si no fossin relacions, nomes camps especialitzats, mes endavant tractarem les relacion entre entitats.
+						}
+					}
+				}
+			}
+		}
+		// Then we can extract the EReferences between taxonomies ans post type.
+		for(Map.Entry<String,JsonElement> route : routes.getAsJsonObject().entrySet()) { 
+			if (route.getKey().replaceFirst("/","").contains("wp/v2/types")) {
+				JsonElement singleRoute = ResourceRequest(Api_Url, route.getKey(), "GET");
+				JsonObject result = singleRoute.getAsJsonObject();
+				for(Entry<String, JsonElement> innerResult : result.entrySet()) {		
+					String restBase = innerResult.getValue().getAsJsonObject().get("rest_base").getAsString();
+					JsonElement response = ResourceRequest(Api_Url, "/wp/v2/"+restBase, "GET");
+					for(Entry<String, JsonElement> properties : response.getAsJsonObject().entrySet()) {	
+						System.out.println("properties");
+						if(properties.getKey().startsWith("taxonomies") ) {
+							properties.getValue().getAsJsonArray().forEach(taxonomia ->{
+								String parent = innerResult.getKey();
+								System.out.println(taxonomia);
+								// Create EReference from de parent content Type to this Taxonomy.
+							});
+							// Attach custom fields to the Content Type.
+							// Aqui farem com si no fossin relacions, nomes camps especialitzats, mes endavant tractarem les relacion entre entitats.
+						}
+					}
+				}
+			}
+		}		
+	}
+	
+	public JsonElement ResourceRequest(String baseUrl, String singleResource, String method) {
 		
 		// create a client
 		var client = HttpClient.newHttpClient();
 
 		// create a request
-		var request = HttpRequest.newBuilder(
-		       URI.create("https://" + baseUrl.replace("\"", "") + singleResource.replace("\"", "") ))
-		   .header("accept", "application/json")
-		   .build();
+		var request = HttpRequest.newBuilder()
+			.uri(URI.create(baseUrl + singleResource ))
+			.method(method, HttpRequest.BodyPublishers.noBody())
+		    .header("accept", "application/json")
+		    .build();
 
 		// use the client to send the request
 		try {
+			request.method();
 			var response = client.send(request, BodyHandlers.ofString());
-			JsonObject res = new JsonParser().parse(response.body()).getAsJsonObject();
-			return res;
+			if (response.statusCode() == 200) {
+				JsonElement res = new JsonParser().parse(response.body());
+				return res;
+			} else {
+				System.out.println("Opps route: " + singleResource + " has returned status: " + response.statusCode());
+			}
 
 		} catch (IOException e) {
 			// TODO Auto-generated catch block

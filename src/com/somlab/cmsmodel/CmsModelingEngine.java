@@ -109,7 +109,7 @@ public class CmsModelingEngine {
 		} else if (cmsType.contains("w")) {
 			// Is Wordpress based site:
 			System.out.println("******************* Extracting model from a Wordpress based site");
-			String Url = "http://localhost/wordpress";
+			String Url = "http://localhost:80/wordpress/wp-json";
 			WordpressSchemaExtractor WordpressExtractor = new WordpressSchemaExtractor(Url);
 			EPackage ExtendedModel = WordpressExtractor.ModelExtractor(genericEPackage, genericModelHelper);
 			// Serialize model to .ecore
