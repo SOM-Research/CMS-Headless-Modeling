@@ -93,20 +93,23 @@ public class CmsModelingEngine {
 		// Instance of Serializer class.
 		CmsModelSerializer theModelSerializer = new CmsModelSerializer();
 
-		// Load Generic CMS model.
-		EPackage genericEPackage = theModelSerializer.loadCmsGenericModel();
-		Map<String, List<String>> genericModelHelper = theModelingEngine.loadCmsGenericModel(genericEPackage);
-		// Extending CMS generic model with specific information provided by CMS API.
+
 		
 		if (cmsType.contains("d")) {
 		// Is Drupal based site:
 			System.out.println("******************* Extracting model from a Drupal based site");
+			// Load Generic CMS model.
+			EPackage genericEPackage = theModelSerializer.loadCmsGenericModel("Drupal");
+			Map<String, List<String>> genericModelHelper = theModelingEngine.loadCmsGenericModel(genericEPackage);
 			String specificactionPath = "./Open_Api_Specifications/drupal3.json";
 			DrupalSchemaExtractor DrupalExtractor = new DrupalSchemaExtractor(specificactionPath);
 			EPackage ExtendedModel = DrupalExtractor.ModelExtractor(genericEPackage, genericModelHelper);
 			// Serialize model to .ecore
 			theModelSerializer.serializeModel(ExtendedModel);
 		} else if (cmsType.contains("w")) {
+			// Load Generic CMS model.
+			EPackage genericEPackage = theModelSerializer.loadCmsGenericModel("Wordpress");
+			Map<String, List<String>> genericModelHelper = theModelingEngine.loadCmsGenericModel(genericEPackage);
 			// Is Wordpress based site:
 			System.out.println("******************* Extracting model from a Wordpress based site");
 			String Url = "http://localhost:80/wordpress/wp-json";

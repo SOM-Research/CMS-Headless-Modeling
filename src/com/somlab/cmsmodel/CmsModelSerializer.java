@@ -89,12 +89,12 @@ public class CmsModelSerializer {
 	 * File: https://api.drupal.org/api/drupal/core%21modules%21file%21src%21Entity%21File.php/function/File%3A%3AbaseFieldDefinitions/8.2.x
 	 * Media: https://api.drupal.org/api/drupal/core%21modules%21media%21src%21Entity%21Media.php/function/Media%3A%3AbaseFieldDefinitions/8.5.x
 	 */
-	public EPackage loadCmsGenericModel() {
+	public EPackage loadCmsGenericModel(String techBase) {
 
 		_resourceSet.getResourceFactoryRegistry().getExtensionToFactoryMap().put("ecore", new EcoreResourceFactoryImpl());
 		_resourceSet.getResourceFactoryRegistry().getExtensionToFactoryMap().put("*", new XMIResourceFactoryImpl());
 		
-		Resource drupalMetaModel= _resourceSet.getResource(URI.createFileURI("./model/cmsGenericModel.ecore"), true);
+		Resource drupalMetaModel= _resourceSet.getResource(URI.createFileURI("./model/cmsGenericModel"+techBase+".ecore"), true);
 		EPackage ecorePackage = (EPackage) drupalMetaModel.getContents().get(0);
 
 
