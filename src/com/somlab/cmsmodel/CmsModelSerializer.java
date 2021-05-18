@@ -45,7 +45,7 @@ public class CmsModelSerializer {
 		
 		// Create empty resource with the given URI
 		Resource resource = _resourceSet.createResource(URI
-				.createURI("./model/extendedModel.ecore"));
+				.createURI("./ExtendedModel/extendedModel.ecore"));
 		 System.out.println("Created resource"); 
 
 		// Add bookStoreEPackage to contents list of the resource
@@ -94,7 +94,7 @@ public class CmsModelSerializer {
 		_resourceSet.getResourceFactoryRegistry().getExtensionToFactoryMap().put("ecore", new EcoreResourceFactoryImpl());
 		_resourceSet.getResourceFactoryRegistry().getExtensionToFactoryMap().put("*", new XMIResourceFactoryImpl());
 		
-		Resource drupalMetaModel= _resourceSet.getResource(URI.createFileURI("./model/cmsGenericModel"+techBase+".ecore"), true);
+		Resource drupalMetaModel= _resourceSet.getResource(URI.createFileURI("./GenericModel/cmsGenericModel"+techBase+".ecore"), true);
 		EPackage ecorePackage = (EPackage) drupalMetaModel.getContents().get(0);
 
 

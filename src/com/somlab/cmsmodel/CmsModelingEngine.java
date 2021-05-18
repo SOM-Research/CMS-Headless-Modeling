@@ -101,7 +101,8 @@ public class CmsModelingEngine {
 			// Load Generic CMS model.
 			EPackage genericEPackage = theModelSerializer.loadCmsGenericModel("Drupal");
 			Map<String, List<String>> genericModelHelper = theModelingEngine.loadCmsGenericModel(genericEPackage);
-			String specificactionPath = "./Open_Api_Specifications/drupal3.json";
+			// Change this to your Drupal OpenAPI specification.
+			String specificactionPath = "./OpenApiSpecifications/drupalExample.json";
 			DrupalSchemaExtractor DrupalExtractor = new DrupalSchemaExtractor(specificactionPath);
 			EPackage ExtendedModel = DrupalExtractor.ModelExtractor(genericEPackage, genericModelHelper);
 			// Serialize model to .ecore
@@ -112,6 +113,7 @@ public class CmsModelingEngine {
 			Map<String, List<String>> genericModelHelper = theModelingEngine.loadCmsGenericModel(genericEPackage);
 			// Is Wordpress based site:
 			System.out.println("******************* Extracting model from a Wordpress based site");
+			// Change this to your Wordpress URL.
 			String Url = "http://localhost:80/wordpress/wp-json";
 			WordpressSchemaExtractor WordpressExtractor = new WordpressSchemaExtractor(Url);
 			EPackage ExtendedModel = WordpressExtractor.ModelExtractor(genericEPackage, genericModelHelper);

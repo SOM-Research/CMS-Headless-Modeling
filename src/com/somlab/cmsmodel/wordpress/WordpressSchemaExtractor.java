@@ -123,6 +123,9 @@ public class WordpressSchemaExtractor {
 					String restBaseLowerCase = innerResult.getValue().getAsJsonObject().get("rest_base").getAsString();
 					String restBase = restBaseLowerCase.substring(0, 1).toUpperCase() + restBaseLowerCase.substring(1);
 					// Create Class
+					if (restBase.contains("Media")) {
+						restBase = "extended_"+restBase;
+					}
 					extendedPostType = createDynamicEClass(restBase);
 					// Get Supports specialitzacion fro the post type
 					JsonObject supports = innerResult.getValue().getAsJsonObject().get("supports").getAsJsonObject();
@@ -153,12 +156,20 @@ public class WordpressSchemaExtractor {
 					_dynamicEPackage.getEClassifiers().add(extendedPostType);
 					EClass metaModelClassObject;
 					if (restBase.contains("Blocks")) {
-						metaModelClassObject = (EClass)_dynamicEPackage.getEClassifier("Block");	
-					} else {
-						metaModelClassObject = (EClass)_dynamicEPackage.getEClassifier("PostType");
+						metaModelClassObject = (EClass)_dynamicEPackage.getEClassifier("Block");
+						EClass currentClass = (EClass)_dynamicEPackage.getEClassifier(restBase);
+						currentClass.getESuperTypes().add(metaModelClassObject);
+					} else if(restBase.contains("Media")) {
+						 metaModelClassObject = (EClass)_dynamicEPackage.getEClassifier("Media");
+						 EClass currentClass = (EClass)_dynamicEPackage.getEClassifier(restBase);
+						 currentClass.getESuperTypes().add(metaModelClassObject);
 					}
-					EClass currentClass = (EClass)_dynamicEPackage.getEClassifier(restBase);
-					currentClass.getESuperTypes().add(metaModelClassObject);
+					else {
+						metaModelClassObject = (EClass)_dynamicEPackage.getEClassifier("PostType");
+						EClass currentClass = (EClass)_dynamicEPackage.getEClassifier(restBase);
+						currentClass.getESuperTypes().add(metaModelClassObject);
+					}
+				
 				}
 			}
 			if (route.getKey().replaceFirst("/","").equals("wp/v2/taxonomies")) {
@@ -278,6 +289,7 @@ public class WordpressSchemaExtractor {
 	 * Create EPackage dynamically
 	 */
 	public void initDynamicEPackage(String name, String description) {
+		 name = name.replaceAll(" ", "_").replaceAll("\"", "");
 		_dynamicEPackage.setName(name);
 		_dynamicEPackage.setNsPrefix(name);
 		_dynamicEPackage.setNsURI("http:///com.somlab.wordpress");
