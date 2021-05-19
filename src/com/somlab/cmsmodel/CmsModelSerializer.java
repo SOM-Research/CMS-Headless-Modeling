@@ -2,7 +2,7 @@ package com.somlab.cmsmodel;
 
 /**
  * This class provides methods to serialize the Ecore-based model and 
- * the model instance.
+ * the model instances.
  * 
  * @author Joan Giner
  */
@@ -33,8 +33,6 @@ public class CmsModelSerializer {
 	public CmsModelSerializer() {
 		// Instantiate EcoreFactory and EcorePackage
 		_resourceSet = new ResourceSetImpl();
-
-
 	}
 	
 	public void serializeModel(EPackage dynamicEPackage) {
@@ -80,15 +78,7 @@ public class CmsModelSerializer {
 			e.printStackTrace();
 		}
 	}
-	/***
-	 * Load the Drupal  Metamodel.
-	 * Metamodel extracted from BaseFieldDefinitions of Drupal Core. Doc:
-	 * Nodes: https://api.drupal.org/api/drupal/core%21modules%21node%21src%21Entity%21Node.php/function/Node%3A%3AbaseFieldDefinitions/8.2.x
-	 * User: https://api.drupal.org/api/drupal/core%21modules%21user%21src%21Entity%21User.php/function/User%3A%3AbaseFieldDefinitions/8.2.x
-	 * Taxonomy: https://api.drupal.org/api/drupal/core%21modules%21taxonomy%21src%21Entity%21Term.php/function/Term%3A%3AbaseFieldDefinitions/8.2.x
-	 * File: https://api.drupal.org/api/drupal/core%21modules%21file%21src%21Entity%21File.php/function/File%3A%3AbaseFieldDefinitions/8.2.x
-	 * Media: https://api.drupal.org/api/drupal/core%21modules%21media%21src%21Entity%21Media.php/function/Media%3A%3AbaseFieldDefinitions/8.5.x
-	 */
+
 	public EPackage loadCmsGenericModel(String techBase) {
 
 		_resourceSet.getResourceFactoryRegistry().getExtensionToFactoryMap().put("ecore", new EcoreResourceFactoryImpl());
@@ -102,5 +92,4 @@ public class CmsModelSerializer {
 
 	}
 	
-
 }

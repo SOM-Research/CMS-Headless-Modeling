@@ -152,7 +152,7 @@ public class WordpressSchemaExtractor {
 							}
 						}
 					}
-					//Add heritance relationship with metamodel class class to extended model.
+					//Add inheritance relationship with the generic model class to extended model.
 					_dynamicEPackage.getEClassifiers().add(extendedPostType);
 					EClass metaModelClassObject;
 					if (restBase.contains("Blocks")) {
@@ -186,7 +186,7 @@ public class WordpressSchemaExtractor {
 						EReference selfReference = createDynamicEReference("parent", taxType, 1, 0);
 						taxType.getEStructuralFeatures().add(selfReference);
 					}
-					//Add heritance relationship with metamodel class class to extended model.
+					//Add inheritance relationship with the generic model class class to extended model.
 					_dynamicEPackage.getEClassifiers().add(taxType);
 					EClass metaModelClassObject = (EClass)_dynamicEPackage.getEClassifier("Taxonomy");
 					EClass currentClass = (EClass)_dynamicEPackage.getEClassifier(slug);
@@ -204,13 +204,13 @@ public class WordpressSchemaExtractor {
 					JsonElement response = ResourceRequest(Api_Url, "/wp/v2/"+restBase, "GET");
 					for(Entry<String, JsonElement> properties : response.getAsJsonObject().entrySet()) {	
 						if (properties.getKey().startsWith("media_details")) {
-							// Check the media details dinamycalle
+							// Check the media details dynamically
 						}
 						if(properties.getKey().startsWith("acf") ) {
-							// camps especialitzats de la taxonomia
-							// La taxonomy s'especialitza amb el parent si es jerarquica i amb el ACF.
-							// Els meta son un array clau - valor
-							// Aqui farem com si no fossin relacions, nomes camps especialitzats, mes endavant tractarem les relacion entre entitats.
+							// Specialized fields of ACF
+							// Taxonomy gets specialized with its parent and with ACF
+							// Metafields are a key-value pair
+							// AS a POF, build it as a specialized fields without relationships.
 						}
 					}
 				}*/

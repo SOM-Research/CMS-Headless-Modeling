@@ -122,7 +122,7 @@ public class DrupalSchemaExtractor {
 			  // Create Attributes
 			  JsonObject attributes = definition.getValue().getAsJsonObject().get("properties").getAsJsonObject().get("data").getAsJsonObject().get("properties").getAsJsonObject().get("attributes").getAsJsonObject().get("properties").getAsJsonObject();
 			  for(Map.Entry<String,JsonElement> singleAttr : attributes.entrySet()) {
-				  // the Attribute is present in the metamodel, or is an id of the entity?
+				  // the Attribute is present in the generic model, or is an id of the entity?
 				  // TODO; identify when "yes" and no call the following function
 				  String attrName = singleAttr.getKey();
 				  JsonObject attrValues = singleAttr.getValue().getAsJsonObject();
@@ -157,9 +157,9 @@ public class DrupalSchemaExtractor {
 				// If we have not created this entites, we does not have to create relationships
 			} else {
 			  // Get entities
-			  // Is a class that is a extension of the metamodel. 
-			  // Check if the class is extension of the metamodel
-			  // get list attributes form de metamodel helper
+			  // Is a class that is a extension of the generic model 
+			  // Check if the class is extension of the generic model
+			  // get list attributes form the generic model helper
 			  boolean isFromMetamodel = false;
 			  List<String> excludedReferences = null;
 			  String metaModelClass = null;
@@ -174,7 +174,7 @@ public class DrupalSchemaExtractor {
 				    	metaModelClass = metamodelClasses.getKey();
 				    }
 			  }
-			// Class are a extension from the metamodel
+			// Class are a extension from the generic model.
 			
 			  String classTitleLowerCase = defRelation.getKey().replaceAll("--", "_");
 			  String classTitle =  classTitleLowerCase.substring(0, 1).toUpperCase() + classTitleLowerCase.substring(1);
@@ -202,14 +202,14 @@ public class DrupalSchemaExtractor {
 				  
 				  EClass referencedClassObject = (EClass)_dynamicEPackage.getEClassifier(referencedClass);
 				  System.out.println("Creating Reference: From: " + classTitle + " has a reference: " + singleProp.getKey() + " pointing to:  " + referencedClass);   
-				  // Check if the properties are present in the metamodel
+				  // Check if the properties are present in the generic model.
 				  // TODO
 				  JsonObject relationValues = singleProp.getValue().getAsJsonObject();
 				  if (singleProp.getKey().startsWith("bundle") || singleProp.getKey().startsWith("node_type") || singleProp.getKey().startsWith("block_content_type") || singleProp.getKey().startsWith("contact_form")) {
 					// Primitive types nothing to do.
 				  } else if(isFromMetamodel){
 					  if (excludedReferences.contains(singleProp.getKey().replaceAll("drupal_internal_", ""))) {
-						  // Inherent from the metamodel
+						  // Inherent from the generic model.
 					  } else {
 						  EStructuralFeature relationship = createDynamicEstructuralFeatures (singleProp.getKey(), relationValues, referencedClassObject, true, false);
 						  parentClass.getEStructuralFeatures().add(relationship);
@@ -221,7 +221,7 @@ public class DrupalSchemaExtractor {
 				  }	 
 				}	
 				if (isFromMetamodel) {
-					// Then we have to create a containment relationship with de metamodel class
+					// Then we have to create a containment relationship with the generic model class
 					
 					EClass metaModelClassObject = (EClass)_dynamicEPackage.getEClassifier(metaModelClass);
 					//EStructuralFeature relationship = createDynamicEstructuralFeatures (metaModelClass, null, metaModelClassObject, true, true);
@@ -230,7 +230,7 @@ public class DrupalSchemaExtractor {
 					//createDynamicEReference(classTitle, metaModelClass, metaModelClass, true);
 			      }
 				} else {
-					// Not form metamodel. Nothing to do.
+					// Not form the generic model. Nothing to do.
 				}
 
 			  }
@@ -353,7 +353,7 @@ public class DrupalSchemaExtractor {
 		// instance
 		 JsonObject info = entry.getAsJsonObject();
 		 String title = info.get("title").getAsString().replaceAll("-", "_").replaceAll(" ", "_");
-		 // Package is loaded from metamodel.
+		 // Package is loaded from generic model.
 		 // _dynamicEPackage = _coreFactory.createEPackage();
 		_dynamicEPackage.setName(title);
 		_dynamicEPackage.setNsPrefix(title);
