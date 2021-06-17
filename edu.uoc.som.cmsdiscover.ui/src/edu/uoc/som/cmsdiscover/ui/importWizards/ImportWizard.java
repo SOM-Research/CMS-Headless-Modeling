@@ -6,6 +6,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.ui.IImportWizard;
@@ -31,9 +32,9 @@ public class ImportWizard extends Wizard implements INewWizard {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-
-		System.out.println("HOLAAAAAAAAAAAA:   "+mainPage.getTech());
-		CmsDiscover.getDefault().buildExtendModel(url, mainPage.getUser(), mainPage.getPass(), mainPage.getTech());
+		String Workspace = ResourcesPlugin.getWorkspace().getRoot().getLocation().toString();
+		String ModelResultPath = Workspace + mainPage.getContainerFullPath() + "/" + mainPage.getFileName();
+		CmsDiscover.getDefault().buildExtendModel(url, mainPage.getUser(), mainPage.getPass(), mainPage.getTech(), ModelResultPath);
 		return true;
 	}
 	 

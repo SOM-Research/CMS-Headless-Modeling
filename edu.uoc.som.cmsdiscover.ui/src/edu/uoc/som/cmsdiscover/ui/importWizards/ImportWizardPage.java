@@ -4,6 +4,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
+
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
@@ -19,6 +21,8 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.ui.dialogs.WizardNewFileCreationPage;
+
+
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.events.KeyEvent;
@@ -61,7 +65,7 @@ public class ImportWizardPage extends WizardNewFileCreationPage {
         Label labelRadio = new Label(container, SWT.NONE);
         labelRadio.setText("Which technology are powering your CMS: ");
          
-        // Create a group to contain 2 radio (Male & Female)
+        // Create radios
         Group techGroup = new Group(container, SWT.NONE);
         techGroup.setLayout(new RowLayout(SWT.HORIZONTAL));
         buttonWp = new Button(techGroup, SWT.RADIO);
@@ -101,7 +105,17 @@ public class ImportWizardPage extends WizardNewFileCreationPage {
         pass = new Text(container, SWT.BORDER | SWT.PASSWORD);
         pass.setText("");
         
-  
+        
+        String Workspace = ResourcesPlugin.getWorkspace().getRoot().getLocation().toString();
+        System.out.println("VAMOSSS:  "+ Workspace);
+        File[] directories = new File(Workspace).listFiles(File::isDirectory);
+        for (int i = 0; i < directories.length; i++) {   	
+        	 System.out.println("VAMOSSS:  "+ directories[i].toString());
+        }
+       
+        
+        
+        // Event listeners
         url.addKeyListener(new KeyListener() {
 
             @Override
@@ -178,7 +192,7 @@ public class ImportWizardPage extends WizardNewFileCreationPage {
 	 * @see org.eclipse.ui.dialogs.WizardNewFileCreationPage#getNewFileLabel()
 	 */
 	protected String getNewFileLabel() {
-		return "New File Name:"; //NON-NLS-1
+		return "Name of the extended model file: "; //NON-NLS-1
 	}
 
 	/* (non-Javadoc)
@@ -200,5 +214,8 @@ public class ImportWizardPage extends WizardNewFileCreationPage {
     public String getTech() {
     	if (buttonDrupal.getSelection()) return "d";
     	else return "w";
+    }
+    public String getFileName() {
+    	return super.getFileName();
     }
 }

@@ -35,7 +35,7 @@ public class CmsModelSerializer {
 		_resourceSet = new ResourceSetImpl();
 	}
 	
-	public void serializeModel(EPackage dynamicEPackage) {
+	public void serializeModel(EPackage dynamicEPackage, String Path) {
 
 		// Register XML Factory implementation to handle .ecore files
 		_resourceSet.getResourceFactoryRegistry().getExtensionToFactoryMap()
@@ -43,7 +43,7 @@ public class CmsModelSerializer {
 	
 		// Create empty resource with the given URI
 		Resource resource = _resourceSet.createResource(URI
-				.createURI("./ExtendedModel/extendedModel.ecore"));
+				.createURI(Path));
 		 System.out.println("Created resource"); 
 
 		// Add bookStoreEPackage to contents list of the resource

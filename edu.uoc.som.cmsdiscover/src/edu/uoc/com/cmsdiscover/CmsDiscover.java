@@ -73,7 +73,7 @@ public class CmsDiscover extends Plugin {
 		return genericModelHelper;
 	}
 	
-	public void buildExtendModel(URL url, String user, String pass, String tech) {
+	public void buildExtendModel(URL url, String user, String pass, String tech, String ModelResultPath) {
 		
 		System.out.println("******************* Recieved Values: " + url + " user:" + user + " pass:" + pass + " tech:" + tech);
 		
@@ -91,7 +91,7 @@ public class CmsDiscover extends Plugin {
 			DrupalSchemaExtractor DrupalExtractor = new DrupalSchemaExtractor(url, user, pass);
 			EPackage ExtendedModel = DrupalExtractor.ModelExtractor(genericEPackage, genericModelHelper);
 			// Serialize model to .ecore
-			theModelSerializer.serializeModel(ExtendedModel);
+			theModelSerializer.serializeModel(ExtendedModel, ModelResultPath);
 		
 		// Is Wordpress based site.
 		} else if (tech.contains("w")) {
@@ -103,7 +103,7 @@ public class CmsDiscover extends Plugin {
 			WordpressSchemaExtractor WordpressExtractor = new WordpressSchemaExtractor(url, user, pass);
 			EPackage ExtendedModel = WordpressExtractor.ModelExtractor(genericEPackage, genericModelHelper);
 			// Serialize model to .ecore
-			theModelSerializer.serializeModel(ExtendedModel);
+			theModelSerializer.serializeModel(ExtendedModel, ModelResultPath);
 		}
 		
 	}
