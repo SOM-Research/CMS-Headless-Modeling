@@ -88,10 +88,10 @@ public class CmsDiscover extends Plugin {
 			EPackage genericEPackage = theModelSerializer.loadCmsGenericModel("Drupal");
 			Map<String, List<String>> genericModelHelper = theModelingEngine.loadCmsGenericModel(genericEPackage);
 			// Change this to your Drupal OpenAPI specification.
-			//DrupalSchemaExtractor DrupalExtractor = new DrupalSchemaExtractor(url);
-			//EPackage ExtendedModel = DrupalExtractor.ModelExtractor(genericEPackage, genericModelHelper);
+			DrupalSchemaExtractor DrupalExtractor = new DrupalSchemaExtractor(url, user, pass);
+			EPackage ExtendedModel = DrupalExtractor.ModelExtractor(genericEPackage, genericModelHelper);
 			// Serialize model to .ecore
-			//theModelSerializer.serializeModel(ExtendedModel);
+			theModelSerializer.serializeModel(ExtendedModel);
 		
 		// Is Wordpress based site.
 		} else if (tech.contains("w")) {

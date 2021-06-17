@@ -2,7 +2,14 @@ package edu.uoc.com.cmsdiscover.drupal;
 
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.IOException;
+import java.net.URI;
+import java.net.URL;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse.BodyHandlers;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -26,7 +33,9 @@ public class DrupalSchemaExtractor {
 	
 	EcoreFactory _coreFactory;
 	EcorePackage _corePackage;
-
+	URL apiUrl;
+	String userName;
+	String password;
 	String _specificationPath;
 	String host;
 	String basePath;
@@ -35,9 +44,12 @@ public class DrupalSchemaExtractor {
 	EPackage _dynamicEPackage;
 	Map<String, List<String>> _metaModelHelper = new HashMap<String, List<String>>();
 	
-	public DrupalSchemaExtractor(String specificactionPath) {
+	public DrupalSchemaExtractor(URL url, String user, String pass) {
 		// TODO Auto-generated constructor stub
-		_specificationPath = specificactionPath;
+		_specificationPath = "";
+		apiUrl = url;
+		userName = user;
+		password = pass;
 		
 		// init Ecore.
 		_coreFactory = EcoreFactory.eINSTANCE;
@@ -47,51 +59,43 @@ public class DrupalSchemaExtractor {
 		
 		_dynamicEPackage = genericEPackage;
 		_metaModelHelper = genericModelHelper;
-	
-		try {
-			// Read the OpenApi specification in JSON format.
-			JsonObject data = (new JsonParser().parse(new JsonReader(new FileReader(_specificationPath)))).getAsJsonObject();
-			for(Entry<String, JsonElement> entry : data.entrySet()) {
-			  String key = entry.getKey();
-			  JsonElement entryValue = entry.getValue();
-			  switch (key) {
-			  	case("info"): {
-			  	  // Create package with the title
-				  initDynamicEPackage(entryValue);
-				  break;
-			  	}
-			 	case("host"): {	  	  
-				  host = entryValue.toString();
-				  break;
-			  	}
-			 	case("basePath"): {
-			 	  basePath = entryValue.toString();
-				  break;
-	  			}
-			 	case("paths"): {
-			 	  // Get the paths of the resources
-			 	  for(Map.Entry<String,JsonElement> path : entryValue.getAsJsonObject().entrySet()) { 
-			 		 String pather = path.getKey(); 
-			 	     resource_paths.add(path.getKey());
-			 	  }
-				  break;
-		  		}
-				case("definitions"): {
-				 	  // Generate the entity model extracting de definitions
-				  generateEntityModel(entryValue);
-				  break;
-			  	}
-			  
-			  }
-			}
-				
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		
+		 // Read the OpenApi specification in JSON format.
+		 JsonObject OpenApiSpecification = OpenApiSpecificationRequest().getAsJsonObject();
+		//JsonObject data = (new JsonParser().parse(new JsonReader(new FileReader(_specificationPath)))).getAsJsonObject();
+		for(Entry<String, JsonElement> entry : OpenApiSpecification.entrySet()) {
+		  String key = entry.getKey();
+		  JsonElement entryValue = entry.getValue();
+		  switch (key) {
+		  	case("info"): {
+		  	  // Create package with the title
+			  initDynamicEPackage(entryValue);
+			  break;
+		  	}
+		 	case("host"): {	  	  
+			  host = entryValue.toString();
+			  break;
+		  	}
+		 	case("basePath"): {
+		 	  basePath = entryValue.toString();
+			  break;
+  			}
+		 	case("paths"): {
+		 	  // Get the paths of the resources
+		 	  for(Map.Entry<String,JsonElement> path : entryValue.getAsJsonObject().entrySet()) { 
+		 		 String pather = path.getKey(); 
+		 	     resource_paths.add(path.getKey());
+		 	  }
+			  break;
+	  		}
+			case("definitions"): {
+			 	  // Generate the entity model extracting de definitions
+			  generateEntityModel(entryValue);
+			  break;
+		  	}
+		  
+		  }
 		}
-		
-		
-		// TODO Auto-generated method stub
 		return _dynamicEPackage;
 	}
 	public void generateEntityModel(JsonElement definitions) {
@@ -360,4 +364,49 @@ public class DrupalSchemaExtractor {
 		_dynamicEPackage
 				.setNsURI("http:///com.somlab.drupal");
 	}
+	
+	/***
+	 * Get OpenAPI Specifications
+	 */
+	public JsonElement OpenApiSpecificationRequest() {
+		
+		// create a client
+		var client = HttpClient.newHttpClient();
+
+			    
+		// create a request
+		var request = HttpRequest.newBuilder()
+			.uri(URI.create(apiUrl.toString()))
+			.method("GET", HttpRequest.BodyPublishers.noBody())
+		    .header("accept", "application/json")
+	//        .header("Authorization", basicAuth(userName, password))
+		    .build();
+
+		// use the client to send the request
+		try {
+			request.method();
+			var response = client.send(request, BodyHandlers.ofString());
+			if (response.statusCode() == 200) {
+				JsonElement res = new JsonParser().parse(response.body());
+				return res;
+			} else {
+				System.out.println("Has returned status: " + response.statusCode());
+				return null;
+			}
+
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	private static String basicAuth(String username, String password) {
+	    return "Basic " + Base64.getEncoder().encodeToString((username + ":" + password).getBytes());
+	}
+
+		
 }

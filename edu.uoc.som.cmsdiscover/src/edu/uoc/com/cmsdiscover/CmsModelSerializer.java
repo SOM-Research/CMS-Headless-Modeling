@@ -10,6 +10,7 @@ package edu.uoc.com.cmsdiscover;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Date;
 
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
@@ -39,7 +40,7 @@ public class CmsModelSerializer {
 		// Register XML Factory implementation to handle .ecore files
 		_resourceSet.getResourceFactoryRegistry().getExtensionToFactoryMap()
 				.put("ecore", new XMLResourceFactoryImpl());
-		
+	
 		// Create empty resource with the given URI
 		Resource resource = _resourceSet.createResource(URI
 				.createURI("./ExtendedModel/extendedModel.ecore"));
