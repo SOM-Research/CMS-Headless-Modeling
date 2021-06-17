@@ -40,10 +40,10 @@ public class CmsModelSerializer {
 		// Register XML Factory implementation to handle .ecore files
 		_resourceSet.getResourceFactoryRegistry().getExtensionToFactoryMap()
 				.put("ecore", new XMLResourceFactoryImpl());
-	
 		// Create empty resource with the given URI
+		System.out.println(Path); 
 		Resource resource = _resourceSet.createResource(URI
-				.createURI(Path));
+				.createFileURI(Path));
 		 System.out.println("Created resource"); 
 
 		// Add bookStoreEPackage to contents list of the resource
