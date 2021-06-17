@@ -1,0 +1,12 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: CMS Discover UI
+Bundle-SymbolicName: edu.uoc.som.cmsdiscover.ui
+Bundle-Version: 0.1.0.qualifier
+Bundle-Activator: edu.uoc.som.cmsdiscover.ui.ActivatorUI
+Bundle-Vendor: SOM - UOC
+Require-Bundle: org.eclipse.ui,
+ org.eclipse.core.runtime
+Bundle-RequiredExecutionEnvironment: JavaSE-11
+Automatic-Module-Name: edu.uoc.som.cmsdiscover.ui
+Bundle-ActivationPolicy: lazy

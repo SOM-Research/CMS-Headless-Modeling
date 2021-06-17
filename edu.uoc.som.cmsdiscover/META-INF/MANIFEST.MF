@@ -1,0 +1,11 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Cmsdiscover
+Bundle-SymbolicName: edu.uoc.som.cmsdiscover
+Bundle-Version: 0.1.0.qualifier
+Bundle-Activator: edu.uoc.com.cmsdiscover.Activator
+Bundle-Vendor: SOM - UOC
+Require-Bundle: org.eclipse.core.runtime
+Bundle-RequiredExecutionEnvironment: JavaSE-11
+Automatic-Module-Name: edu.uoc.com.cmsdiscover
+Bundle-ActivationPolicy: lazy
