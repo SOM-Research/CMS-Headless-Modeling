@@ -25,15 +25,12 @@ public class ImportWizard extends Wizard implements IImportWizard {
 	public boolean performFinish() {
 		URL url = null;
 		try {
-			url = new URL("http://www.micasa.com");
+			url = new URL(mainPage.getUrl());
 		} catch (MalformedURLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		String user = "usera";
-		String pass = "pass";
-		String tech = "tech";
-		CmsDiscover.getDefault().buildExtendModel(url, user, pass, tech);
+		CmsDiscover.getDefault().buildExtendModel(url, mainPage.getUser(), mainPage.getPass(), mainPage.getTech());
 		return true;
 	}
 	 
@@ -41,9 +38,9 @@ public class ImportWizard extends Wizard implements IImportWizard {
 	 * @see org.eclipse.ui.IWorkbenchWizard#init(org.eclipse.ui.IWorkbench, org.eclipse.jface.viewers.IStructuredSelection)
 	 */
 	public void init(IWorkbench workbench, IStructuredSelection selection) {
-		setWindowTitle("File Import Wizard"); //NON-NLS-1
+		setWindowTitle("Import CMS model"); //NON-NLS-1
 		setNeedsProgressMonitor(true);
-		mainPage = new ImportWizardPage("Import File",selection); //NON-NLS-1
+		mainPage = new ImportWizardPage("Import CMS model",selection); //NON-NLS-1
 	}
 	
 	/* (non-Javadoc)

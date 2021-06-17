@@ -1,4 +1,4 @@
-package com.somlab.cmsmodel.drupal;
+package edu.uoc.com.cmsdiscover.drupal;
 
 import java.io.FileNotFoundException;
 import java.io.FileReader;

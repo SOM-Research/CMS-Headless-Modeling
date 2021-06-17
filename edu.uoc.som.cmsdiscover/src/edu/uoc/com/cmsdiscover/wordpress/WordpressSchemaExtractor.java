@@ -1,4 +1,4 @@
-package com.somlab.cmsmodel.wordpress;
+package edu.uoc.com.cmsdiscover.wordpress;
 
 import java.io.Console;
 import java.io.IOException;

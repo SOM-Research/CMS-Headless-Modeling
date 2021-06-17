@@ -15,42 +15,77 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.dialogs.WizardNewFileCreationPage;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Text;
+import org.eclipse.swt.events.KeyEvent;
+import org.eclipse.swt.events.KeyListener;
 
 
 public class ImportWizardPage extends WizardNewFileCreationPage {
 	
 	protected FileFieldEditor editor;
+	private Composite container;
+	private Text url;
+	private Text user;
+	private Text pass;
+	private Text tech;
+	
+	
 
 	public ImportWizardPage(String pageName, IStructuredSelection selection) {
 		super(pageName, selection);
 		setTitle(pageName); //NON-NLS-1
-		setDescription("Import a file from the local file system into the workspace"); //NON-NLS-1
+		setDescription("Import CMS model"); //NON-NLS-1
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.dialogs.WizardNewFileCreationPage#createAdvancedControls(org.eclipse.swt.widgets.Composite)
 	 */	
 	protected void createAdvancedControls(Composite parent) {
-		Composite fileSelectionArea = new Composite(parent, SWT.NONE);
-		GridData fileSelectionData = new GridData(GridData.GRAB_HORIZONTAL
-				| GridData.FILL_HORIZONTAL);
-		fileSelectionArea.setLayoutData(fileSelectionData);
+        container = new Composite(parent, SWT.NONE);
+        GridLayout layout = new GridLayout();
+        container.setLayout(layout);
+        layout.numColumns = 2;
+        
+        Label label1 = new Label(container, SWT.NONE);
+        label1.setText("Set the URL: .");
+        url = new Text(container, SWT.BORDER | SWT.SINGLE);
+        url.setText("");
+        
+        Label label2 = new Label(container, SWT.NONE);
+        label2.setText("User: ");
+        user = new Text(container, SWT.BORDER | SWT.SINGLE);
+        user.setText("");
+        
+        Label label3 = new Label(container, SWT.NONE);
+        label3.setText("Passwrod: ");
+        pass = new Text(container, SWT.BORDER | SWT.SINGLE);
+        pass.setText("");
+        
+        Label label4 = new Label(container, SWT.NONE);
+        label4.setText("Technology: ");
+        tech = new Text(container, SWT.BORDER | SWT.SINGLE);
+        tech.setText("");
+        tech.addKeyListener(new KeyListener() {
 
-		GridLayout fileSelectionLayout = new GridLayout();
-		fileSelectionLayout.numColumns = 3;
-		fileSelectionLayout.makeColumnsEqualWidth = false;
-		fileSelectionLayout.marginWidth = 0;
-		fileSelectionLayout.marginHeight = 0;
-		fileSelectionArea.setLayout(fileSelectionLayout);
-		
-		editor = new FileFieldEditor("fileSelect","Select File: ",fileSelectionArea); //NON-NLS-1 //NON-NLS-2
-		editor.getTextControl(fileSelectionArea).addModifyListener(e -> {
-			IPath path = new Path(ImportWizardPage.this.editor.getStringValue());
-			setFileName(path.lastSegment());
-		});
-		String[] extensions = new String[] { "*.*" }; //NON-NLS-1
-		editor.setFileExtensions(extensions);
-		fileSelectionArea.moveAbove(null);
+            @Override
+            public void keyPressed(KeyEvent e) {
+            }
+
+            @Override
+            public void keyReleased(KeyEvent e) {
+                if (!tech.getText().isEmpty()) {
+                    setPageComplete(true);
+
+                }
+            }
+
+        });
+        GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+        tech.setLayoutData(gd);
+        // required to avoid an error in the system
+        setControl(container);
+        setPageComplete(false);
 
 	}
 	
@@ -84,4 +119,17 @@ public class ImportWizardPage extends WizardNewFileCreationPage {
 	protected IStatus validateLinkedResource() {
 		return new Status(IStatus.OK, "edu.uoc.som.cmsdiscover.ui", IStatus.OK, "", null); //NON-NLS-1 //NON-NLS-2
 	}
+	
+    public String getUrl() {
+        return url.getText();
+    }
+    public String getUser() {
+        return user.getText();
+    }
+    public String getPass() {
+        return pass.getText();
+    }
+    public String getTech() {
+        return tech.getText();
+    }
 }

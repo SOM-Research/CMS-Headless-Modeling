@@ -5,14 +5,14 @@
          point="org.eclipse.ui.importWizards">
       <category
             id="edu.uoc.som.cmsdiscover.ui.importWizards.sampleCategory"
-            name="Sample File Import">
+            name="Import CMS model">
       </category>
       <wizard
             category="edu.uoc.som.cmsdiscover.ui.importWizards.sampleCategory"
             class="edu.uoc.som.cmsdiscover.ui.importWizards.ImportWizard"
             icon="icons/sample.png"
             id="edu.uoc.som.cmsdiscover.ui.importWizards.ImportWizard"
-            name="Import File">
+            name="Import CMS specification">
          <description>
             Import a file from the local file system into the workspace.
          </description>

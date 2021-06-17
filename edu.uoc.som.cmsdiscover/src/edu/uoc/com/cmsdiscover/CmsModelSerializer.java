@@ -1,4 +1,4 @@
-package com.somlab.cmsmodel;
+package edu.uoc.com.cmsdiscover;
 
 /**
  * This class provides methods to serialize the Ecore-based model and 
@@ -24,7 +24,6 @@ import org.eclipse.emf.ecore.xmi.impl.EcoreResourceFactoryImpl;
 import org.eclipse.emf.ecore.xmi.impl.XMIResourceFactoryImpl;
 import org.eclipse.emf.ecore.xmi.impl.XMLResourceFactoryImpl;
 
-import workflowMetamodel.root;
 
 public class CmsModelSerializer {
 	
@@ -57,27 +56,6 @@ public class CmsModelSerializer {
 		}
 	}
 	
-	public void serializeWorkflowModel(root WorkflowEPackage) {
-
-		// Register XML Factory implementation to handle .ecore files
-		_resourceSet.getResourceFactoryRegistry().getExtensionToFactoryMap()
-				.put("workflowmetamodel", new XMLResourceFactoryImpl());
-		
-		// Create empty resource with the given URI
-		Resource resource = _resourceSet.createResource(URI
-				.createURI("./model/workflowsmeta.ecore"));
-		 System.out.println("Created resource"); 
-
-		// Add bookStoreEPackage to contents list of the resource
-		resource.getContents().add(WorkflowEPackage);
-
-		try {
-			// Save the resource
-			resource.save(null);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
 
 	public EPackage loadCmsGenericModel(String techBase) {
 
