@@ -22,17 +22,14 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.ui.dialogs.WizardNewFileCreationPage;
 
-
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.graphics.Image;
 
-
-
 public class ImportWizardPage extends WizardNewFileCreationPage {
-	
+
 	protected FileFieldEditor editor;
 	private Composite container;
 	private Text url;
@@ -41,143 +38,138 @@ public class ImportWizardPage extends WizardNewFileCreationPage {
 	private Group techGroup;
 	private Button buttonDrupal;
 	private Button buttonWp;
-	
-	
 
 	public ImportWizardPage(String pageName, IStructuredSelection selection) {
 		super(pageName, selection);
-		setTitle(pageName); //NON-NLS-1
-		setDescription("Import CMS model"); //NON-NLS-1
+		setTitle(pageName); // NON-NLS-1
+		setDescription("Import CMS model"); // NON-NLS-1
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.dialogs.WizardNewFileCreationPage#createAdvancedControls(org.eclipse.swt.widgets.Composite)
-	 */	
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.ui.dialogs.WizardNewFileCreationPage#createAdvancedControls(org.
+	 * eclipse.swt.widgets.Composite)
+	 */
 	protected void createAdvancedControls(Composite parent) {
-        container = new Composite(parent, SWT.NONE);
-        GridLayout layout = new GridLayout();
-        container.setLayout(layout);
-        layout.numColumns = 2;
-        
-   
-   
-        
-        Label labelRadio = new Label(container, SWT.NONE);
-        labelRadio.setText("Which technology are powering your CMS: ");
-         
-        // Create radios
-        Group techGroup = new Group(container, SWT.NONE);
-        techGroup.setLayout(new RowLayout(SWT.HORIZONTAL));
-        buttonWp = new Button(techGroup, SWT.RADIO);
-        buttonWp.setText("Wordpress");
-        
-        InputStream input = ImportWizardPage.class.getResourceAsStream("/assets/wordpress.png");
-        Image image = new Image(null, input);
-        final Image scaledWp = new Image(null,
-                image.getImageData().scaledTo((int)(30),(int)(30)));
-        buttonWp.setImage(scaledWp);
-         
-        buttonDrupal = new Button(techGroup, SWT.RADIO);
-        buttonDrupal.setText("Drupal");
-        
-        InputStream inputDru = ImportWizardPage.class.getResourceAsStream("/assets/drupal.png");
-        Image imageDru = new Image(null, inputDru);
-        final Image scaledDru = new Image(null,
-                imageDru.getImageData().scaledTo((int)(30),(int)(30)));
-        buttonDrupal.setImage(scaledDru);
-       // buttonDrupal.setImage(imageDru);
+		container = new Composite(parent, SWT.NONE);
+		GridLayout layout = new GridLayout();
+		container.setLayout(layout);
+		layout.numColumns = 2;
 
-        
-        Label label1 = new Label(container, SWT.NONE);
-        label1.setText("Set the URL: .");
-        url = new Text(container, SWT.BORDER | SWT.SINGLE);
-        url.setText("");
-     
-        
-        Label label2 = new Label(container, SWT.NONE);
-        label2.setText("User: ");
-        user = new Text(container, SWT.BORDER | SWT.SINGLE);
-        user.setText("");
-     
-        
-        Label label3 = new Label(container, SWT.NONE);
-        label3.setText("Passwrod: ");
-        pass = new Text(container, SWT.BORDER | SWT.PASSWORD);
-        pass.setText("");
-        
-        
-        String Workspace = ResourcesPlugin.getWorkspace().getRoot().getLocation().toString();
-        System.out.println("VAMOSSS:  "+ Workspace);
-        File[] directories = new File(Workspace).listFiles(File::isDirectory);
-        for (int i = 0; i < directories.length; i++) {   	
-        	 System.out.println("VAMOSSS:  "+ directories[i].toString());
-        }
-       
-        
-        
-        // Event listeners
-        url.addKeyListener(new KeyListener() {
+		Label labelRadio = new Label(container, SWT.NONE);
+		labelRadio.setText("Which technology are powering your CMS: ");
 
-            @Override
-            public void keyPressed(KeyEvent e) {
-            }
+		// Create radios
+		Group techGroup = new Group(container, SWT.NONE);
+		techGroup.setLayout(new RowLayout(SWT.HORIZONTAL));
+		buttonWp = new Button(techGroup, SWT.RADIO);
+		buttonWp.setText("Wordpress");
 
-            @Override
-            public void keyReleased(KeyEvent e) {
-                if (!url.getText().isEmpty() && (buttonDrupal.getSelection() || buttonWp.getSelection())) {
-                    setPageComplete(true);
+		InputStream input = ImportWizardPage.class.getResourceAsStream("/assets/wordpress.png");
+		Image image = new Image(null, input);
+		final Image scaledWp = new Image(null, image.getImageData().scaledTo((int) (30), (int) (30)));
+		buttonWp.setImage(scaledWp);
 
-                }
-            }
+		buttonDrupal = new Button(techGroup, SWT.RADIO);
+		buttonDrupal.setText("Drupal");
 
-        });
-        
-        buttonWp.addKeyListener(new KeyListener() {
+		InputStream inputDru = ImportWizardPage.class.getResourceAsStream("/assets/drupal.png");
+		Image imageDru = new Image(null, inputDru);
+		final Image scaledDru = new Image(null, imageDru.getImageData().scaledTo((int) (30), (int) (30)));
+		buttonDrupal.setImage(scaledDru);
+		// buttonDrupal.setImage(imageDru);
 
-            @Override
-            public void keyPressed(KeyEvent e) {
-            }
+		Label label1 = new Label(container, SWT.NONE);
+		label1.setText("Set the URL: .");
+		url = new Text(container, SWT.BORDER | SWT.SINGLE);
+		url.setText("");
 
-            @Override
-            public void keyReleased(KeyEvent e) {
-                if (!url.getText().isEmpty() && (buttonDrupal.getSelection() || buttonWp.getSelection())) {
-                    setPageComplete(true);
+		Label label2 = new Label(container, SWT.NONE);
+		label2.setText("User: ");
+		user = new Text(container, SWT.BORDER | SWT.SINGLE);
+		user.setText("");
 
-                }
-            }
-        	
-        });
-        
-        buttonDrupal.addKeyListener(new KeyListener() {
+		Label label3 = new Label(container, SWT.NONE);
+		label3.setText("Passwrod: ");
+		pass = new Text(container, SWT.BORDER | SWT.PASSWORD);
+		pass.setText("");
 
-            @Override
-            public void keyPressed(KeyEvent e) {
-            }
+		String Workspace = ResourcesPlugin.getWorkspace().getRoot().getLocation().toString();
+		System.out.println("VAMOSSS:  " + Workspace);
+		File[] directories = new File(Workspace).listFiles(File::isDirectory);
+		for (int i = 0; i < directories.length; i++) {
+			System.out.println("VAMOSSS:  " + directories[i].toString());
+		}
 
-            @Override
-            public void keyReleased(KeyEvent e) {
-                if (!url.getText().isEmpty() && (buttonDrupal.getSelection() || buttonWp.getSelection())) {
-                    setPageComplete(true);
+		// Event listeners
+		url.addKeyListener(new KeyListener() {
 
-                }
-            }
-        	
-        });
-        GridData gd = new GridData(GridData.FILL_HORIZONTAL);
-        url.setLayoutData(gd);
-        // required to avoid an error in the system
-        setControl(container);
-        setPageComplete(false);
+			@Override
+			public void keyPressed(KeyEvent e) {
+			}
+
+			@Override
+			public void keyReleased(KeyEvent e) {
+				if (!url.getText().isEmpty() && (buttonDrupal.getSelection() || buttonWp.getSelection())) {
+					setPageComplete(true);
+
+				}
+			}
+
+		});
+
+		buttonWp.addKeyListener(new KeyListener() {
+
+			@Override
+			public void keyPressed(KeyEvent e) {
+			}
+
+			@Override
+			public void keyReleased(KeyEvent e) {
+				if (!url.getText().isEmpty() && (buttonDrupal.getSelection() || buttonWp.getSelection())) {
+					setPageComplete(true);
+
+				}
+			}
+
+		});
+
+		buttonDrupal.addKeyListener(new KeyListener() {
+
+			@Override
+			public void keyPressed(KeyEvent e) {
+			}
+
+			@Override
+			public void keyReleased(KeyEvent e) {
+				if (!url.getText().isEmpty() && (buttonDrupal.getSelection() || buttonWp.getSelection())) {
+					setPageComplete(true);
+
+				}
+			}
+
+		});
+		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+		url.setLayoutData(gd);
+		// required to avoid an error in the system
+		setControl(container);
+		setPageComplete(false);
 
 	}
-	
-	 /* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.dialogs.WizardNewFileCreationPage#createLinkTarget()
 	 */
 	protected void createLinkTarget() {
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.dialogs.WizardNewFileCreationPage#getInitialContents()
 	 */
 	protected InputStream getInitialContents() {
@@ -188,34 +180,45 @@ public class ImportWizardPage extends WizardNewFileCreationPage {
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.dialogs.WizardNewFileCreationPage#getNewFileLabel()
 	 */
 	protected String getNewFileLabel() {
-		return "Name of the extended model file: "; //NON-NLS-1
+		return "Name of the extended model file: "; // NON-NLS-1
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.dialogs.WizardNewFileCreationPage#validateLinkedResource()
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.ui.dialogs.WizardNewFileCreationPage#validateLinkedResource()
 	 */
 	protected IStatus validateLinkedResource() {
-		return new Status(IStatus.OK, "edu.uoc.som.cmsdiscover.ui", IStatus.OK, "", null); //NON-NLS-1 //NON-NLS-2
+		return new Status(IStatus.OK, "edu.uoc.som.cmsdiscover.ui", IStatus.OK, "", null); // NON-NLS-1 //NON-NLS-2
 	}
-	
-    public String getUrl() {
-        return url.getText();
-    }
-    public String getUser() {
-        return user.getText();
-    }
-    public String getPass() {
-        return pass.getText();
-    }
-    public String getTech() {
-    	if (buttonDrupal.getSelection()) return "d";
-    	else return "w";
-    }
-    public String getFileName() {
-    	return super.getFileName();
-    }
+
+	public String getUrl() {
+		return url.getText();
+	}
+
+	public String getUser() {
+		return user.getText();
+	}
+
+	public String getPass() {
+		return pass.getText();
+	}
+
+	public String getTech() {
+		if (buttonDrupal.getSelection())
+			return "d";
+		else
+			return "w";
+	}
+
+	public String getFileName() {
+		return super.getFileName();
+	}
 }

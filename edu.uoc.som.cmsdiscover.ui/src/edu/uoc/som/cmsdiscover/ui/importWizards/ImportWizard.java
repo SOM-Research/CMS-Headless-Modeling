@@ -14,14 +14,16 @@ import org.eclipse.ui.INewWizard;
 import org.eclipse.ui.IWorkbench;
 
 public class ImportWizard extends Wizard implements INewWizard {
-	
+
 	ImportWizardPage mainPage;
 
 	public ImportWizard() {
 		super();
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.jface.wizard.Wizard#performFinish()
 	 */
 	public boolean performFinish() {
@@ -34,25 +36,31 @@ public class ImportWizard extends Wizard implements INewWizard {
 		}
 		String Workspace = ResourcesPlugin.getWorkspace().getRoot().getLocation().toString();
 		String ModelResultPath = Workspace + mainPage.getContainerFullPath() + "/" + mainPage.getFileName();
-		CmsDiscover.getDefault().buildExtendModel(url, mainPage.getUser(), mainPage.getPass(), mainPage.getTech(), ModelResultPath);
+		CmsDiscover.getDefault().buildExtendModel(url, mainPage.getUser(), mainPage.getPass(), mainPage.getTech(),
+				ModelResultPath);
 		return true;
 	}
-	 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IWorkbenchWizard#init(org.eclipse.ui.IWorkbench, org.eclipse.jface.viewers.IStructuredSelection)
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.IWorkbenchWizard#init(org.eclipse.ui.IWorkbench,
+	 * org.eclipse.jface.viewers.IStructuredSelection)
 	 */
 	public void init(IWorkbench workbench, IStructuredSelection selection) {
-		setWindowTitle("Import CMS model"); //NON-NLS-1
+		setWindowTitle("Import CMS model"); // NON-NLS-1
 		setNeedsProgressMonitor(true);
-		mainPage = new ImportWizardPage("Import CMS model", selection); //NON-NLS-1
+		mainPage = new ImportWizardPage("Import CMS model", selection); // NON-NLS-1
 	}
-	
-	/* (non-Javadoc)
-     * @see org.eclipse.jface.wizard.IWizard#addPages()
-     */
-    public void addPages() {
-        super.addPages(); 
-        addPage(mainPage);        
-    }
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.jface.wizard.IWizard#addPages()
+	 */
+	public void addPages() {
+		super.addPages();
+		addPage(mainPage);
+	}
 
 }
