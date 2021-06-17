@@ -61,7 +61,7 @@ public class CmsModelSerializer {
 
 		_resourceSet.getResourceFactoryRegistry().getExtensionToFactoryMap().put("ecore", new EcoreResourceFactoryImpl());
 		_resourceSet.getResourceFactoryRegistry().getExtensionToFactoryMap().put("*", new XMIResourceFactoryImpl());
-		
+		System.out.println(URI.createFileURI("./GenericModel/cmsGenericModel"+techBase+".ecore"));
 		Resource drupalMetaModel= _resourceSet.getResource(URI.createFileURI("./GenericModel/cmsGenericModel"+techBase+".ecore"), true);
 		EPackage ecorePackage = (EPackage) drupalMetaModel.getContents().get(0);
 

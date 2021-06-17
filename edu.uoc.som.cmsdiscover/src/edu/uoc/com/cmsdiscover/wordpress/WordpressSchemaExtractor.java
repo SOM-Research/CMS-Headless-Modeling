@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.net.Authenticator;
 import java.net.PasswordAuthentication;
 import java.net.URI;
+import java.net.URL;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse.BodyHandlers;
@@ -36,7 +37,9 @@ public class WordpressSchemaExtractor {
 	EcorePackage _corePackage;
 
 
-	String Api_Url;
+	URL apiUrl;
+	String userName;
+	String password;
 	String name;
 	String host;
 	String description;
@@ -45,9 +48,11 @@ public class WordpressSchemaExtractor {
 	Map<String, List<String>> _metaModelHelper = new HashMap<String, List<String>>();
 	List<String> namespaces = new ArrayList<String>();
 	
-	public WordpressSchemaExtractor(String url) {
+	public WordpressSchemaExtractor(URL url, String user, String pass) {
 		// TODO Auto-generated constructor stub
-		Api_Url = url;
+		apiUrl = url;
+		userName = user;
+		password = pass;
 		// init Ecore.
 		_coreFactory = EcoreFactory.eINSTANCE;
 		_corePackage = EcorePackage.eINSTANCE;
@@ -59,7 +64,7 @@ public class WordpressSchemaExtractor {
 		_metaModelHelper = genericModelHelper;
 		
 		// Get the main Wp JSON Route
-		JsonElement wpJson = ResourceRequest(Api_Url, "", "GET");
+		JsonElement wpJson = ResourceRequest("", "GET");
 		for(Entry<String, JsonElement> wpEntry : wpJson.getAsJsonObject().entrySet()) {		
 			String key = wpEntry.getKey();
 			JsonElement entryValue = wpEntry.getValue();
@@ -117,7 +122,7 @@ public class WordpressSchemaExtractor {
 		for(Map.Entry<String,JsonElement> route : routes.getAsJsonObject().entrySet()) { 
 			if (route.getKey().replaceFirst("/","").contentEquals("wp/v2/types")) {
 				System.out.println(route.getKey());
-				JsonElement singleRoute = ResourceRequest(Api_Url, route.getKey() + "?context=edit", "GET");
+				JsonElement singleRoute = ResourceRequest(route.getKey() + "?context=edit", "GET");
 				JsonObject result = singleRoute.getAsJsonObject();
 				for(Entry<String, JsonElement> innerResult : result.entrySet()) {		
 					String restBaseLowerCase = innerResult.getValue().getAsJsonObject().get("rest_base").getAsString();
@@ -137,7 +142,7 @@ public class WordpressSchemaExtractor {
 					}
 					if (!restBase.contains("Blocks")) { 
 					// Miren quins camps especials te aquesta classe del ACF
-						JsonElement response = ResourceRequest(Api_Url, "/acf/v3/"+restBase, "GET");
+						JsonElement response = ResourceRequest("/acf/v3/"+restBase, "GET");
 						if(response != null) {
 							System.out.println(restBase + " custom fields:");
 							JsonElement exampleContent = response.getAsJsonArray().get(0).getAsJsonObject().get("acf");
@@ -173,7 +178,7 @@ public class WordpressSchemaExtractor {
 				}
 			}
 			if (route.getKey().replaceFirst("/","").equals("wp/v2/taxonomies")) {
-				JsonElement singleRoute = ResourceRequest(Api_Url, route.getKey(), "GET");
+				JsonElement singleRoute = ResourceRequest(route.getKey(), "GET");
 				JsonObject result = singleRoute.getAsJsonObject();
 				for(Entry<String, JsonElement> innerResult : result.entrySet()) {		
 					String slugBaseLowerCase = innerResult.getValue().getAsJsonObject().get("slug").getAsString().replaceAll("-", "_");
@@ -220,7 +225,7 @@ public class WordpressSchemaExtractor {
 		// Then we can extract the EReferences between taxonomies ans post type.
 		for(Map.Entry<String,JsonElement> routeRef : routes.getAsJsonObject().entrySet()) { 
 			if (routeRef.getKey().replaceFirst("/","").equals("wp/v2/types")) {
-				JsonElement singleRoute = ResourceRequest(Api_Url, routeRef.getKey(), "GET");
+				JsonElement singleRoute = ResourceRequest(routeRef.getKey(), "GET");
 				JsonObject result = singleRoute.getAsJsonObject();
 				for(Entry<String, JsonElement> innerResult : result.entrySet()) {		
 					String restBaseLowerCase = innerResult.getValue().getAsJsonObject().get("rest_base").getAsString();
@@ -244,7 +249,7 @@ public class WordpressSchemaExtractor {
 		}		
 	}
 	
-	public JsonElement ResourceRequest(String baseUrl, String singleResource, String method) {
+	public JsonElement ResourceRequest(String singleResource, String method) {
 		
 		// create a client
 		var client = HttpClient.newHttpClient();
@@ -252,10 +257,10 @@ public class WordpressSchemaExtractor {
 			    
 		// create a request
 		var request = HttpRequest.newBuilder()
-			.uri(URI.create(baseUrl + singleResource ))
+			.uri(URI.create(apiUrl + singleResource ))
 			.method(method, HttpRequest.BodyPublishers.noBody())
 		    .header("accept", "application/json")
-		    .header("Authorization", basicAuth("giner.joan", "joangi"))
+		    .header("Authorization", basicAuth(userName, password))
 		    .build();
 
 		// use the client to send the request

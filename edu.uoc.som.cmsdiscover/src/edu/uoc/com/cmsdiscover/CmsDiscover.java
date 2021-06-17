@@ -88,10 +88,10 @@ public class CmsDiscover extends Plugin {
 			EPackage genericEPackage = theModelSerializer.loadCmsGenericModel("Drupal");
 			Map<String, List<String>> genericModelHelper = theModelingEngine.loadCmsGenericModel(genericEPackage);
 			// Change this to your Drupal OpenAPI specification.
-			DrupalSchemaExtractor DrupalExtractor = new DrupalSchemaExtractor(url);
-			EPackage ExtendedModel = DrupalExtractor.ModelExtractor(genericEPackage, genericModelHelper);
+			//DrupalSchemaExtractor DrupalExtractor = new DrupalSchemaExtractor(url);
+			//EPackage ExtendedModel = DrupalExtractor.ModelExtractor(genericEPackage, genericModelHelper);
 			// Serialize model to .ecore
-			theModelSerializer.serializeModel(ExtendedModel);
+			//theModelSerializer.serializeModel(ExtendedModel);
 		
 		// Is Wordpress based site.
 		} else if (tech.contains("w")) {
@@ -100,7 +100,7 @@ public class CmsDiscover extends Plugin {
 			Map<String, List<String>> genericModelHelper = theModelingEngine.loadCmsGenericModel(genericEPackage);
 			System.out.println("******************* Extracting model from a Wordpress based site");
 			// Change this to your Wordpress URL.
-			WordpressSchemaExtractor WordpressExtractor = new WordpressSchemaExtractor(url);
+			WordpressSchemaExtractor WordpressExtractor = new WordpressSchemaExtractor(url, user, pass);
 			EPackage ExtendedModel = WordpressExtractor.ModelExtractor(genericEPackage, genericModelHelper);
 			// Serialize model to .ecore
 			theModelSerializer.serializeModel(ExtendedModel);
