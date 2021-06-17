@@ -9,9 +9,10 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.ui.IImportWizard;
+import org.eclipse.ui.INewWizard;
 import org.eclipse.ui.IWorkbench;
 
-public class ImportWizard extends Wizard implements IImportWizard {
+public class ImportWizard extends Wizard implements INewWizard {
 	
 	ImportWizardPage mainPage;
 
@@ -30,6 +31,8 @@ public class ImportWizard extends Wizard implements IImportWizard {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+
+		System.out.println("HOLAAAAAAAAAAAA:   "+mainPage.getTech());
 		CmsDiscover.getDefault().buildExtendModel(url, mainPage.getUser(), mainPage.getPass(), mainPage.getTech());
 		return true;
 	}
@@ -40,7 +43,7 @@ public class ImportWizard extends Wizard implements IImportWizard {
 	public void init(IWorkbench workbench, IStructuredSelection selection) {
 		setWindowTitle("Import CMS model"); //NON-NLS-1
 		setNeedsProgressMonitor(true);
-		mainPage = new ImportWizardPage("Import CMS model",selection); //NON-NLS-1
+		mainPage = new ImportWizardPage("Import CMS model", selection); //NON-NLS-1
 	}
 	
 	/* (non-Javadoc)

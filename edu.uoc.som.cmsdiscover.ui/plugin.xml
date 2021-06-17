@@ -10,9 +10,9 @@
       <wizard
             category="edu.uoc.som.cmsdiscover.ui.importWizards.sampleCategory"
             class="edu.uoc.som.cmsdiscover.ui.importWizards.ImportWizard"
-            icon="icons/sample.png"
+            icon="assets/cms.png"
             id="edu.uoc.som.cmsdiscover.ui.importWizards.ImportWizard"
-            name="Import CMS specification">
+            name="Import CMS model">
          <description>
             Import a file from the local file system into the workspace.
          </description>
