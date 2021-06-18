@@ -43,7 +43,7 @@ public class CmsModelSerializer {
 		// Create empty resource with the given URI
 		System.out.println(Path); 
 		Resource resource = _resourceSet.createResource(URI
-				.createFileURI(Path));
+				.createFileURI(Path + ".ecore"));
 		 System.out.println("Created resource"); 
 
 		// Add bookStoreEPackage to contents list of the resource

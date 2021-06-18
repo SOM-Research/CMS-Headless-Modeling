@@ -376,7 +376,7 @@ public class DrupalSchemaExtractor {
 			    
 		// create a request
 		var request = HttpRequest.newBuilder()
-			.uri(URI.create(apiUrl.toString()))
+			.uri(URI.create(apiUrl.toString() + "/openapi/jsonapi"))
 			.method("GET", HttpRequest.BodyPublishers.noBody())
 		    .header("accept", "application/json")
 	//        .header("Authorization", basicAuth(userName, password))

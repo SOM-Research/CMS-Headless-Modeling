@@ -257,7 +257,7 @@ public class WordpressSchemaExtractor {
 			    
 		// create a request
 		var request = HttpRequest.newBuilder()
-			.uri(URI.create(apiUrl + singleResource ))
+			.uri(URI.create(apiUrl + "/wp-json" + singleResource ))
 			.method(method, HttpRequest.BodyPublishers.noBody())
 		    .header("accept", "application/json")
 		    .header("Authorization", basicAuth(userName, password))
