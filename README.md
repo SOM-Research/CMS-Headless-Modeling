@@ -18,13 +18,12 @@ The main objective of this tool is to reduce the cost of the integration of Head
 
 ## Installation
 
-In the Eclipse installation go to Help - Install New Software - and... (pending to be published)
 
 1 - Clone this code 
 
 2 - Import it in your Eclipse Project
 
-3 - Launch as a Eclipse application
+3 - Launch your project as a Eclipse application
 
 
 ## Usage and Examples
@@ -37,6 +36,7 @@ Once you have your eclipse application with this plugin installed, you should ha
 <p align="center">
 <img src="edu.uoc.som.cmsdiscover.ui/assets/importMenu.png"/>
 </p>
+
 3 - Select the project and the folder where the model will be saved
 
 4 - Set a name for the output model file
@@ -52,7 +52,7 @@ Once you have your eclipse application with this plugin installed, you should ha
 </p>
 
 
-Then refresh your project folder and you will see a model like the following (this is an example).
+8 - Then refresh your project folder. You will see a model like the following example:
 
 
 ![New Project Wizard - Step 2](edu.uoc.som.cmsdiscover.ui/assets/exampleWPecore.png)
