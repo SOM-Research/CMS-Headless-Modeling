@@ -6,7 +6,7 @@ This repository contains a prototype of a tool able to extract the Model from a 
 
 The main objective of this tool is to reduce the cost of the integration of Headless CMS in Enterprise IT ecosystems. To achieve this, we have proposed a generic model for Headless CMS. Here is the proposed generic model that serves as central piece of this tool.
 
-![Headless CMS generic model](edu.uoc.som.cmsdiscover.ui/assets/genericModelcamel.pdf)
+![Headless CMS generic model](doc/genericModelcamel.pdf)
 
 ### Prerequisites
 
@@ -34,7 +34,7 @@ Once you have your eclipse application with this plugin installed, you should ha
 
 2 - Select Import CMS model
 
-![New Project Wizard - Step 1](edu.uoc.som.cmsdiscover.ui/assets/importMenu.png)
+![New Project Wizard - Step 1](doc/importMenu.png)
 
 
 3 - Select the project and the folder where the model will be saved
@@ -47,13 +47,13 @@ Once you have your eclipse application with this plugin installed, you should ha
 
 7 - If your API or your API specifications are not open to anonymous request, then fill user and password
 
-![New Project Wizard - Step 1](edu.uoc.som.cmsdiscover.ui/assets/finalMenu.png)
+![New Project Wizard - Step 1](doc/finalMenu.png)
 
 
 Then refresh your project folder and you will see a model like the following (this is an example).
 
 
-![New Project Wizard - Step 1](edu.uoc.som.cmsdiscover.ui/assets/exampleWPecore.png)
+![New Project Wizard - Step 1](doc/exampleWPecore.png)
 
 ## Project Content and Credits
 
