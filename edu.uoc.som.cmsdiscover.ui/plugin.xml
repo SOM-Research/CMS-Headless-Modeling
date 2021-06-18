@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.eclipse.ui.importWizards">
+      <category
+            id="edu.uoc.som.cmsdiscover.ui.importWizards.sampleCategory"
+            name="Import CMS model">
+      </category>
+      <wizard
+            category="edu.uoc.som.cmsdiscover.ui.importWizards.sampleCategory"
+            class="edu.uoc.som.cmsdiscover.ui.importWizards.ImportWizard"
+            icon="assets/cms.png"
+            id="edu.uoc.som.cmsdiscover.ui.importWizards.ImportWizard"
+            name="Import CMS model">
+         <description>
+            Import a file from the local file system into the workspace.
+         </description>
+      </wizard>
+   </extension>
+
+</plugin>
