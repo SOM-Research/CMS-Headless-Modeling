@@ -1,14 +1,12 @@
 # Headless CMS model extractor
 
-This repository contains a prototype of a tool able to extract the Model from a Wordpress or Drupal CMS by analyzing its API. This tools works over the Eclipse Modeling Framework and generates the concrete model of a CMS instance using Ecore.
-
-The main objective of this tool is to reduce the cost of the integration of Headless CMS in Enterprise IT ecosystems. To achieve this, we have proposed a generic model for Headless CMS 
+This repository contains a prototype of a tool able to extract the Model from a Wordpress or Drupal CMS by analyzing its API. This tools works over the Eclipse Modeling Framework and generates the concrete model of a CMS instance using Ecore. This tool is built as a Eclipse Plug-in and can be used following the instructions of this file.
 
 ## Headless CMS generic model
 
-Here is the proposed generic model that serves as central piece of this tool.
+The main objective of this tool is to reduce the cost of the integration of Headless CMS in Enterprise IT ecosystems. To achieve this, we have proposed a generic model for Headless CMS. Here is the proposed generic model that serves as central piece of this tool.
 
-![Headless CMS generic model](doc/genericModel.pdf)
+![Headless CMS generic model](edu.uoc.som.cmsdiscover.ui/assets/genericModelcamel.pdf)
 
 ### Prerequisites
 
@@ -19,20 +17,46 @@ Here is the proposed generic model that serves as central piece of this tool.
 
 ## Installation
 
-To install the tool follow this steps:
+In the Eclipse installation go to Help - Install New Software - and... (pending to be published)
 
- - git clone
- - Import the code in your Eclipse Project
- - Set your OpenAPi Specifications in /OpenApiSpecifications or provide your Wordpress URL and credentials 
+1 - Clone this code 
 
+2 - Import it in your Eclipse Project
+
+3 - Launch as a Eclipse application
 
 
 ## Usage and Examples
 
-Here some instructions of the usage and some examples provided.
+Once you have your eclipse application with this plugin installed, you should have at least one project openend. 
 
-![New Project Wizard - Step 1](doc/WordpressExample.png)
+1 - Then go to File -> Import 
 
+2 - Select Import CMS model
+
+![New Project Wizard - Step 1](edu.uoc.som.cmsdiscover.ui/assets/importMenu.png)
+
+
+3 - Select the project and the folder where the model will be saved
+
+4 - Set a name for the output model file
+
+5 - Select the technology of the source CMS
+
+6 - Set the url of the site (for example: https://www.mysupersite.com)
+
+7 - If your API or your API specifications are not open to anonymous request, then fill user and password
+
+![New Project Wizard - Step 1](edu.uoc.som.cmsdiscover.ui/assets/finalMenu.png)
+
+
+Then refresh your project folder and you will see a model like the following (this is an example).
+
+
+![New Project Wizard - Step 1](edu.uoc.som.cmsdiscover.ui/assets/exampleWPecore.png)
 
 ## Project Content and Credits
 
+Author and maintainer: Joan Giner
+
+SOM Research Group
