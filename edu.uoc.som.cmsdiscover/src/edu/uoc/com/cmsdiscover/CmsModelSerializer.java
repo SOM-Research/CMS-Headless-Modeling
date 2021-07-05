@@ -26,6 +26,11 @@ import org.eclipse.emf.ecore.xmi.impl.XMIResourceFactoryImpl;
 import org.eclipse.emf.ecore.xmi.impl.XMLResourceFactoryImpl;
 
 
+import edu.uoc.som.cmsdiscover.GenericModel.GenericModelPackage;
+
+
+
+
 public class CmsModelSerializer {
 	
 	ResourceSet _resourceSet;
@@ -60,14 +65,18 @@ public class CmsModelSerializer {
 
 	public EPackage loadCmsGenericModel(String techBase) {
 
-		_resourceSet.getResourceFactoryRegistry().getExtensionToFactoryMap().put("ecore", new EcoreResourceFactoryImpl());
+		/*_resourceSet.getResourceFactoryRegistry().getExtensionToFactoryMap().put("ecore", new EcoreResourceFactoryImpl());
 		_resourceSet.getResourceFactoryRegistry().getExtensionToFactoryMap().put("*", new XMIResourceFactoryImpl());
 		System.out.println(URI.createFileURI("./GenericModel/cmsGenericModel"+techBase+".ecore"));
 		Resource drupalMetaModel= _resourceSet.getResource(URI.createFileURI("./GenericModel/cmsGenericModel"+techBase+".ecore"), true);
-		EPackage ecorePackage = (EPackage) drupalMetaModel.getContents().get(0);
+		EPackage ecorePackage = (EPackage) drupalMetaModel.getContents().get(0);*/
+		
+		
+		EPackage genericModel = EPackage.Registry.INSTANCE.getEPackage("http://edu.uoc.som.genericmodel");
+		//DrupalGenericModelPackage.eINSTANCE.get;
 
 
-		return ecorePackage;
+		return genericModel;
 
 	}
 	

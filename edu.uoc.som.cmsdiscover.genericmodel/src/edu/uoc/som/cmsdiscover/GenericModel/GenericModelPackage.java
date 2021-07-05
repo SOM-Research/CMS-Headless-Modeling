@@ -36,7 +36,7 @@ public interface GenericModelPackage extends EPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	String eNS_URI = "http:///com.somlab.genericmodel";
+	String eNS_URI = "http://edu.uoc.som.genericmodel";
 
 	/**
 	 * The package namespace name.

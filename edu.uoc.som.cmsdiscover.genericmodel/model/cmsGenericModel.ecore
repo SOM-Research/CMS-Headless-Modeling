@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ecore:EPackage xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" name="GenericModel" nsURI="http:///com.somlab.genericmodel" nsPrefix="GenericModel">
+    xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" name="GenericModel" nsURI="http://edu.uoc.som.genericmodel" nsPrefix="GenericModel">
   <eClassifiers xsi:type="ecore:EClass" name="ContentEntity">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="uuid" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"/>
   </eClassifiers>
@@ -87,7 +87,8 @@
           upperBound="-1" eType="#//features/revisions/Revision" containment="true"/>
     </eClassifiers>
   </eSubpackages>
-  <eSubpackages name="user" nsURI="http://user" nsPrefix="user">
+  <eSubpackages name="user" nsURI="http://edu.uoc.som.cmsdiscoverer.genericmodel.user"
+      nsPrefix="user">
     <eClassifiers xsi:type="ecore:EClass" name="User">
       <eStructuralFeatures xsi:type="ecore:EAttribute" name="uid" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"/>
       <eStructuralFeatures xsi:type="ecore:EAttribute" name="langcode" upperBound="-1"
@@ -133,8 +134,10 @@
           eType="#//user/User"/>
     </eClassifiers>
   </eSubpackages>
-  <eSubpackages name="features" nsURI="http://views" nsPrefix="views">
-    <eSubpackages name="moderation" nsURI="http://workflowmodel" nsPrefix="moderation">
+  <eSubpackages name="features" nsURI="http://edu.uoc.som.cmsdiscoverer.genericmodel.features"
+      nsPrefix="views">
+    <eSubpackages name="moderation" nsURI="http://edu.uoc.som.cmsdiscoverer.genericmodel.features.moderation"
+        nsPrefix="moderation">
       <eClassifiers xsi:type="ecore:EClass" name="State">
         <eStructuralFeatures xsi:type="ecore:EAttribute" name="label" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
         <eStructuralFeatures xsi:type="ecore:EAttribute" name="code" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
@@ -162,7 +165,8 @@
       </eClassifiers>
       <eClassifiers xsi:type="ecore:EClass" name="ModerableEntity" eSuperTypes="#//ContentEntity"/>
     </eSubpackages>
-    <eSubpackages name="revisions" nsURI="revisions" nsPrefix="revisions">
+    <eSubpackages name="revisions" nsURI="http://edu.uoc.som.cmsdiscoverer.genericmodel.features.revisions"
+        nsPrefix="revisions">
       <eClassifiers xsi:type="ecore:EClass" name="Revision">
         <eStructuralFeatures xsi:type="ecore:EAttribute" name="vid" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"/>
         <eStructuralFeatures xsi:type="ecore:EReference" name="revision_uid" eType="#//user/User"/>
@@ -176,7 +180,8 @@
         <eStructuralFeatures xsi:type="ecore:EReference" name="defaultRevision" eType="#//features/revisions/Revision"/>
       </eClassifiers>
     </eSubpackages>
-    <eSubpackages name="translations" nsURI="translations" nsPrefix="translations">
+    <eSubpackages name="translations" nsURI="http://edu.uoc.som.cmsdiscoverer.genericmodel.features.translations"
+        nsPrefix="translations">
       <eClassifiers xsi:type="ecore:EClass" name="Translation">
         <eStructuralFeatures xsi:type="ecore:EAttribute" name="langcode" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
         <eStructuralFeatures xsi:type="ecore:EAttribute" name="tcreated" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EDate"/>

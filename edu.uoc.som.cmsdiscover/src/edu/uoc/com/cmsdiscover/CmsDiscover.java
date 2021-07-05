@@ -18,7 +18,7 @@ import org.eclipse.emf.ecore.EClassifier;
 import org.eclipse.emf.ecore.EcoreFactory;
 import org.eclipse.emf.ecore.EcorePackage;
 
-import edu.uoc.com.cmsdiscover.drupal.DrupalSchemaExtractor;
+import edu.uoc.com.cmsdiscover.drupal.*;
 import edu.uoc.com.cmsdiscover.wordpress.*;
 
 public class CmsDiscover extends Plugin {

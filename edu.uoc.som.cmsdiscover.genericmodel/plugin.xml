@@ -25,7 +25,7 @@
    <extension point="org.eclipse.emf.ecore.generated_package">
       <!-- @generated cmsGenericModel -->
       <package
-            uri="http:///com.somlab.genericmodel"
+            uri="http://edu.uoc.som.genericmodel"
             class="edu.uoc.som.cmsdiscover.GenericModel.GenericModelPackage"
             genModel="model/cmsGenericModel.genmodel"/>
    </extension>

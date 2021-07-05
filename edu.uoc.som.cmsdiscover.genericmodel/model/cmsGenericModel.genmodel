@@ -12,7 +12,8 @@
     <genClasses ecoreClass="cmsGenericModel.ecore#//ContentEntity">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute cmsGenericModel.ecore#//ContentEntity/uuid"/>
     </genClasses>
-    <nestedGenPackages prefix="GenericSchema" disposableProviderFactory="true" ecorePackage="cmsGenericModel.ecore#//genericSchema">
+    <nestedGenPackages prefix="GenericSchema" basePackage="edu.uoc.som.cmsdiscover.GenericModel"
+        disposableProviderFactory="true" ecorePackage="cmsGenericModel.ecore#//genericSchema">
       <genClasses ecoreClass="cmsGenericModel.ecore#//genericSchema/Comment">
         <genFeatures createChild="false" ecoreFeature="ecore:EAttribute cmsGenericModel.ecore#//genericSchema/Comment/cid"/>
         <genFeatures createChild="false" ecoreFeature="ecore:EAttribute cmsGenericModel.ecore#//genericSchema/Comment/subject"/>
@@ -94,7 +95,8 @@
         <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference cmsGenericModel.ecore#//genericSchema/Taxonomy/revisions"/>
       </genClasses>
     </nestedGenPackages>
-    <nestedGenPackages prefix="User" disposableProviderFactory="true" ecorePackage="cmsGenericModel.ecore#//user">
+    <nestedGenPackages prefix="User" basePackage="edu.uoc.som.cmsdiscover.GenericModel"
+        disposableProviderFactory="true" ecorePackage="cmsGenericModel.ecore#//user">
       <genClasses ecoreClass="cmsGenericModel.ecore#//user/User">
         <genFeatures createChild="false" ecoreFeature="ecore:EAttribute cmsGenericModel.ecore#//user/User/uid"/>
         <genFeatures createChild="false" ecoreFeature="ecore:EAttribute cmsGenericModel.ecore#//user/User/langcode"/>
@@ -134,8 +136,10 @@
             ecoreFeature="ecore:EReference cmsGenericModel.ecore#//user/ContactForm/recipient"/>
       </genClasses>
     </nestedGenPackages>
-    <nestedGenPackages prefix="Features" disposableProviderFactory="true" ecorePackage="cmsGenericModel.ecore#//features">
-      <nestedGenPackages prefix="Moderation" disposableProviderFactory="true" ecorePackage="cmsGenericModel.ecore#//features/moderation">
+    <nestedGenPackages prefix="Features" basePackage="edu.uoc.som.cmsdiscover.GenericModel"
+        disposableProviderFactory="true" ecorePackage="cmsGenericModel.ecore#//features">
+      <nestedGenPackages prefix="Moderation" basePackage="edu.uoc.som.cmsdiscover.GenericModel.features"
+          disposableProviderFactory="true" ecorePackage="cmsGenericModel.ecore#//features/moderation">
         <genClasses ecoreClass="cmsGenericModel.ecore#//features/moderation/State">
           <genFeatures createChild="false" ecoreFeature="ecore:EAttribute cmsGenericModel.ecore#//features/moderation/State/label"/>
           <genFeatures createChild="false" ecoreFeature="ecore:EAttribute cmsGenericModel.ecore#//features/moderation/State/code"/>
@@ -162,7 +166,8 @@
         </genClasses>
         <genClasses ecoreClass="cmsGenericModel.ecore#//features/moderation/ModerableEntity"/>
       </nestedGenPackages>
-      <nestedGenPackages prefix="Revisions" disposableProviderFactory="true" ecorePackage="cmsGenericModel.ecore#//features/revisions">
+      <nestedGenPackages prefix="Revisions" basePackage="edu.uoc.som.cmsdiscover.GenericModel.features"
+          disposableProviderFactory="true" ecorePackage="cmsGenericModel.ecore#//features/revisions">
         <genClasses ecoreClass="cmsGenericModel.ecore#//features/revisions/Revision">
           <genFeatures createChild="false" ecoreFeature="ecore:EAttribute cmsGenericModel.ecore#//features/revisions/Revision/vid"/>
           <genFeatures notify="false" createChild="false" propertySortChoices="true"
@@ -177,7 +182,8 @@
               ecoreFeature="ecore:EReference cmsGenericModel.ecore#//features/revisions/RevisionableEntity/defaultRevision"/>
         </genClasses>
       </nestedGenPackages>
-      <nestedGenPackages prefix="Translations" disposableProviderFactory="true" ecorePackage="cmsGenericModel.ecore#//features/translations">
+      <nestedGenPackages prefix="Translations" basePackage="edu.uoc.som.cmsdiscover.GenericModel.features"
+          disposableProviderFactory="true" ecorePackage="cmsGenericModel.ecore#//features/translations">
         <genClasses ecoreClass="cmsGenericModel.ecore#//features/translations/Translation">
           <genFeatures createChild="false" ecoreFeature="ecore:EAttribute cmsGenericModel.ecore#//features/translations/Translation/langcode"/>
           <genFeatures createChild="false" ecoreFeature="ecore:EAttribute cmsGenericModel.ecore#//features/translations/Translation/tcreated"/>

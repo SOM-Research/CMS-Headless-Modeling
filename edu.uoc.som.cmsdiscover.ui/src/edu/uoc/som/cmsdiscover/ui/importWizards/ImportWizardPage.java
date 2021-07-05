@@ -67,7 +67,7 @@ public class ImportWizardPage extends WizardNewFileCreationPage {
 		buttonWp = new Button(techGroup, SWT.RADIO);
 		buttonWp.setText("Wordpress");
 
-		InputStream input = ImportWizardPage.class.getResourceAsStream("/assets/wordpress.png");
+		InputStream input = ImportWizardPage.class.getResourceAsStream("/icons/wordpress.png");
 		Image image = new Image(null, input);
 		final Image scaledWp = new Image(null, image.getImageData().scaledTo((int) (30), (int) (30)));
 		buttonWp.setImage(scaledWp);
@@ -75,7 +75,7 @@ public class ImportWizardPage extends WizardNewFileCreationPage {
 		buttonDrupal = new Button(techGroup, SWT.RADIO);
 		buttonDrupal.setText("Drupal");
 
-		InputStream inputDru = ImportWizardPage.class.getResourceAsStream("/assets/drupal.png");
+		InputStream inputDru = ImportWizardPage.class.getResourceAsStream("/icons/drupal.png");
 		Image imageDru = new Image(null, inputDru);
 		final Image scaledDru = new Image(null, imageDru.getImageData().scaledTo((int) (30), (int) (30)));
 		buttonDrupal.setImage(scaledDru);

@@ -28,6 +28,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.stream.JsonReader;
 
+
 public class DrupalSchemaExtractor {
 	
 	
@@ -381,7 +382,7 @@ public class DrupalSchemaExtractor {
 		    .header("accept", "application/json")
 	//        .header("Authorization", basicAuth(userName, password))
 		    .build();
-
+		
 		// use the client to send the request
 		try {
 			request.method();
