@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<genmodel:GenModel xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore"
+    xmlns:genmodel="http://www.eclipse.org/emf/2002/GenModel" modelDirectory="/edu.uoc.som.cmsdiscover.genericmodel/src" editDirectory="/edu.uoc.som.cmsdiscover.genericmodel.edit/src"
+    editorDirectory="/edu.uoc.som.cmsdiscover.genericmodel.editor/src" modelPluginID="edu.uoc.som.cmsdiscover.genericmodel"
+    modelName="CmsGenericModel" editPluginClass="edu.uoc.som.cmsdiscover.GenericModel.provider.CmsGenericModelEditPlugin"
+    rootExtendsClass="org.eclipse.emf.ecore.impl.MinimalEObjectImpl$Container" importerID="org.eclipse.emf.importer.ecore"
+    complianceLevel="5.0" copyrightFields="false" editPluginID="edu.uoc.som.cmsdiscover.genericmodel.edit"
+    editorPluginID="edu.uoc.som.cmsdiscover.genericmodell.editor" importOrganizing="true">
+  <foreignModel>cmsGenericModel.ecore</foreignModel>
+  <genPackages prefix="GenericModel" basePackage="edu.uoc.som.cmsdiscover" disposableProviderFactory="true"
+      ecorePackage="cmsGenericModel.ecore#/">
+    <genClasses ecoreClass="cmsGenericModel.ecore#//ContentEntity">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute cmsGenericModel.ecore#//ContentEntity/uuid"/>
+    </genClasses>
+    <nestedGenPackages prefix="GenericSchema" disposableProviderFactory="true" ecorePackage="cmsGenericModel.ecore#//genericSchema">
+      <genClasses ecoreClass="cmsGenericModel.ecore#//genericSchema/Comment">
+        <genFeatures createChild="false" ecoreFeature="ecore:EAttribute cmsGenericModel.ecore#//genericSchema/Comment/cid"/>
+        <genFeatures createChild="false" ecoreFeature="ecore:EAttribute cmsGenericModel.ecore#//genericSchema/Comment/subject"/>
+        <genFeatures createChild="false" ecoreFeature="ecore:EAttribute cmsGenericModel.ecore#//genericSchema/Comment/name"/>
+        <genFeatures createChild="false" ecoreFeature="ecore:EAttribute cmsGenericModel.ecore#//genericSchema/Comment/mail"/>
+        <genFeatures createChild="false" ecoreFeature="ecore:EAttribute cmsGenericModel.ecore#//genericSchema/Comment/hostname"/>
+        <genFeatures createChild="false" ecoreFeature="ecore:EAttribute cmsGenericModel.ecore#//genericSchema/Comment/created"/>
+        <genFeatures createChild="false" ecoreFeature="ecore:EAttribute cmsGenericModel.ecore#//genericSchema/Comment/changed"/>
+        <genFeatures createChild="false" ecoreFeature="ecore:EAttribute cmsGenericModel.ecore#//genericSchema/Comment/thread"/>
+        <genFeatures notify="false" createChild="false" propertySortChoices="true"
+            ecoreFeature="ecore:EReference cmsGenericModel.ecore#//genericSchema/Comment/uid"/>
+        <genFeatures notify="false" createChild="false" propertySortChoices="true"
+            ecoreFeature="ecore:EReference cmsGenericModel.ecore#//genericSchema/Comment/pid"/>
+        <genFeatures notify="false" createChild="false" propertySortChoices="true"
+            ecoreFeature="ecore:EReference cmsGenericModel.ecore#//genericSchema/Comment/entity_id"/>
+      </genClasses>
+      <genClasses ecoreClass="cmsGenericModel.ecore#//genericSchema/File">
+        <genFeatures createChild="false" ecoreFeature="ecore:EAttribute cmsGenericModel.ecore#//genericSchema/File/fid"/>
+        <genFeatures createChild="false" ecoreFeature="ecore:EAttribute cmsGenericModel.ecore#//genericSchema/File/langcode"/>
+        <genFeatures notify="false" createChild="false" propertySortChoices="true"
+            ecoreFeature="ecore:EReference cmsGenericModel.ecore#//genericSchema/File/uid"/>
+        <genFeatures createChild="false" ecoreFeature="ecore:EAttribute cmsGenericModel.ecore#//genericSchema/File/filename"/>
+        <genFeatures createChild="false" ecoreFeature="ecore:EAttribute cmsGenericModel.ecore#//genericSchema/File/uri"/>
+        <genFeatures createChild="false" ecoreFeature="ecore:EAttribute cmsGenericModel.ecore#//genericSchema/File/filemime"/>
+        <genFeatures createChild="false" ecoreFeature="ecore:EAttribute cmsGenericModel.ecore#//genericSchema/File/filesize"/>
+        <genFeatures createChild="false" ecoreFeature="ecore:EAttribute cmsGenericModel.ecore#//genericSchema/File/status"/>
+        <genFeatures createChild="false" ecoreFeature="ecore:EAttribute cmsGenericModel.ecore#//genericSchema/File/created"/>
+        <genFeatures createChild="false" ecoreFeature="ecore:EAttribute cmsGenericModel.ecore#//genericSchema/File/changed"/>
+      </genClasses>
+      <genClasses ecoreClass="cmsGenericModel.ecore#//genericSchema/Media">
+        <genFeatures createChild="false" ecoreFeature="ecore:EAttribute cmsGenericModel.ecore#//genericSchema/Media/mid"/>
+        <genFeatures createChild="false" ecoreFeature="ecore:EAttribute cmsGenericModel.ecore#//genericSchema/Media/vid"/>
+        <genFeatures createChild="false" ecoreFeature="ecore:EAttribute cmsGenericModel.ecore#//genericSchema/Media/name"/>
+        <genFeatures notify="false" createChild="false" propertySortChoices="true"
+            ecoreFeature="ecore:EReference cmsGenericModel.ecore#//genericSchema/Media/uid"/>
+        <genFeatures createChild="false" ecoreFeature="ecore:EAttribute cmsGenericModel.ecore#//genericSchema/Media/status"/>
+        <genFeatures createChild="false" ecoreFeature="ecore:EAttribute cmsGenericModel.ecore#//genericSchema/Media/created"/>
+        <genFeatures createChild="false" ecoreFeature="ecore:EAttribute cmsGenericModel.ecore#//genericSchema/Media/changed"/>
+        <genFeatures createChild="false" ecoreFeature="ecore:EAttribute cmsGenericModel.ecore#//genericSchema/Media/thumbnail"/>
+        <genFeatures notify="false" createChild="false" propertySortChoices="true"
+            ecoreFeature="ecore:EReference cmsGenericModel.ecore#//genericSchema/Media/file_reference"/>
+        <genFeatures notify="false" createChild="false" propertySortChoices="true"
+            ecoreFeature="ecore:EReference cmsGenericModel.ecore#//genericSchema/Media/revision_default"/>
+        <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference cmsGenericModel.ecore#//genericSchema/Media/revisions"/>
+      </genClasses>
+      <genClasses ecoreClass="cmsGenericModel.ecore#//genericSchema/Block">
+        <genFeatures createChild="false" ecoreFeature="ecore:EAttribute cmsGenericModel.ecore#//genericSchema/Block/id"/>
+        <genFeatures createChild="false" ecoreFeature="ecore:EAttribute cmsGenericModel.ecore#//genericSchema/Block/vid"/>
+        <genFeatures createChild="false" ecoreFeature="ecore:EAttribute cmsGenericModel.ecore#//genericSchema/Block/status"/>
+        <genFeatures createChild="false" ecoreFeature="ecore:EAttribute cmsGenericModel.ecore#//genericSchema/Block/changed"/>
+        <genFeatures createChild="false" ecoreFeature="ecore:EAttribute cmsGenericModel.ecore#//genericSchema/Block/reusable"/>
+        <genFeatures notify="false" createChild="false" propertySortChoices="true"
+            ecoreFeature="ecore:EReference cmsGenericModel.ecore#//genericSchema/Block/revision_default"/>
+        <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference cmsGenericModel.ecore#//genericSchema/Block/revisions"/>
+      </genClasses>
+      <genClasses ecoreClass="cmsGenericModel.ecore#//genericSchema/ContentType">
+        <genFeatures createChild="false" ecoreFeature="ecore:EAttribute cmsGenericModel.ecore#//genericSchema/ContentType/contentId"/>
+        <genFeatures notify="false" createChild="false" propertySortChoices="true"
+            ecoreFeature="ecore:EReference cmsGenericModel.ecore#//genericSchema/ContentType/uid"/>
+        <genFeatures createChild="false" ecoreFeature="ecore:EAttribute cmsGenericModel.ecore#//genericSchema/ContentType/title"/>
+        <genFeatures createChild="false" ecoreFeature="ecore:EAttribute cmsGenericModel.ecore#//genericSchema/ContentType/status"/>
+        <genFeatures createChild="false" ecoreFeature="ecore:EAttribute cmsGenericModel.ecore#//genericSchema/ContentType/created"/>
+        <genFeatures createChild="false" ecoreFeature="ecore:EAttribute cmsGenericModel.ecore#//genericSchema/ContentType/changed"/>
+        <genFeatures notify="false" createChild="false" propertySortChoices="true"
+            ecoreFeature="ecore:EReference cmsGenericModel.ecore#//genericSchema/ContentType/revision_default"/>
+        <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference cmsGenericModel.ecore#//genericSchema/ContentType/revisions"/>
+        <genFeatures notify="false" createChild="false" propertySortChoices="true"
+            ecoreFeature="ecore:EReference cmsGenericModel.ecore#//genericSchema/ContentType/moderation_state"/>
+      </genClasses>
+      <genClasses ecoreClass="cmsGenericModel.ecore#//genericSchema/Taxonomy">
+        <genFeatures createChild="false" ecoreFeature="ecore:EAttribute cmsGenericModel.ecore#//genericSchema/Taxonomy/tid"/>
+        <genFeatures createChild="false" ecoreFeature="ecore:EAttribute cmsGenericModel.ecore#//genericSchema/Taxonomy/vid"/>
+        <genFeatures createChild="false" ecoreFeature="ecore:EAttribute cmsGenericModel.ecore#//genericSchema/Taxonomy/name"/>
+        <genFeatures createChild="false" ecoreFeature="ecore:EAttribute cmsGenericModel.ecore#//genericSchema/Taxonomy/description"/>
+        <genFeatures createChild="false" ecoreFeature="ecore:EAttribute cmsGenericModel.ecore#//genericSchema/Taxonomy/parent"/>
+        <genFeatures createChild="false" ecoreFeature="ecore:EAttribute cmsGenericModel.ecore#//genericSchema/Taxonomy/changed"/>
+        <genFeatures notify="false" createChild="false" propertySortChoices="true"
+            ecoreFeature="ecore:EReference cmsGenericModel.ecore#//genericSchema/Taxonomy/revision_default"/>
+        <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference cmsGenericModel.ecore#//genericSchema/Taxonomy/revisions"/>
+      </genClasses>
+    </nestedGenPackages>
+    <nestedGenPackages prefix="User" disposableProviderFactory="true" ecorePackage="cmsGenericModel.ecore#//user">
+      <genClasses ecoreClass="cmsGenericModel.ecore#//user/User">
+        <genFeatures createChild="false" ecoreFeature="ecore:EAttribute cmsGenericModel.ecore#//user/User/uid"/>
+        <genFeatures createChild="false" ecoreFeature="ecore:EAttribute cmsGenericModel.ecore#//user/User/langcode"/>
+        <genFeatures createChild="false" ecoreFeature="ecore:EAttribute cmsGenericModel.ecore#//user/User/preferred_langcode"/>
+        <genFeatures createChild="false" ecoreFeature="ecore:EAttribute cmsGenericModel.ecore#//user/User/preferred_admin_langcode"/>
+        <genFeatures createChild="false" ecoreFeature="ecore:EAttribute cmsGenericModel.ecore#//user/User/name"/>
+        <genFeatures createChild="false" ecoreFeature="ecore:EAttribute cmsGenericModel.ecore#//user/User/pass"/>
+        <genFeatures createChild="false" ecoreFeature="ecore:EAttribute cmsGenericModel.ecore#//user/User/mail"/>
+        <genFeatures createChild="false" ecoreFeature="ecore:EAttribute cmsGenericModel.ecore#//user/User/timezone"/>
+        <genFeatures createChild="false" ecoreFeature="ecore:EAttribute cmsGenericModel.ecore#//user/User/status"/>
+        <genFeatures createChild="false" ecoreFeature="ecore:EAttribute cmsGenericModel.ecore#//user/User/changed"/>
+        <genFeatures createChild="false" ecoreFeature="ecore:EAttribute cmsGenericModel.ecore#//user/User/access"/>
+        <genFeatures createChild="false" ecoreFeature="ecore:EAttribute cmsGenericModel.ecore#//user/User/login"/>
+        <genFeatures createChild="false" ecoreFeature="ecore:EAttribute cmsGenericModel.ecore#//user/User/init"/>
+        <genFeatures createChild="false" ecoreFeature="ecore:EAttribute cmsGenericModel.ecore#//user/User/created"/>
+        <genFeatures createChild="false" ecoreFeature="ecore:EAttribute cmsGenericModel.ecore#//user/User/default_langcode"/>
+        <genFeatures notify="false" createChild="false" propertySortChoices="true"
+            ecoreFeature="ecore:EReference cmsGenericModel.ecore#//user/User/roles"/>
+      </genClasses>
+      <genClasses ecoreClass="cmsGenericModel.ecore#//user/Roles">
+        <genFeatures createChild="false" ecoreFeature="ecore:EAttribute cmsGenericModel.ecore#//user/Roles/label"/>
+        <genFeatures createChild="false" ecoreFeature="ecore:EAttribute cmsGenericModel.ecore#//user/Roles/role_code"/>
+        <genFeatures notify="false" createChild="false" propertySortChoices="true"
+            ecoreFeature="ecore:EReference cmsGenericModel.ecore#//user/Roles/permissions"/>
+      </genClasses>
+      <genClasses ecoreClass="cmsGenericModel.ecore#//user/Permission">
+        <genFeatures createChild="false" ecoreFeature="ecore:EAttribute cmsGenericModel.ecore#//user/Permission/permission_code"/>
+      </genClasses>
+      <genClasses ecoreClass="cmsGenericModel.ecore#//user/ContactForm">
+        <genFeatures createChild="false" ecoreFeature="ecore:EAttribute cmsGenericModel.ecore#//user/ContactForm/langcode"/>
+        <genFeatures createChild="false" ecoreFeature="ecore:EAttribute cmsGenericModel.ecore#//user/ContactForm/name"/>
+        <genFeatures createChild="false" ecoreFeature="ecore:EAttribute cmsGenericModel.ecore#//user/ContactForm/mail"/>
+        <genFeatures createChild="false" ecoreFeature="ecore:EAttribute cmsGenericModel.ecore#//user/ContactForm/subject"/>
+        <genFeatures createChild="false" ecoreFeature="ecore:EAttribute cmsGenericModel.ecore#//user/ContactForm/message"/>
+        <genFeatures createChild="false" ecoreFeature="ecore:EAttribute cmsGenericModel.ecore#//user/ContactForm/copy"/>
+        <genFeatures notify="false" createChild="false" propertySortChoices="true"
+            ecoreFeature="ecore:EReference cmsGenericModel.ecore#//user/ContactForm/recipient"/>
+      </genClasses>
+    </nestedGenPackages>
+    <nestedGenPackages prefix="Features" disposableProviderFactory="true" ecorePackage="cmsGenericModel.ecore#//features">
+      <nestedGenPackages prefix="Moderation" disposableProviderFactory="true" ecorePackage="cmsGenericModel.ecore#//features/moderation">
+        <genClasses ecoreClass="cmsGenericModel.ecore#//features/moderation/State">
+          <genFeatures createChild="false" ecoreFeature="ecore:EAttribute cmsGenericModel.ecore#//features/moderation/State/label"/>
+          <genFeatures createChild="false" ecoreFeature="ecore:EAttribute cmsGenericModel.ecore#//features/moderation/State/code"/>
+          <genFeatures createChild="false" ecoreFeature="ecore:EAttribute cmsGenericModel.ecore#//features/moderation/State/published"/>
+        </genClasses>
+        <genClasses ecoreClass="cmsGenericModel.ecore#//features/moderation/Transition">
+          <genFeatures createChild="false" ecoreFeature="ecore:EAttribute cmsGenericModel.ecore#//features/moderation/Transition/code"/>
+          <genFeatures createChild="false" ecoreFeature="ecore:EAttribute cmsGenericModel.ecore#//features/moderation/Transition/label"/>
+          <genFeatures notify="false" createChild="false" propertySortChoices="true"
+              ecoreFeature="ecore:EReference cmsGenericModel.ecore#//features/moderation/Transition/from"/>
+          <genFeatures notify="false" createChild="false" propertySortChoices="true"
+              ecoreFeature="ecore:EReference cmsGenericModel.ecore#//features/moderation/Transition/to"/>
+          <genFeatures notify="false" createChild="false" propertySortChoices="true"
+              ecoreFeature="ecore:EReference cmsGenericModel.ecore#//features/moderation/Transition/transition_permision"/>
+        </genClasses>
+        <genClasses ecoreClass="cmsGenericModel.ecore#//features/moderation/ModerationWorkflow">
+          <genFeatures createChild="false" ecoreFeature="ecore:EAttribute cmsGenericModel.ecore#//features/moderation/ModerationWorkflow/workflow_code"/>
+          <genFeatures createChild="false" ecoreFeature="ecore:EAttribute cmsGenericModel.ecore#//features/moderation/ModerationWorkflow/label"/>
+          <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference cmsGenericModel.ecore#//features/moderation/ModerationWorkflow/states"/>
+          <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference cmsGenericModel.ecore#//features/moderation/ModerationWorkflow/transitions"/>
+          <genFeatures notify="false" createChild="false" propertySortChoices="true"
+              ecoreFeature="ecore:EReference cmsGenericModel.ecore#//features/moderation/ModerationWorkflow/default_moderation_state"/>
+          <genFeatures createChild="false" ecoreFeature="ecore:EAttribute cmsGenericModel.ecore#//features/moderation/ModerationWorkflow/status"/>
+        </genClasses>
+        <genClasses ecoreClass="cmsGenericModel.ecore#//features/moderation/ModerableEntity"/>
+      </nestedGenPackages>
+      <nestedGenPackages prefix="Revisions" disposableProviderFactory="true" ecorePackage="cmsGenericModel.ecore#//features/revisions">
+        <genClasses ecoreClass="cmsGenericModel.ecore#//features/revisions/Revision">
+          <genFeatures createChild="false" ecoreFeature="ecore:EAttribute cmsGenericModel.ecore#//features/revisions/Revision/vid"/>
+          <genFeatures notify="false" createChild="false" propertySortChoices="true"
+              ecoreFeature="ecore:EReference cmsGenericModel.ecore#//features/revisions/Revision/revision_uid"/>
+          <genFeatures createChild="false" ecoreFeature="ecore:EAttribute cmsGenericModel.ecore#//features/revisions/Revision/revision_timestamp"/>
+          <genFeatures createChild="false" ecoreFeature="ecore:EAttribute cmsGenericModel.ecore#//features/revisions/Revision/revision_log"/>
+        </genClasses>
+        <genClasses ecoreClass="cmsGenericModel.ecore#//features/revisions/RevisionableEntity">
+          <genFeatures notify="false" createChild="false" propertySortChoices="true"
+              ecoreFeature="ecore:EReference cmsGenericModel.ecore#//features/revisions/RevisionableEntity/revisions"/>
+          <genFeatures notify="false" createChild="false" propertySortChoices="true"
+              ecoreFeature="ecore:EReference cmsGenericModel.ecore#//features/revisions/RevisionableEntity/defaultRevision"/>
+        </genClasses>
+      </nestedGenPackages>
+      <nestedGenPackages prefix="Translations" disposableProviderFactory="true" ecorePackage="cmsGenericModel.ecore#//features/translations">
+        <genClasses ecoreClass="cmsGenericModel.ecore#//features/translations/Translation">
+          <genFeatures createChild="false" ecoreFeature="ecore:EAttribute cmsGenericModel.ecore#//features/translations/Translation/langcode"/>
+          <genFeatures createChild="false" ecoreFeature="ecore:EAttribute cmsGenericModel.ecore#//features/translations/Translation/tcreated"/>
+        </genClasses>
+      </nestedGenPackages>
+    </nestedGenPackages>
+  </genPackages>
+</genmodel:GenModel>
