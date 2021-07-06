@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.core.runtime.Plugin;
-import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 
 import org.eclipse.emf.common.util.EList;
@@ -20,6 +19,7 @@ import org.eclipse.emf.ecore.EcorePackage;
 
 import edu.uoc.com.cmsdiscover.drupal.*;
 import edu.uoc.com.cmsdiscover.wordpress.*;
+import edu.uoc.som.cmsdiscover.GenericModel.GenericModelPackage;
 
 public class CmsDiscover extends Plugin {
 
@@ -61,7 +61,7 @@ public class CmsDiscover extends Plugin {
 		genericPackages.forEach((singlePackage) -> {
 			metaClasses.addAll(singlePackage.getEClassifiers());
 		});
-		
+
 		metaClasses.forEach((metaClass) -> {
 			if (metaClass != null && metaClass instanceof EClass) {
 				List<String> listEFeatures = new ArrayList<String>();
@@ -85,28 +85,26 @@ public class CmsDiscover extends Plugin {
 		CmsDiscover theModelingEngine = plugin;
 		// Instance of Serializer class.
 		CmsModelSerializer theModelSerializer = new CmsModelSerializer();
+		// Load Generic CMS model.
+		EPackage genericEPackage = GenericModelPackage.eINSTANCE;
+		// Helper class of generic model.
+		Map<String, List<String>> genericModelHelper = theModelingEngine.genericModelHelper(genericEPackage);
+
 		// Is Drupal based site.
 		if (tech.contains("d")) {
 			System.out.println("******************* Extracting model from a Drupal based site");
-			// Load Generic CMS model.
-			EPackage genericEPackage = theModelSerializer.loadCmsGenericModel("Drupal");
-			Map<String, List<String>> genericModelHelper = theModelingEngine.genericModelHelper(genericEPackage);
-			// Change this to your Drupal OpenAPI specification.
 			DrupalSchemaExtractor DrupalExtractor = new DrupalSchemaExtractor(url, user, pass);
 			EPackage ExtendedModel = DrupalExtractor.ModelExtractor(genericEPackage, genericModelHelper);
-			// Serialize model to .ecore
+			// Save the model.
 			theModelSerializer.serializeModel(ExtendedModel, ModelResultPath);
 
 			// Is Wordpress based site.
 		} else if (tech.contains("w")) {
-			// Load Generic CMS model.
-			EPackage genericEPackage = theModelSerializer.loadCmsGenericModel("Wordpress");
-			Map<String, List<String>> genericModelHelper = theModelingEngine.genericModelHelper(genericEPackage);
 			System.out.println("******************* Extracting model from a Wordpress based site");
 			// Change this to your Wordpress URL.
 			WordpressSchemaExtractor WordpressExtractor = new WordpressSchemaExtractor(url, user, pass);
 			EPackage ExtendedModel = WordpressExtractor.ModelExtractor(genericEPackage, genericModelHelper);
-			// Serialize model to .ecore
+			// Save the model.
 			theModelSerializer.serializeModel(ExtendedModel, ModelResultPath);
 		}
 

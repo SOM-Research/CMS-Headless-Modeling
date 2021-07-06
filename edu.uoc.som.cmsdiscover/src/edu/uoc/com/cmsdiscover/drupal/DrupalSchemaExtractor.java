@@ -1,7 +1,5 @@
 package edu.uoc.com.cmsdiscover.drupal;
 
-import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URL;
@@ -10,14 +8,12 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse.BodyHandlers;
 import java.util.ArrayList;
 import java.util.Base64;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
 import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
-import org.eclipse.emf.ecore.EClassifier;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.EStructuralFeature;
@@ -27,7 +23,6 @@ import org.eclipse.emf.ecore.EcorePackage;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import com.google.gson.stream.JsonReader;
 
 public class DrupalSchemaExtractor {
 
@@ -101,7 +96,6 @@ public class DrupalSchemaExtractor {
 
 	public void generateEntityModel(JsonElement definitions) {
 
-		List<String> excludedEntities = new ArrayList<String>();
 		// Iterate over definitions and create Classes and Attributes
 		for (Map.Entry<String, JsonElement> definition : definitions.getAsJsonObject().entrySet()) {
 
@@ -166,7 +160,7 @@ public class DrupalSchemaExtractor {
 						hasAttributes = true;
 					}
 				}
-				
+
 				// Add the created class to the extendedPackage
 				_extendedEPackage.getEClassifiers().add(dynamicEClass);
 			} else {
@@ -179,12 +173,7 @@ public class DrupalSchemaExtractor {
 		for (
 
 		Map.Entry<String, JsonElement> defRelation : definitions.getAsJsonObject().entrySet()) {
-			
-			/*String definitionKeyLowerCase = defRelation.getKey().replaceAll("--", "_");
-			String definitionKey = definitionKeyLowerCase.substring(0, 1).toUpperCase()
-					+ definitionKeyLowerCase.substring(1);
-			*/
-			
+
 			// Get the type of the definition.
 			int iend = defRelation.getKey().indexOf("--");
 			String definitionType = defRelation.getKey().substring(0, iend).substring(0, 1).toUpperCase()
@@ -213,11 +202,10 @@ public class DrupalSchemaExtractor {
 						isFromMetamodel = true;
 					}
 				}
-				
-				
+
 				// Get the referencing class name.
 				EClass parentClass = (EClass) _extendedEPackage.getEClassifier(classTitle);
-				
+
 				// Get the references of the class.
 				JsonObject propertiesJson = defRelation.getValue().getAsJsonObject().get("properties").getAsJsonObject()
 						.get("data").getAsJsonObject().get("properties").getAsJsonObject().get("relationships")
@@ -240,8 +228,8 @@ public class DrupalSchemaExtractor {
 										.getAsString().replaceAll("--", "_");
 								int index = referencedClassLowerCase.indexOf("--");
 								// Get the custom name of the definition.
-								referencedClass = referencedClassLowerCase.substring(index + 2).substring(0, 1).toUpperCase()
-										+ referencedClassLowerCase.substring(index + 2).substring(1);
+								referencedClass = referencedClassLowerCase.substring(index + 2).substring(0, 1)
+										.toUpperCase() + referencedClassLowerCase.substring(index + 2).substring(1);
 							} else {
 								referencedClassLowerCase = referencedClass_temp.get("properties").getAsJsonObject()
 										.get("type").getAsJsonObject().get("enum").getAsString()
@@ -249,33 +237,35 @@ public class DrupalSchemaExtractor {
 										.replaceAll("contact_form--", "").replaceAll("--", "_");
 								int index = referencedClassLowerCase.indexOf("--");
 								// Get the custom name of the definition.
-								referencedClass = referencedClassLowerCase.substring(index + 2).substring(0, 1).toUpperCase()
-										+ referencedClassLowerCase.substring(index + 2).substring(1);
+								referencedClass = referencedClassLowerCase.substring(index + 2).substring(0, 1)
+										.toUpperCase() + referencedClassLowerCase.substring(index + 2).substring(1);
 							}
 							referencedClass = referencedClassLowerCase.substring(0, 1).toUpperCase()
 									+ referencedClassLowerCase.substring(1);
 						}
-						
-						// Check if the referenced class is present in the model or in the generic model.
+
+						// Check if the referenced class is present in the model or in the generic
+						// model.
 						EClass referencedClassObject = (EClass) _extendedEPackage.getEClassifier(referencedClass);
 						if (referencedClassObject == null) {
-							
+
 							// The class is not created, to review
 						} else {
 							System.out.println("Creating Reference: From: " + classTitle + " has a reference: "
 									+ singleProp.getKey() + " pointing to:  " + referencedClass);
-							
+
 							JsonObject relationValues = singleProp.getValue().getAsJsonObject();
 							if (singleProp.getKey().startsWith("bundle") || singleProp.getKey().startsWith("node_type")
 									|| singleProp.getKey().startsWith("block_content_type")
 									|| singleProp.getKey().startsWith("contact_form")) {
 								// Primitive Drupal types, not really a relationsuip, nothing to do.
 							} else if (isFromMetamodel) {
-								if (superTypeAttributes.contains(singleProp.getKey().replaceAll("drupal_internal_", ""))) {
+								if (superTypeAttributes
+										.contains(singleProp.getKey().replaceAll("drupal_internal_", ""))) {
 									// Inherent from the generic model. No need to create it.
 								} else {
-									EStructuralFeature relationship = createDynamicEstructuralFeatures(singleProp.getKey(),
-											relationValues, referencedClassObject, true, false);
+									EStructuralFeature relationship = createDynamicEstructuralFeatures(
+											singleProp.getKey(), relationValues, referencedClassObject, true, false);
 									parentClass.getEStructuralFeatures().add(relationship);
 								}
 							} else {
@@ -287,7 +277,7 @@ public class DrupalSchemaExtractor {
 						}
 						// Check if the properties are present in the generic model.
 						// TODO
-			
+
 					}
 				} else {
 					// Not form the generic model. Nothing to do.
