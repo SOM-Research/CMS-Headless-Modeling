@@ -6,21 +6,7 @@
 
 <plugin>
 
-   <extension point="org.eclipse.emf.ecore.generated_package">
-      <!-- @generated cmsGenericModelDrupal -->
-      <package
-            uri="http:///com.somlab.drupalGeneric"
-            class="edu.uoc.som.cmsdicover.DrupalGenericModel.DrupalGenericModelPackage"
-            genModel="model/cmsGenericModel.genmodel"/>
-   </extension>
 
-   <extension point="org.eclipse.emf.ecore.generated_package">
-      <!-- @generated cmsGenericModelDrupal -->
-      <package
-            uri="http://workflowmodel"
-            class="edu.uoc.som.cmsdicover.DrupalGenericModel.content_workflow.Content_workflowPackage"
-            genModel="model/cmsGenericModel.genmodel"/>
-   </extension>
 
    <extension point="org.eclipse.emf.ecore.generated_package">
       <!-- @generated cmsGenericModel -->

@@ -52,10 +52,16 @@ public class CmsDiscover extends Plugin {
 	/***
 	 * Load the generic model.
 	 */
-	public Map<String, List<String>> loadCmsGenericModel(EPackage genericEPackage) {
+	public Map<String, List<String>> genericModelHelper(EPackage genericEPackage) {
 
 		Map<String, List<String>> genericModelHelper = new HashMap<String, List<String>>();
 		EList<EClassifier> metaClasses = genericEPackage.getEClassifiers();
+		// Dive into the packages.
+		EList<EPackage> genericPackages = genericEPackage.getESubpackages();
+		genericPackages.forEach((singlePackage) -> {
+			metaClasses.addAll(singlePackage.getEClassifiers());
+		});
+		
 		metaClasses.forEach((metaClass) -> {
 			if (metaClass != null && metaClass instanceof EClass) {
 				List<String> listEFeatures = new ArrayList<String>();
@@ -84,7 +90,7 @@ public class CmsDiscover extends Plugin {
 			System.out.println("******************* Extracting model from a Drupal based site");
 			// Load Generic CMS model.
 			EPackage genericEPackage = theModelSerializer.loadCmsGenericModel("Drupal");
-			Map<String, List<String>> genericModelHelper = theModelingEngine.loadCmsGenericModel(genericEPackage);
+			Map<String, List<String>> genericModelHelper = theModelingEngine.genericModelHelper(genericEPackage);
 			// Change this to your Drupal OpenAPI specification.
 			DrupalSchemaExtractor DrupalExtractor = new DrupalSchemaExtractor(url, user, pass);
 			EPackage ExtendedModel = DrupalExtractor.ModelExtractor(genericEPackage, genericModelHelper);
@@ -95,7 +101,7 @@ public class CmsDiscover extends Plugin {
 		} else if (tech.contains("w")) {
 			// Load Generic CMS model.
 			EPackage genericEPackage = theModelSerializer.loadCmsGenericModel("Wordpress");
-			Map<String, List<String>> genericModelHelper = theModelingEngine.loadCmsGenericModel(genericEPackage);
+			Map<String, List<String>> genericModelHelper = theModelingEngine.genericModelHelper(genericEPackage);
 			System.out.println("******************* Extracting model from a Wordpress based site");
 			// Change this to your Wordpress URL.
 			WordpressSchemaExtractor WordpressExtractor = new WordpressSchemaExtractor(url, user, pass);
