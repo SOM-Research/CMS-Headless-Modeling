@@ -49,6 +49,11 @@ public class DrupalSchemaExtractor {
 
 	}
 
+	/***
+	 * 
+	 * @param genericEPackage    The generic model.
+	 * @param genericModelHelper A helper to generate the model.
+	 */
 	public EPackage ModelExtractor(EPackage genericEPackage, Map<String, List<String>> genericModelHelper) {
 
 		_genericModelEPackage = genericEPackage;
@@ -94,8 +99,23 @@ public class DrupalSchemaExtractor {
 		return _extendedEPackage;
 	}
 
+	/***
+	 * 
+	 * @param title definitions Get the site model.
+	 */
 	public void generateEntityModel(JsonElement definitions) {
+		// Get the OpenAPI specification and extract the entities of the site.
+		extractEntities(definitions);
+		// Once we have detected the entities, then model the relationships between this
+		// entities.
+		extractRelationships(definitions);
+	}
 
+	/***
+	 * 
+	 * @param definitions Extract the entities of the site.
+	 */
+	public void extractEntities(JsonElement definitions) {
 		// Iterate over definitions and create Classes and Attributes
 		for (Map.Entry<String, JsonElement> definition : definitions.getAsJsonObject().entrySet()) {
 
@@ -169,6 +189,15 @@ public class DrupalSchemaExtractor {
 			}
 		}
 		;
+
+	}
+
+	/***
+	 * 
+	 * @param definitions Model the relationships between the detected entities
+	 */
+	public void extractRelationships(JsonElement definitions) {
+
 		// Iterate again over definitions and create EReferences.
 		for (
 
@@ -288,6 +317,10 @@ public class DrupalSchemaExtractor {
 
 	}
 
+	/***
+	 * 
+	 * @param title Create EClass dynamically.
+	 */
 	public EClass createDynamicEClass(String title) {
 		EClass dynamicEClass = _coreFactory.createEClass();
 		dynamicEClass.setName(title);
