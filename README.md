@@ -6,7 +6,7 @@ This repository contains a prototype of a tool able to extract the Model from a 
 
 The main objective of this tool is to reduce the cost of the integration of Headless CMS in Enterprise IT ecosystems. To achieve this, we have proposed a generic model for Headless CMS. Here is the proposed generic model that serves as central piece of this tool.
 
-![Headless CMS generic model](doc/genericModelcamel.pdf)
+![Headless CMS generic model](doc/genericModelcamel-1.png)
 
 ### Prerequisites
 
