@@ -10,7 +10,7 @@
       <wizard
             category="edu.uoc.som.cmsdiscover.ui.importWizards.sampleCategory"
             class="edu.uoc.som.cmsdiscover.ui.importWizards.ImportWizard"
-            icon="assets/cms.png"
+            icon="icons/cms.png"
             id="edu.uoc.som.cmsdiscover.ui.importWizards.ImportWizard"
             name="Import CMS model">
          <description>
