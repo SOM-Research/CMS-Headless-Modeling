@@ -1,9 +1,6 @@
 package edu.uoc.com.cmsdiscover.wordpress;
 
-import java.io.Console;
 import java.io.IOException;
-import java.net.Authenticator;
-import java.net.PasswordAuthentication;
 import java.net.URI;
 import java.net.URL;
 import java.net.http.HttpClient;
@@ -20,7 +17,7 @@ import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EReference;
-import org.eclipse.emf.ecore.EStructuralFeature;
+
 import org.eclipse.emf.ecore.EcoreFactory;
 import org.eclipse.emf.ecore.EcorePackage;
 
@@ -28,8 +25,6 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-
-//import jdk.internal.net.http.HttpClientBuilderImpl;
 
 public class WordpressSchemaExtractor {
 
@@ -156,7 +151,7 @@ public class WordpressSchemaExtractor {
 						extendedPostType.getEStructuralFeatures().add(selfReference);
 					}
 					if (!restBase.contains("Blocks")) {
-						// Miren quins camps especials te aquesta classe del ACF
+						// Look at custom fields of ACF
 						JsonElement response = ResourceRequest("/acf/v3/" + restBase, "GET");
 						if (response != null) {
 							System.out.println(restBase + " custom fields:");
