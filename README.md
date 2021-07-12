@@ -14,7 +14,9 @@ The main objective of this tool is to reduce the cost of the integration of Head
 
 * The toolkit requires [EMF 2.10 (2015-01)](http://download.eclipse.org/modeling/emf/emf/builds/release/2.10/index.html) or [above](https://download.eclipse.org/eclipse/downloads/).
 
-* The toolkit requires Worpdress site with REST API v2 (above Wordpress core 4.7), and Drupal with JSON:API activated. (above Drupal core 8.1) 
+* The toolkit requires Worpdress site with REST API v2 (above Wordpress core 4.7), and Drupal with JSON:API activated. (above Drupal core 8.1)
+
+* To use this toolkit over a Drupal site, we recommend enabling Drupal's OpenAPI specification permissions for anonymous users.
 
 
 ## Installation
@@ -24,12 +26,12 @@ The main objective of this tool is to reduce the cost of the integration of Head
 
 2 - Import it in your Eclipse Project
 
-3 - Launch your project as a Eclipse application
+3 - Launch your project as an Eclipse application
 
 
 ## Usage and Examples
 
-Once you have your eclipse application with this plugin installed, you should have at least one project openend. 
+Once you have your eclipse application with this plugin installed, you should have at least one project opened. 
 
 1 - Then go to File -> Import 
 
@@ -46,12 +48,12 @@ Once you have your eclipse application with this plugin installed, you should ha
 
 6 - Set the url of the site (for example: https://www.mysupersite.com)
 
-7 - If your API or your API specifications are not open to anonymous request, then fill user and password
+7 - If your API or your API specifications are not open to anonymous request, then fill user and password (by now, only for Wordpress case)
 
 ![New Project Wizard - Step 1](doc/finalMenu.png)
 
 
-8 - Then refresh your project folder. You will see a model like the following example:
+8 - Then, refresh your project folder. You will see a model like the following example:
 
 
 ![New Project Wizard - Step 1](doc/exampleWPecore.png)
