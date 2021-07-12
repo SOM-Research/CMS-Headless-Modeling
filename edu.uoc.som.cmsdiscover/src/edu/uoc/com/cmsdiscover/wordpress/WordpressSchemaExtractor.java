@@ -33,9 +33,9 @@ import com.google.gson.JsonParser;
 
 public class WordpressSchemaExtractor {
 
-	EcoreFactory _coreFactory;
-	EcorePackage _corePackage;
-	EPackage _extendedEPackage;
+	EcoreFactory coreFactory;
+	EcorePackage corePackage;
+	EPackage extendedEPackage;
 	EClass extendedPostType;
 
 	URL apiUrl;
@@ -45,8 +45,8 @@ public class WordpressSchemaExtractor {
 	String host;
 	String description;
 
-	EPackage _genericModelEPackage;
-	Map<String, List<String>> _metaModelHelper = new HashMap<String, List<String>>();
+	EPackage genericModelEPackage;
+	Map<String, List<String>> metaModelHelper = new HashMap<String, List<String>>();
 	List<String> namespaces = new ArrayList<String>();
 
 	public WordpressSchemaExtractor(URL url, String user, String pass) {
@@ -55,15 +55,15 @@ public class WordpressSchemaExtractor {
 		userName = user;
 		password = pass;
 		// init Ecore.
-		_coreFactory = EcoreFactory.eINSTANCE;
-		_corePackage = EcorePackage.eINSTANCE;
-		_extendedEPackage = _coreFactory.createEPackage();
+		coreFactory = EcoreFactory.eINSTANCE;
+		corePackage = EcorePackage.eINSTANCE;
+		extendedEPackage = coreFactory.createEPackage();
 	}
 
 	public EPackage ModelExtractor(EPackage genericEPackage, Map<String, List<String>> genericModelHelper) {
 
-		_genericModelEPackage = genericEPackage;
-		_metaModelHelper = genericModelHelper;
+		this.genericModelEPackage = genericEPackage;
+		this.metaModelHelper = genericModelHelper;
 
 		// Get the main Wp JSON Route
 		JsonElement wpJson = ResourceRequest("", "GET");
@@ -98,7 +98,7 @@ public class WordpressSchemaExtractor {
 				initDynamicEPackage(name, description);
 				generateEntityModel(entryValue);
 				System.out.println("This");
-				return _extendedEPackage;
+				return extendedEPackage;
 			}
 
 			}
@@ -176,19 +176,19 @@ public class WordpressSchemaExtractor {
 						}
 					}
 					// Add inheritance relationship with the generic model class to extended model.
-					_extendedEPackage.getEClassifiers().add(extendedPostType);
+					extendedEPackage.getEClassifiers().add(extendedPostType);
 					EClass metaModelClassObject;
 					if (restBase.contains("Blocks")) {
-						metaModelClassObject = (EClass) _genericModelEPackage.getEClassifier("Block");
-						EClass currentClass = (EClass) _extendedEPackage.getEClassifier(restBase);
+						metaModelClassObject = (EClass) genericModelEPackage.getEClassifier("Block");
+						EClass currentClass = (EClass) extendedEPackage.getEClassifier(restBase);
 						currentClass.getESuperTypes().add(metaModelClassObject);
 					} else if (restBase.contains("Media")) {
-						metaModelClassObject = (EClass) _genericModelEPackage.getEClassifier("Media");
-						EClass currentClass = (EClass) _extendedEPackage.getEClassifier(restBase);
+						metaModelClassObject = (EClass) genericModelEPackage.getEClassifier("Media");
+						EClass currentClass = (EClass) extendedEPackage.getEClassifier(restBase);
 						currentClass.getESuperTypes().add(metaModelClassObject);
 					} else {
-						metaModelClassObject = (EClass) _genericModelEPackage.getEClassifier("ContentType");
-						EClass currentClass = (EClass) _extendedEPackage.getEClassifier(restBase);
+						metaModelClassObject = (EClass) genericModelEPackage.getEClassifier("ContentType");
+						EClass currentClass = (EClass) extendedEPackage.getEClassifier(restBase);
 						currentClass.getESuperTypes().add(metaModelClassObject);
 					}
 
@@ -211,9 +211,9 @@ public class WordpressSchemaExtractor {
 					}
 					// Add inheritance relationship with the generic model class class to extended
 					// model.
-					_extendedEPackage.getEClassifiers().add(taxType);
-					EClass metaModelClassObject = (EClass) _genericModelEPackage.getEClassifier("Taxonomy");
-					EClass currentClass = (EClass) _extendedEPackage.getEClassifier(slug);
+					extendedEPackage.getEClassifiers().add(taxType);
+					EClass metaModelClassObject = (EClass) genericModelEPackage.getEClassifier("Taxonomy");
+					EClass currentClass = (EClass) extendedEPackage.getEClassifier(slug);
 					currentClass.getESuperTypes().add(metaModelClassObject);
 				}
 			}
@@ -251,7 +251,7 @@ public class WordpressSchemaExtractor {
 					String restBaseLowerCase = innerResult.getValue().getAsJsonObject().get("rest_base").getAsString();
 					String restBase = restBaseLowerCase.substring(0, 1).toUpperCase() + restBaseLowerCase.substring(1);
 					if (!restBase.contains("Blocks")) {
-						EClass parentClass = (EClass) _extendedEPackage.getEClassifier(restBase);
+						EClass parentClass = (EClass) extendedEPackage.getEClassifier(restBase);
 						JsonArray taxonomies = innerResult.getValue().getAsJsonObject().get("taxonomies")
 								.getAsJsonArray();
 						if (taxonomies.size() >= 1) {
@@ -259,7 +259,7 @@ public class WordpressSchemaExtractor {
 								String taxString = taxonomy.getAsString().replaceAll("-", "_");
 								String taxonomyUpper = taxString.substring(0, 1).toUpperCase() + taxString.substring(1);
 								// CreateEReference
-								EClass taxonomyClass = (EClass) _extendedEPackage.getEClassifier(taxonomyUpper);
+								EClass taxonomyClass = (EClass) extendedEPackage.getEClassifier(taxonomyUpper);
 								EReference taxReference = createDynamicEReference(taxonomyUpper, taxonomyClass, -1, 0);
 								parentClass.getEStructuralFeatures().add(taxReference);
 							});
@@ -312,16 +312,16 @@ public class WordpressSchemaExtractor {
 	 */
 	public void initDynamicEPackage(String name, String description) {
 		name = name.replaceAll(" ", "_").replaceAll("\"", "");
-		_extendedEPackage.setName(name);
-		_extendedEPackage.setNsPrefix(name);
-		_extendedEPackage.setNsURI(apiUrl.toString());
+		extendedEPackage.setName(name);
+		extendedEPackage.setNsPrefix(name);
+		extendedEPackage.setNsURI(apiUrl.toString());
 	}
 
 	/***
 	 * @param title Create EClass dynamically
 	 */
 	public EClass createDynamicEClass(String title) {
-		EClass dynamicEClass = _coreFactory.createEClass();
+		EClass dynamicEClass = coreFactory.createEClass();
 		dynamicEClass.setName(title);
 		return dynamicEClass;
 	}
@@ -345,7 +345,7 @@ public class WordpressSchemaExtractor {
 				break;
 			}
 			case ("author"): {
-				EClass userClass = (EClass) _genericModelEPackage.getEClassifier("User");
+				EClass userClass = (EClass) genericModelEPackage.getEClassifier("User");
 				EReference userReference = createDynamicEReference("author", userClass, 1, 1);
 				extendedPostType.getEStructuralFeatures().add(userReference);
 				System.out.println("author");
@@ -366,7 +366,7 @@ public class WordpressSchemaExtractor {
 			}
 			case ("custom-fields"): {
 				System.out.println("custom-fields");
-				EClass metaClass = (EClass) _genericModelEPackage.getEClassifier("MetaData");
+				EClass metaClass = (EClass) genericModelEPackage.getEClassifier("MetaData");
 				EReference commentsReference = createDynamicEReference("meta", metaClass, -1, 0);
 				extendedPostType.getEStructuralFeatures().add(commentsReference);
 				break;
@@ -377,20 +377,20 @@ public class WordpressSchemaExtractor {
 				extendedPostType.getEStructuralFeatures().add(commentEAttribute);
 				System.out.println("comments");
 				// Comments related
-				EClass commentsClass = (EClass) _genericModelEPackage.getEClassifier("Comment");
+				EClass commentsClass = (EClass) genericModelEPackage.getEClassifier("Comment");
 				EReference commentsReference = createDynamicEReference("comments", commentsClass, -1, 0);
 				extendedPostType.getEStructuralFeatures().add(commentsReference);
 				break;
 			}
 			case ("revisions"): {
-				EClass revisionClass = (EClass) _genericModelEPackage.getEClassifier("Revision");
+				EClass revisionClass = (EClass) genericModelEPackage.getEClassifier("Revision");
 				EReference revisionReference = createDynamicEReference("revisions", revisionClass, -1, 0);
 				extendedPostType.getEStructuralFeatures().add(revisionReference);
 				System.out.println("revisions");
 				break;
 			}
 			case ("thumbnail"): {
-				EClass mediaClass = (EClass) _genericModelEPackage.getEClassifier("Media");
+				EClass mediaClass = (EClass) genericModelEPackage.getEClassifier("Media");
 				EReference mediaReference = createDynamicEReference("featured_image", mediaClass, 1, 0);
 				extendedPostType.getEStructuralFeatures().add(mediaReference);
 				System.out.println("revisions");
@@ -411,18 +411,18 @@ public class WordpressSchemaExtractor {
 	}
 
 	public EAttribute createDynamicEAttributes(String attrName, String Etype) {
-		EAttribute dynamicEAttribute = _coreFactory.createEAttribute();
+		EAttribute dynamicEAttribute = coreFactory.createEAttribute();
 		dynamicEAttribute.setName(attrName);
 		if (Etype.contains("string")) {
-			dynamicEAttribute.setEType(_corePackage.getEString());
+			dynamicEAttribute.setEType(corePackage.getEString());
 		} else {
-			dynamicEAttribute.setEType(_corePackage.getEString());
+			dynamicEAttribute.setEType(corePackage.getEString());
 		}
 		return dynamicEAttribute;
 	}
 
 	public EReference createDynamicEReference(String attrName, EClass targetClass, int upperBound, int lowerBound) {
-		EReference dynamicEReference = _coreFactory.createEReference();
+		EReference dynamicEReference = coreFactory.createEReference();
 		dynamicEReference.setName(attrName);
 		dynamicEReference.setEType(targetClass);
 		dynamicEReference.setUpperBound(upperBound);

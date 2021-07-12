@@ -26,26 +26,26 @@ import com.google.gson.JsonParser;
 
 public class DrupalSchemaExtractor {
 
-	EcoreFactory _coreFactory;
-	EcorePackage _corePackage;
-	EPackage _genericModelEPackage;
-	EPackage _extendedEPackage;
-	Map<String, List<String>> _genericModelHelper;
+	EcoreFactory coreFactory;
+	EcorePackage corePackage;
+	EPackage genericModelEPackage;
+	EPackage extendedEPackage;
+	Map<String, List<String>> genericModelHelper;
 
-	URL _apiUrl;
-	String _userName;
-	String _password;
-	String _basePath;
-	List<String> _resource_paths = null;
+	URL apiUrl;
+	String userName;
+	String password;
+	String basePath;
+	List<String> resource_paths = null;
 
 	public DrupalSchemaExtractor(URL url, String user, String pass) {
-		// Init parameters.
-		_apiUrl = url;
-		_userName = user;
-		_password = pass;
-		_coreFactory = EcoreFactory.eINSTANCE;
-		_corePackage = EcorePackage.eINSTANCE;
-		_extendedEPackage = _coreFactory.createEPackage();
+		// Initialize parameters.
+		apiUrl = url;
+		userName = user;
+		password = pass;
+		coreFactory = EcoreFactory.eINSTANCE;
+		corePackage = EcorePackage.eINSTANCE;
+		extendedEPackage = coreFactory.createEPackage();
 
 	}
 
@@ -56,8 +56,8 @@ public class DrupalSchemaExtractor {
 	 */
 	public EPackage ModelExtractor(EPackage genericEPackage, Map<String, List<String>> genericModelHelper) {
 
-		_genericModelEPackage = genericEPackage;
-		_genericModelHelper = genericModelHelper;
+		this.genericModelEPackage = genericEPackage;
+		this.genericModelHelper = genericModelHelper;
 
 		// Read the OpenApi specification in JSON format of the remote site.
 		JsonObject OpenApiSpecification = OpenApiSpecificationRequest().getAsJsonObject();
@@ -69,16 +69,16 @@ public class DrupalSchemaExtractor {
 			case ("info"): {
 				JsonObject info = entryValue.getAsJsonObject();
 				String title = info.get("title").getAsString().replaceAll("-", "_").replaceAll(" ", "_");
-				_extendedEPackage.setName(title);
-				_extendedEPackage.setNsPrefix(title);
+				extendedEPackage.setName(title);
+				extendedEPackage.setNsPrefix(title);
 				break;
 			}
 			case ("host"): {
-				_extendedEPackage.setNsURI(entryValue.toString());
+				extendedEPackage.setNsURI(entryValue.toString());
 				break;
 			}
 			case ("basePath"): {
-				_basePath = entryValue.toString();
+				basePath = entryValue.toString();
 				break;
 			}
 			case ("paths"): {
@@ -96,7 +96,7 @@ public class DrupalSchemaExtractor {
 
 			}
 		}
-		return _extendedEPackage;
+		return extendedEPackage;
 	}
 
 	/***
@@ -138,12 +138,12 @@ public class DrupalSchemaExtractor {
 				// Check if has a superType form the generic model and create it.
 				boolean isFromMetamodel = false;
 				List<String> superTypeAttributes = null;
-				for (Map.Entry<String, List<String>> metamodelClasses : _genericModelHelper.entrySet()) {
+				for (Map.Entry<String, List<String>> metamodelClasses : genericModelHelper.entrySet()) {
 					if (normalizedType.startsWith(metamodelClasses.getKey())) {
 						superTypeAttributes = metamodelClasses.getValue();
 
 						// Add super type
-						EClass genericSuperType = (EClass) _genericModelEPackage
+						EClass genericSuperType = (EClass) genericModelEPackage
 								.getEClassifier(metamodelClasses.getKey());
 						dynamicEClass.getESuperTypes().add(genericSuperType);
 						isFromMetamodel = true;
@@ -182,7 +182,7 @@ public class DrupalSchemaExtractor {
 				}
 
 				// Add the created class to the extendedPackage
-				_extendedEPackage.getEClassifiers().add(dynamicEClass);
+				extendedEPackage.getEClassifiers().add(dynamicEClass);
 			} else {
 				// Do not create the class. Following definition.
 				break;
@@ -225,7 +225,7 @@ public class DrupalSchemaExtractor {
 				boolean isFromMetamodel = false;
 				List<String> excludedReferences = null;
 				List<String> superTypeAttributes = null;
-				for (Map.Entry<String, List<String>> metamodelClasses : _genericModelHelper.entrySet()) {
+				for (Map.Entry<String, List<String>> metamodelClasses : genericModelHelper.entrySet()) {
 					if (normalizedType.startsWith(metamodelClasses.getKey())) {
 						superTypeAttributes = metamodelClasses.getValue();
 						isFromMetamodel = true;
@@ -233,7 +233,7 @@ public class DrupalSchemaExtractor {
 				}
 
 				// Get the referencing class name.
-				EClass parentClass = (EClass) _extendedEPackage.getEClassifier(classTitle);
+				EClass parentClass = (EClass) extendedEPackage.getEClassifier(classTitle);
 
 				// Get the references of the class.
 				JsonObject propertiesJson = defRelation.getValue().getAsJsonObject().get("properties").getAsJsonObject()
@@ -275,7 +275,7 @@ public class DrupalSchemaExtractor {
 
 						// Check if the referenced class is present in the model or in the generic
 						// model.
-						EClass referencedClassObject = (EClass) _extendedEPackage.getEClassifier(referencedClass);
+						EClass referencedClassObject = (EClass) extendedEPackage.getEClassifier(referencedClass);
 						if (referencedClassObject == null) {
 
 							// The class is not created, to review
@@ -322,7 +322,7 @@ public class DrupalSchemaExtractor {
 	 * @param title Create EClass dynamically.
 	 */
 	public EClass createDynamicEClass(String title) {
-		EClass dynamicEClass = _coreFactory.createEClass();
+		EClass dynamicEClass = coreFactory.createEClass();
 		dynamicEClass.setName(title);
 		return dynamicEClass;
 	}
@@ -344,7 +344,7 @@ public class DrupalSchemaExtractor {
 				} else {
 					// Is a object with custom DataType.
 					EClass extraDynamicEClass;
-					if (_extendedEPackage.getEClassifier(featureName) == null) {
+					if (extendedEPackage.getEClassifier(featureName) == null) {
 						extraDynamicEClass = createDynamicEClass(featureName);
 						JsonObject attributeProperties = featureValues.get("properties").getAsJsonObject();
 						for (Map.Entry<String, JsonElement> singleProperty : attributeProperties.entrySet()) {
@@ -353,9 +353,9 @@ public class DrupalSchemaExtractor {
 							EAttribute ExtraAttribute = createDynamicEAttributes(propName, propValues);
 							extraDynamicEClass.getEStructuralFeatures().add(ExtraAttribute);
 						}
-						_extendedEPackage.getEClassifiers().add(extraDynamicEClass);
+						extendedEPackage.getEClassifiers().add(extraDynamicEClass);
 					} else {
-						extraDynamicEClass = (EClass) _extendedEPackage.getEClassifier(featureName);
+						extraDynamicEClass = (EClass) extendedEPackage.getEClassifier(featureName);
 					}
 
 					EReference EReferenceObject = createDynamicEReference(featureName, extraDynamicEClass, true);
@@ -377,32 +377,32 @@ public class DrupalSchemaExtractor {
 	 */
 	public EAttribute createDynamicEAttributes(String attrName, JsonObject singleAttr) {
 
-		EAttribute dynamicEAttribute = _coreFactory.createEAttribute();
+		EAttribute dynamicEAttribute = coreFactory.createEAttribute();
 		dynamicEAttribute.setName(attrName);
 		String attrType = singleAttr.get("type").getAsString();
 
 		// Check Attribute type
 		if (attrType.startsWith("integer") || attrType.startsWith("number")) {
-			dynamicEAttribute.setEType(_corePackage.getEIntegerObject());
+			dynamicEAttribute.setEType(corePackage.getEIntegerObject());
 		} else if (attrType.startsWith("string")) {
-			dynamicEAttribute.setEType(_corePackage.getEString());
+			dynamicEAttribute.setEType(corePackage.getEString());
 		} else if (attrType.startsWith("boolean")) {
-			dynamicEAttribute.setEType(_corePackage.getEBoolean());
+			dynamicEAttribute.setEType(corePackage.getEBoolean());
 		} else if (attrType.startsWith("array")) {
 			String arrayTypeOf = singleAttr.get("items").getAsJsonObject().get("type").getAsString();
 			if (arrayTypeOf.startsWith("string")) {
-				dynamicEAttribute.setEType(_corePackage.getEString());
+				dynamicEAttribute.setEType(corePackage.getEString());
 				dynamicEAttribute.setUpperBound(-1);
 			} else if (arrayTypeOf.startsWith("layout_section")) {
 				// TO DO: Here we have and array of Layout object sections
-				dynamicEAttribute.setEType(_corePackage.getEString());
+				dynamicEAttribute.setEType(corePackage.getEString());
 			} else {
 				// TO DO: Here we have other types of array.
-				dynamicEAttribute.setEType(_corePackage.getEString());
+				dynamicEAttribute.setEType(corePackage.getEString());
 			}
 		} else {
 			// TO DO. How we can proceed when EAttributes are objects and Arrays????
-			dynamicEAttribute.setEType(_corePackage.getEString());
+			dynamicEAttribute.setEType(corePackage.getEString());
 		}
 		return dynamicEAttribute;
 	}
@@ -414,7 +414,7 @@ public class DrupalSchemaExtractor {
 	 * @param ReferencedClass Create EREferences dynamically.
 	 */
 	public EReference createDynamicEReference(String propertyName, EClass referencedClass, boolean setContainment) {
-		EReference dynamicEReference = _coreFactory.createEReference();
+		EReference dynamicEReference = coreFactory.createEReference();
 		dynamicEReference.setName(propertyName);
 		dynamicEReference.setEType(referencedClass);
 		dynamicEReference.setUpperBound(EStructuralFeature.UNBOUNDED_MULTIPLICITY);
@@ -437,8 +437,8 @@ public class DrupalSchemaExtractor {
 		JsonObject info = entry.getAsJsonObject();
 		String title = info.get("title").getAsString().replaceAll("-", "_").replaceAll(" ", "_");
 		// We create the extended package
-		_extendedEPackage.setName(title);
-		_extendedEPackage.setNsPrefix(title);
+		extendedEPackage.setName(title);
+		extendedEPackage.setNsPrefix(title);
 	}
 
 	/***
@@ -450,7 +450,7 @@ public class DrupalSchemaExtractor {
 		var client = HttpClient.newHttpClient();
 
 		// create a request
-		var request = HttpRequest.newBuilder().uri(URI.create(_apiUrl.toString() + "/openapi/jsonapi"))
+		var request = HttpRequest.newBuilder().uri(URI.create(apiUrl.toString() + "/openapi/jsonapi"))
 				.method("GET", HttpRequest.BodyPublishers.noBody()).header("accept", "application/json")
 				// .header("Authorization", basicAuth(userName, password))
 				.build();

@@ -14,8 +14,7 @@ import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.EClassifier;
-import org.eclipse.emf.ecore.EcoreFactory;
-import org.eclipse.emf.ecore.EcorePackage;
+
 
 import edu.uoc.com.cmsdiscover.drupal.*;
 import edu.uoc.com.cmsdiscover.wordpress.*;
@@ -25,14 +24,8 @@ public class CmsDiscover extends Plugin {
 
 	private static CmsDiscover plugin;
 
-	EcoreFactory _coreFactory;
-	EcorePackage _corePackage;
-	EPackage _dynamicEPackage;
-
 	public CmsDiscover() {
-		// Instantiate EcoreFactory and EcorePackage
-		_coreFactory = EcoreFactory.eINSTANCE;
-		_corePackage = EcorePackage.eINSTANCE;
+
 	}
 
 	public void start(BundleContext bundleContext) throws Exception {
@@ -83,7 +76,7 @@ public class CmsDiscover extends Plugin {
 
 		// Instance of the own class.
 		CmsDiscover theModelingEngine = plugin;
-		// Instance of Serializer class.
+		// Instance of Serialize class.
 		CmsModelSerializer theModelSerializer = new CmsModelSerializer();
 		// Load Generic CMS model.
 		EPackage genericEPackage = GenericModelPackage.eINSTANCE;
