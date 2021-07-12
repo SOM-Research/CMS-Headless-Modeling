@@ -14,6 +14,8 @@ The main objective of this tool is to reduce the cost of the integration of Head
 
 * The toolkit requires [EMF 2.10 (2015-01)](http://download.eclipse.org/modeling/emf/emf/builds/release/2.10/index.html) or [above](https://download.eclipse.org/eclipse/downloads/).
 
+* The toolkit requires Worpdress site with REST API v2 (above Wordpress core 4.7), and Drupal with JSON:API activated. (above Drupal core 8.1) 
+
 
 ## Installation
 
