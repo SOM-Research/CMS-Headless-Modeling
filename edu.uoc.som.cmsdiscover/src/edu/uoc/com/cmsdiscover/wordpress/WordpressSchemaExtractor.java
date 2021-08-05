@@ -142,7 +142,7 @@ public class WordpressSchemaExtractor {
 						restBase = "extended_" + restBase;
 					}
 					extendedPostType = createDynamicEClass(restBase);
-					// Get Supports specialitzacion fro the post type
+					// Get Supports specialitzacion from the post type
 					JsonObject supports = innerResult.getValue().getAsJsonObject().get("supports").getAsJsonObject();
 					extendedPostType = enableSupports(supports, extendedPostType);
 					String hierarchical = innerResult.getValue().getAsJsonObject().get("hierarchical").getAsString();

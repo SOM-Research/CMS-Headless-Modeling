@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<site>
+   <feature url="features/edu.uoc.som.cmsdiscover.feature_0.1.0.202107131329.jar" id="edu.uoc.som.cmsdiscover.feature" version="0.1.0.202107131329">
+      <category name="CMS Discover"/>
+   </feature>
+   <category-def name="CMS Discover" label="CMS Discover">
+      <description>
+         Eclipse Modeling Framework plugin able to model CMS Sites using the data exposed by its default REST API. Compatible with Drupal (JSON:API) and Wordpress
+      </description>
+   </category-def>
+</site>
