@@ -3,7 +3,12 @@ package edu.uoc.som.cmsdiscover.ui.importWizards;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.InputStream;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse.BodyHandlers;
 
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IStatus;
@@ -11,6 +16,8 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.preference.FileFieldEditor;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.FocusEvent;
+import org.eclipse.swt.events.FocusListener;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.graphics.Image;
@@ -19,8 +26,10 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.dialogs.WizardNewFileCreationPage;
 
@@ -34,6 +43,7 @@ public class ImportWizardPage extends WizardNewFileCreationPage {
 	private Group techGroup;
 	private Button buttonDrupal;
 	private Button buttonWp;
+	private Boolean urlValidation;
 
 	public ImportWizardPage(String pageName, IStructuredSelection selection) {
 		super(pageName, selection);
@@ -78,9 +88,12 @@ public class ImportWizardPage extends WizardNewFileCreationPage {
 		// buttonDrupal.setImage(imageDru);
 
 		Label label1 = new Label(container, SWT.NONE);
-		label1.setText("Set the URL: .");
+		label1.setText("Set the URL: (https://myurl.domain) ");
 		url = new Text(container, SWT.BORDER | SWT.SINGLE);
 		url.setText("");
+		urlValidation = false;
+
+	
 
 		Label label2 = new Label(container, SWT.NONE);
 		label2.setText("User: ");
@@ -98,6 +111,39 @@ public class ImportWizardPage extends WizardNewFileCreationPage {
 		for (int i = 0; i < directories.length; i++) {
 			System.out.println("VAMOSSS:  " + directories[i].toString());
 		}
+		url.addFocusListener(new FocusListener() {
+			public void focusGained(FocusEvent event) {
+
+			}
+
+			public void focusLost(FocusEvent event) {
+				Label labelUrl = new Label(container, SWT.NONE);
+				labelUrl.setText("validating");
+				String rawUrl = url.getText();
+				new Thread() {
+					public void run() {
+						System.out.print("In my thread");
+						Display.getDefault().asyncExec(new Runnable() {
+							public void run() {
+								boolean answer = checkUrl(rawUrl);
+								if (answer == true) {
+									url.setBackground(Display.getCurrent().getSystemColor(SWT.COLOR_GREEN));
+									urlValidation = true;
+								} else {
+									url.setBackground(Display.getCurrent().getSystemColor(SWT.COLOR_RED));
+									urlValidation = false;
+									MessageBox messageBox = new MessageBox(container.getShell(), SWT.ICON_ERROR);
+									messageBox.setMessage("Please check your URL");
+									int result = messageBox.open();
+								}
+						
+							}
+						});
+					}
+
+				}.start();
+			}
+		});
 
 		// Event listeners
 		url.addKeyListener(new KeyListener() {
@@ -108,7 +154,7 @@ public class ImportWizardPage extends WizardNewFileCreationPage {
 
 			@Override
 			public void keyReleased(KeyEvent e) {
-				if (!url.getText().isEmpty() && (buttonDrupal.getSelection() || buttonWp.getSelection())) {
+				if (urlValidation && (buttonDrupal.getSelection() || buttonWp.getSelection())) {
 					setPageComplete(true);
 
 				}
@@ -152,6 +198,7 @@ public class ImportWizardPage extends WizardNewFileCreationPage {
 		// required to avoid an error in the system
 		setControl(container);
 		setPageComplete(false);
+		
 
 	}
 
@@ -212,6 +259,35 @@ public class ImportWizardPage extends WizardNewFileCreationPage {
 			return "d";
 		else
 			return "w";
+	}
+
+	public boolean checkUrl(String url) {
+		var client = HttpClient.newHttpClient();
+
+		// create a request
+		var request = HttpRequest.newBuilder().uri(URI.create(url)).method("GET", HttpRequest.BodyPublishers.noBody())
+				.build();
+
+		// use the client to send the request
+		try {
+			request.method();
+			var response = client.send(request, BodyHandlers.ofString());
+			if (response.statusCode() == 200) {
+				return true;
+			} else {
+				System.out.println("Has returned status: " + response.statusCode());
+				return false;
+			}
+
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			//e.printStackTrace();
+			return false;
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			//e.printStackTrace();
+			return false;
+		}
 	}
 
 	public String getFileName() {
