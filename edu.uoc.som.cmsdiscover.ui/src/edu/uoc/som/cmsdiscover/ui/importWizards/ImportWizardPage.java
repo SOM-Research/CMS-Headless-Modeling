@@ -5,7 +5,9 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.MalformedURLException;
 import java.net.URI;
+import java.net.URL;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse.BodyHandlers;
@@ -108,9 +110,6 @@ public class ImportWizardPage extends WizardNewFileCreationPage {
 		String Workspace = ResourcesPlugin.getWorkspace().getRoot().getLocation().toString();
 		System.out.println("VAMOSSS:  " + Workspace);
 		File[] directories = new File(Workspace).listFiles(File::isDirectory);
-		for (int i = 0; i < directories.length; i++) {
-			System.out.println("VAMOSSS:  " + directories[i].toString());
-		}
 		url.addFocusListener(new FocusListener() {
 			public void focusGained(FocusEvent event) {
 
@@ -155,7 +154,7 @@ public class ImportWizardPage extends WizardNewFileCreationPage {
 			@Override
 			public void keyReleased(KeyEvent e) {
 				if (urlValidation && (buttonDrupal.getSelection() || buttonWp.getSelection())) {
-					setPageComplete(true);
+					//setPageComplete(true);
 
 				}
 			}
@@ -202,6 +201,7 @@ public class ImportWizardPage extends WizardNewFileCreationPage {
 
 	}
 
+	
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -264,12 +264,13 @@ public class ImportWizardPage extends WizardNewFileCreationPage {
 	public boolean checkUrl(String url) {
 		var client = HttpClient.newHttpClient();
 
-		// create a request
-		var request = HttpRequest.newBuilder().uri(URI.create(url)).method("GET", HttpRequest.BodyPublishers.noBody())
-				.build();
-
 		// use the client to send the request
 		try {
+			URL passUrl = new URL(url);
+			URI uri = URI.create(url);
+			// create a request
+			var request = HttpRequest.newBuilder().uri(uri).method("GET", HttpRequest.BodyPublishers.noBody())
+					.build();
 			request.method();
 			var response = client.send(request, BodyHandlers.ofString());
 			if (response.statusCode() == 200) {
@@ -279,6 +280,9 @@ public class ImportWizardPage extends WizardNewFileCreationPage {
 				return false;
 			}
 
+		} catch (MalformedURLException e) {
+			return false;
+			
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			//e.printStackTrace();
