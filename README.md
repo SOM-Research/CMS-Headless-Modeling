@@ -22,11 +22,9 @@ The main objective of this tool is to reduce the cost of the integration of Head
 ## Installation
 
 
-1 - Clone this code 
+To install the toolkit use the following update site:
 
-2 - Import it in your Eclipse Project
-
-3 - Launch your project as an Eclipse application
+https://som-research.github.io/CMS-Headless-Modeling/updates/
 
 
 ## Usage and Examples
