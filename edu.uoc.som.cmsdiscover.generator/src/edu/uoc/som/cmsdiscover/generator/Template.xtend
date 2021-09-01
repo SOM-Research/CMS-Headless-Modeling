@@ -2,25 +2,27 @@ package edu.uoc.som.cmsdiscover.generator
 
 import org.eclipse.emf.ecore.EAttribute
 import org.eclipse.emf.ecore.EClass
+import org.eclipse.emf.common.util.EList
 
 class Template {
-	def generateMiddleWare(EClass entity) '''
+	def generateMiddleWare(EClass modelClass, EList<EClass> superClasses) '''
 		package Web_Name
 	
 		import org.eclipse.emf.ecore.EClass
 		import org.eclipse.emf.ecore.EAttribute
 	
 	
-		public class «entity.getName()»(url) extends LA SUPER CLASS. {
-			
-			
+		public class «modelClass.getName()» extends « IF !superClasses.isEmpty()» « superClasses.get(0).getName()» «ENDIF» {
+			« IF !superClasses.isEmpty()»
+			« superClasses.get(0).getName()»
+			«ENDIF»
 			// Attributes
-			« FOR EAttribute attribute : entity.getEAllAttributes()»
+			« FOR EAttribute attribute : modelClass.getEAllAttributes()»
 				«addAttribute(attribute)»
 			«ENDFOR»
 			
 			// Constructor
-			 «addConstructor(entity)»
+			 «addConstructor(modelClass)»
 			
 			// Methods
 			// Getters

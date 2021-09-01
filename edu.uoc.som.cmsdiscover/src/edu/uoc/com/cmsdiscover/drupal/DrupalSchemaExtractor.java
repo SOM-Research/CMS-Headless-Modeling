@@ -120,25 +120,20 @@ public class DrupalSchemaExtractor {
 
 			// Get the type of the definition.
 			int iend = definition.getKey().indexOf("--");
-			String definitionType = definition.getKey().substring(0, iend).substring(0, 1).toUpperCase()
-					+ definition.getKey().substring(0, iend).substring(1);
-			;
-			String normalizedType = normalizeDefinition(definitionType);
-
-			// Get the custom name of the definition.
-			String customDefinition = definition.getKey().substring(iend + 2).substring(0, 1).toUpperCase()
+			String definitionType = normalizeDefinition(definition.getKey().substring(0, iend).substring(0, 1).toUpperCase()
+					+ definition.getKey().substring(0, iend).substring(1));
+			String classTitle = definition.getKey().substring(iend + 2).substring(0, 1).toUpperCase()
 					+ definition.getKey().substring(iend + 2).substring(1);
 
 			// Create Classes with title
-			if (definitionType != "Path_alias" && definitionType != "Oauth2_token" && definitionType != "Menu_link"
-					&& definitionType != "Shortcut" && definitionType != "File" && definitionType != "Consumer") {
+			if (excludeNoContentEntities(definitionType)) {
 				// Create the class.
-				EClass dynamicEClass = createDynamicEClass(customDefinition);
+				EClass dynamicEClass = createDynamicEClass(classTitle);
 				// Check if has a superType form the generic model and create it.
 				boolean isFromMetamodel = false;
 				List<String> superTypeAttributes = null;
 				for (Map.Entry<String, List<String>> metamodelClasses : genericModelHelper.entrySet()) {
-					if (normalizedType.startsWith(metamodelClasses.getKey())) {
+					if (definitionType.startsWith(metamodelClasses.getKey())) {
 						superTypeAttributes = metamodelClasses.getValue();
 
 						// Add super type
@@ -184,7 +179,6 @@ public class DrupalSchemaExtractor {
 				extendedEPackage.getEClassifiers().add(dynamicEClass);
 			} else {
 				// Do not create the class. Following definition.
-				break;
 			}
 		}
 		;
@@ -213,10 +207,7 @@ public class DrupalSchemaExtractor {
 			String classTitle = defRelation.getKey().substring(iend + 2).substring(0, 1).toUpperCase()
 					+ defRelation.getKey().substring(iend + 2).substring(1);
 			// Create Classes with title
-			if (definitionType != "Path_alias" && definitionType != "Oauth2_token" && definitionType != "Menu_link"
-					&& definitionType != "Shortcut" && definitionType != "File" && definitionType != "Consumer") {
-				// If we have not created these entities, we do not create relationships
-			} else {
+			if (excludeNoContentEntities(normalizedType)) {
 				// Get entities
 				// Is a class that is a extension of the generic model
 				// Check if the class is extension of the generic model
@@ -310,7 +301,8 @@ public class DrupalSchemaExtractor {
 				} else {
 					// Not form the generic model. Nothing to do.
 				}
-
+			} else {
+				// If we have not created the class we donot model it.
 			}
 		}
 
@@ -323,6 +315,8 @@ public class DrupalSchemaExtractor {
 	public EClass createDynamicEClass(String title) {
 		EClass dynamicEClass = coreFactory.createEClass();
 		dynamicEClass.setName(title);
+		System.out.println("Class created: " + title);
+		
 		return dynamicEClass;
 	}
 
@@ -498,6 +492,49 @@ public class DrupalSchemaExtractor {
 		}
 
 		return definitionType;
+
+	}
+
+	private boolean excludeNoContentEntities(String definitionType) {
+
+		switch (definitionType) {
+		case ("Path_alias"): {
+			return false;
+		}
+		case ("Oauth2_token"): {
+			return false;
+		}
+		case ("Menu_link_content"): {
+			return false;
+		}
+		case ("Shortcut"): {
+			return false;
+		}
+		case ("Auth_code"): {
+			return false;
+		}
+		case ("File"): {
+			return false;
+		}
+		case ("Consumer"): {
+			return false;
+		}
+		case ("Access_Token"): {
+			return false;
+		}
+		case ("secret"): {
+			return false;
+		}
+		case ("Default"): {
+			return false;
+		}
+		case ("Content_moderation_state"): {
+			return false;
+		}
+		default: {
+			return true;
+		}
+		}
 
 	}
 

@@ -134,11 +134,11 @@ public class WordpressSchemaExtractor {
 				JsonElement singleRoute = ResourceRequest(route.getKey() + "?context=edit", "GET");
 				JsonObject result = singleRoute.getAsJsonObject();
 				for (Entry<String, JsonElement> innerResult : result.entrySet()) {
-					String restBaseLowerCase = innerResult.getValue().getAsJsonObject().get("rest_base").getAsString();
+					String restBaseLowerCase = innerResult.getValue().getAsJsonObject().get("rest_base").getAsString().replaceAll(" ", "_");
 					String restBase = restBaseLowerCase.substring(0, 1).toUpperCase() + restBaseLowerCase.substring(1);
 					// Create Class
 					if (restBase.contains("Media")) {
-						restBase = "extended_" + restBase;
+						restBase = "Extended_" + restBase;
 					}
 					extendedPostType = createDynamicEClass(restBase);
 					// Get Supports specialitzacion from the post type
@@ -146,8 +146,8 @@ public class WordpressSchemaExtractor {
 					extendedPostType = enableSupports(supports, extendedPostType);
 					String hierarchical = innerResult.getValue().getAsJsonObject().get("hierarchical").getAsString();
 					if (hierarchical.contains("true")) {
-						EReference selfReference = createDynamicEReference("parent", extendedPostType, 1, 0);
-						extendedPostType.getEStructuralFeatures().add(selfReference);
+						//EReference selfReference = createDynamicEReference("parent", extendedPostType, 1, 0);
+						//extendedPostType.getEStructuralFeatures().add(selfReference);
 					}
 					if (!restBase.contains("Blocks")) {
 						// Look at custom fields of ACF
@@ -193,7 +193,7 @@ public class WordpressSchemaExtractor {
 				JsonObject result = singleRoute.getAsJsonObject();
 				for (Entry<String, JsonElement> innerResult : result.entrySet()) {
 					String slugBaseLowerCase = innerResult.getValue().getAsJsonObject().get("slug").getAsString()
-							.replaceAll("-", "_");
+							.replaceAll("-", "_").replaceAll(" ", "_" );
 					String slug = slugBaseLowerCase.substring(0, 1).toUpperCase() + slugBaseLowerCase.substring(1);
 					EClass taxType = createDynamicEClass(slug);
 
@@ -378,9 +378,9 @@ public class WordpressSchemaExtractor {
 				break;
 			}
 			case ("revisions"): {
-				EClass revisionClass = (EClass) genericModelEPackage.getEClassifier("Revision");
-				EReference revisionReference = createDynamicEReference("revisions", revisionClass, -1, 0);
-				extendedPostType.getEStructuralFeatures().add(revisionReference);
+				//EClass revisionClass = (EClass) genericModelEPackage.getEClassifier("Revision");
+				//EReference revisionReference = createDynamicEReference("revisions", revisionClass, -1, 0);
+				//extendedPostType.getEStructuralFeatures().add(revisionReference);
 				System.out.println("revisions");
 				break;
 			}

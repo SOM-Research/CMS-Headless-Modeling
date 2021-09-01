@@ -30,11 +30,10 @@ class CodeGenerator {
 		if (input !== null && input instanceof EPackage) {
 			thePackage = input as EPackage;
 			val eClasses = thePackage.EClassifiers.filter(EClass)
-				println("vamos");
 			// For every class we call the generator template
 			for (EClass modelClass : eClasses) {
-				val superClasses = modelClass.getEAllSuperTypes()
-				val content = template.generateMiddleWare(modelClass)
+				val superClasses = modelClass.getESuperTypes()
+				val content = template.generateMiddleWare(modelClass, superClasses)
 				val name = modelClass.getName()
 				val resultFile = srcGenFolder.getFile(modelClass.getName+".java")
 				resultFile.create(new ByteArrayInputStream(content.toString().getBytes()), IResource.FORCE, new NullProgressMonitor())
