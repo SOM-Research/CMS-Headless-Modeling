@@ -17,7 +17,6 @@ import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EReference;
-
 import org.eclipse.emf.ecore.EcoreFactory;
 import org.eclipse.emf.ecore.EcorePackage;
 
@@ -274,7 +273,8 @@ public class WordpressSchemaExtractor {
 		// create a request
 		var request = HttpRequest.newBuilder().uri(URI.create(apiUrl + "/wp-json" + singleResource))
 				.method(method, HttpRequest.BodyPublishers.noBody()).header("accept", "application/json")
-				.header("Authorization", basicAuth(userName, password)).build();
+				.header("Authorization", basicAuth(userName, password))
+				.build();
 
 		// use the client to send the request
 		try {

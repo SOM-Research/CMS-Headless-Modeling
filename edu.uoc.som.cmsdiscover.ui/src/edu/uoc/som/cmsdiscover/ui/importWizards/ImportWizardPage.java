@@ -273,7 +273,7 @@ public class ImportWizardPage extends WizardNewFileCreationPage {
 					.build();
 			request.method();
 			var response = client.send(request, BodyHandlers.ofString());
-			if (response.statusCode() == 200) {
+			if (response.statusCode() == 200 || response.statusCode() == 301) {
 				return true;
 			} else {
 				System.out.println("Has returned status: " + response.statusCode());

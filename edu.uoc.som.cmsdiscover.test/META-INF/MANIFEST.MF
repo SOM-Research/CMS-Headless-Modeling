@@ -1,0 +1,17 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Test
+Bundle-SymbolicName: edu.uoc.som.cmsdiscover.test
+Bundle-Version: 1.0.0.qualifier
+Automatic-Module-Name: edu.uoc.som.cmsdiscover.test
+Bundle-RequiredExecutionEnvironment: JavaSE-11
+Require-Bundle: org.junit;bundle-version="4.13.0",
+ edu.uoc.som.cmsdiscover.generator;bundle-version="1.0.0",
+ org.junit,
+ org.junit.jupiter.api,
+ org.eclipse.xtext.builder;bundle-version="2.22.0",
+ org.eclipse.xtext.generator;bundle-version="2.22.0",
+ edu.uoc.som.cmsdiscover.genericmodel;bundle-version="0.1.0",
+ org.eclipse.emf.ecore.xmi,
+ org.eclipse.core.runtime;bundle-version="3.18.0"
+Import-Package: org.eclipse.xtext.builder
