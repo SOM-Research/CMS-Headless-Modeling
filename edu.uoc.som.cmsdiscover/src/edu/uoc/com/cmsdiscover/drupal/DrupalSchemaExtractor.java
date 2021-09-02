@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.eclipse.emf.ecore.EAnnotation;
 import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EPackage;
@@ -29,22 +30,38 @@ public class DrupalSchemaExtractor {
 	EcorePackage corePackage;
 	EPackage genericModelEPackage;
 	EPackage extendedEPackage;
+	EPackage fieldsEPackage;
 	Map<String, List<String>> genericModelHelper;
 
 	URL apiUrl;
+	String basePath;
 	String userName;
 	String password;
-	String basePath;
-	List<String> resource_paths = null;
 
 	public DrupalSchemaExtractor(URL url, String user, String pass) {
+		
+		coreFactory = EcoreFactory.eINSTANCE;
+		corePackage = EcorePackage.eINSTANCE;
+				
 		// Initialize parameters.
 		apiUrl = url;
 		userName = user;
 		password = pass;
-		coreFactory = EcoreFactory.eINSTANCE;
-		corePackage = EcorePackage.eINSTANCE;
 		extendedEPackage = coreFactory.createEPackage();
+		
+		// Create annotations
+		EAnnotation sourceInformation = coreFactory.createEAnnotation();
+		sourceInformation.setSource("Source CMS information");
+		
+		sourceInformation.getDetails().put("cmsUrl", apiUrl.toString());
+		sourceInformation.getDetails().put("consumerUser", userName);
+		sourceInformation.getDetails().put("consumerPass", password);
+		sourceInformation.getDetails().put("cmsTechnology", "Drupal");
+		extendedEPackage.getEAnnotations().add(sourceInformation);
+		
+		fieldsEPackage = coreFactory.createEPackage();
+		fieldsEPackage.setName("Custom_Attributes");
+		extendedEPackage.getESubpackages().add(fieldsEPackage);
 
 	}
 
@@ -56,6 +73,7 @@ public class DrupalSchemaExtractor {
 	public EPackage ModelExtractor(EPackage genericEPackage, Map<String, List<String>> genericModelHelper) {
 
 		this.genericModelEPackage = genericEPackage;
+		initDynamicEPackage();
 		this.genericModelHelper = genericModelHelper;
 
 		// Read the OpenApi specification in JSON format of the remote site.
@@ -77,7 +95,7 @@ public class DrupalSchemaExtractor {
 				break;
 			}
 			case ("basePath"): {
-				basePath = entryValue.toString();
+				this.basePath = entryValue.toString().replaceAll("\"","");
 				break;
 			}
 			case ("paths"): {
@@ -120,20 +138,21 @@ public class DrupalSchemaExtractor {
 
 			// Get the type of the definition.
 			int iend = definition.getKey().indexOf("--");
-			String definitionType = normalizeDefinition(definition.getKey().substring(0, iend).substring(0, 1).toUpperCase()
-					+ definition.getKey().substring(0, iend).substring(1));
+			String definitionType = definition.getKey().substring(0, iend).substring(0, 1).toUpperCase()
+							+ definition.getKey().substring(0, iend).substring(1);
+			String normalizedType = normalizeDefinition(definitionType);
 			String classTitle = definition.getKey().substring(iend + 2).substring(0, 1).toUpperCase()
 					+ definition.getKey().substring(iend + 2).substring(1);
 
 			// Create Classes with title
-			if (excludeNoContentEntities(definitionType)) {
+			if (excludeNoContentEntities(normalizedType)) {
 				// Create the class.
-				EClass dynamicEClass = createDynamicEClass(classTitle);
+				EClass dynamicEClass = createDynamicEClass(classTitle, definitionType);
 				// Check if has a superType form the generic model and create it.
 				boolean isFromMetamodel = false;
 				List<String> superTypeAttributes = null;
 				for (Map.Entry<String, List<String>> metamodelClasses : genericModelHelper.entrySet()) {
-					if (definitionType.startsWith(metamodelClasses.getKey())) {
+					if (normalizedType.startsWith(metamodelClasses.getKey())) {
 						superTypeAttributes = metamodelClasses.getValue();
 
 						// Add super type
@@ -312,11 +331,19 @@ public class DrupalSchemaExtractor {
 	 * 
 	 * @param title Create EClass dynamically.
 	 */
-	public EClass createDynamicEClass(String title) {
+	public EClass createDynamicEClass(String title, String definitionType) {
 		EClass dynamicEClass = coreFactory.createEClass();
 		dynamicEClass.setName(title);
 		System.out.println("Class created: " + title);
 		
+		String route = this.basePath +"/"+ definitionType.toLowerCase() + "/"+ title.toLowerCase();
+		// Create annotations
+		EAnnotation classInformation = coreFactory.createEAnnotation();
+		classInformation.setSource("Source Resource information");
+	
+		classInformation.getDetails().put("resourceRoute", route);
+		dynamicEClass.getEAnnotations().add(classInformation);
+
 		return dynamicEClass;
 	}
 
@@ -337,8 +364,8 @@ public class DrupalSchemaExtractor {
 				} else {
 					// Is a object with custom DataType.
 					EClass extraDynamicEClass;
-					if (extendedEPackage.getEClassifier(featureName) == null) {
-						extraDynamicEClass = createDynamicEClass(featureName);
+					if (fieldsEPackage.getEClassifier(featureName) == null) {
+						extraDynamicEClass = createDynamicEClass(featureName,"noRoute");
 						JsonObject attributeProperties = featureValues.get("properties").getAsJsonObject();
 						for (Map.Entry<String, JsonElement> singleProperty : attributeProperties.entrySet()) {
 							String propName = singleProperty.getKey();
@@ -346,9 +373,9 @@ public class DrupalSchemaExtractor {
 							EAttribute ExtraAttribute = createDynamicEAttributes(propName, propValues);
 							extraDynamicEClass.getEStructuralFeatures().add(ExtraAttribute);
 						}
-						extendedEPackage.getEClassifiers().add(extraDynamicEClass);
+						fieldsEPackage.getEClassifiers().add(extraDynamicEClass);
 					} else {
-						extraDynamicEClass = (EClass) extendedEPackage.getEClassifier(featureName);
+						extraDynamicEClass = (EClass) fieldsEPackage.getEClassifier(featureName);
 					}
 
 					EReference EReferenceObject = createDynamicEReference(featureName, extraDynamicEClass, true);
@@ -422,16 +449,11 @@ public class DrupalSchemaExtractor {
 	}
 
 	/***
-	 * @param title Create EPackage dynamically
+	 * Create EPackage dynamically
 	 */
-	public void initDynamicEPackage(JsonElement entry) {
-		// Instantiate EPackage and provide unique URI to identify the package
-		// instance
-		JsonObject info = entry.getAsJsonObject();
-		String title = info.get("title").getAsString().replaceAll("-", "_").replaceAll(" ", "_");
-		// We create the extended package
-		extendedEPackage.setName(title);
-		extendedEPackage.setNsPrefix(title);
+	public void initDynamicEPackage() {
+
+	
 	}
 
 	/***
@@ -470,34 +492,34 @@ public class DrupalSchemaExtractor {
 		return null;
 	}
 
-	private String normalizeDefinition(String definitionType) {
+	private String normalizeDefinition(String normalizedType) {
 
-		switch (definitionType) {
+		switch (normalizedType) {
 		case ("Block_content"): {
-			definitionType = "Block";
+			normalizedType = "Block";
 			break;
 		}
 		case ("Contact_message"): {
-			definitionType = "ContactForm";
+			normalizedType = "ContactForm";
 			break;
 		}
 		case ("Node"): {
-			definitionType = "ContentType";
+			normalizedType = "ContentType";
 			break;
 		}
 		case ("Taxonomy_term"): {
-			definitionType = "Taxonomy";
+			normalizedType = "Taxonomy";
 			break;
 		}
 		}
 
-		return definitionType;
+		return normalizedType;
 
 	}
 
-	private boolean excludeNoContentEntities(String definitionType) {
+	private boolean excludeNoContentEntities(String normalizedType) {
 
-		switch (definitionType) {
+		switch (normalizedType) {
 		case ("Path_alias"): {
 			return false;
 		}

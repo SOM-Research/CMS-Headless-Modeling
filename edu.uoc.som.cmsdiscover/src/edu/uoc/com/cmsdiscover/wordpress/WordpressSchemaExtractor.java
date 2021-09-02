@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.eclipse.emf.ecore.EAnnotation;
 import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EPackage;
@@ -38,20 +39,31 @@ public class WordpressSchemaExtractor {
 	String name;
 	String host;
 	String description;
+	String basePath = "/wp-json";
 
 	EPackage genericModelEPackage;
 	Map<String, List<String>> metaModelHelper = new HashMap<String, List<String>>();
 	List<String> namespaces = new ArrayList<String>();
 
 	public WordpressSchemaExtractor(URL url, String user, String pass) {
-		// TODO Auto-generated constructor stub
+
 		apiUrl = url;
 		userName = user;
 		password = pass;
-		// init Ecore.
+		// Init Ecore.
 		coreFactory = EcoreFactory.eINSTANCE;
 		corePackage = EcorePackage.eINSTANCE;
 		extendedEPackage = coreFactory.createEPackage();
+		
+		// Create annotations
+		EAnnotation sourceInformation = coreFactory.createEAnnotation();
+		sourceInformation.setSource("Source CMS information");
+	
+		sourceInformation.getDetails().put("cmsUrl", apiUrl.toString());
+		sourceInformation.getDetails().put("consumerUser", userName);
+		sourceInformation.getDetails().put("consumerPass", password);
+		sourceInformation.getDetails().put("cmsTechnology", "Wordpress");
+		extendedEPackage.getEAnnotations().add(sourceInformation);
 	}
 
 	public EPackage ModelExtractor(EPackage genericEPackage, Map<String, List<String>> genericModelHelper) {
@@ -91,7 +103,6 @@ public class WordpressSchemaExtractor {
 				// Generate the entity model extracting de definitions
 				initDynamicEPackage(name, description);
 				generateEntityModel(entryValue);
-				System.out.println("This");
 				return extendedEPackage;
 			}
 
@@ -140,7 +151,7 @@ public class WordpressSchemaExtractor {
 					if (restBase.contains("Media")) {
 						restBase = "Extended_" + restBase;
 					}
-					extendedPostType = createDynamicEClass(restBase);
+					extendedPostType = createDynamicEClass(restBase, route.getKey());
 					// Get Supports specialitzacion from the post type
 					JsonObject supports = innerResult.getValue().getAsJsonObject().get("supports").getAsJsonObject();
 					extendedPostType = enableSupports(supports, extendedPostType);
@@ -195,7 +206,7 @@ public class WordpressSchemaExtractor {
 					String slugBaseLowerCase = innerResult.getValue().getAsJsonObject().get("slug").getAsString()
 							.replaceAll("-", "_").replaceAll(" ", "_" );
 					String slug = slugBaseLowerCase.substring(0, 1).toUpperCase() + slugBaseLowerCase.substring(1);
-					EClass taxType = createDynamicEClass(slug);
+					EClass taxType = createDynamicEClass(slug, route.getKey());
 
 					String hierarchical = innerResult.getValue().getAsJsonObject().get("hierarchical").getAsString();
 					if (hierarchical.contains("true")) {
@@ -310,14 +321,24 @@ public class WordpressSchemaExtractor {
 		extendedEPackage.setName(name);
 		extendedEPackage.setNsPrefix(name);
 		extendedEPackage.setNsURI(apiUrl.toString());
+		
+	
+		
 	}
 
 	/***
 	 * @param title Create EClass dynamically
 	 */
-	public EClass createDynamicEClass(String title) {
+	public EClass createDynamicEClass(String title, String route) {
 		EClass dynamicEClass = coreFactory.createEClass();
 		dynamicEClass.setName(title);
+		
+		// Create annotations
+		EAnnotation classInformation = coreFactory.createEAnnotation();
+		classInformation.setSource("Source CMS information");
+	
+		classInformation.getDetails().put("resourceURl", this.basePath + route);
+		dynamicEClass.getEAnnotations().add(classInformation);
 		return dynamicEClass;
 	}
 
