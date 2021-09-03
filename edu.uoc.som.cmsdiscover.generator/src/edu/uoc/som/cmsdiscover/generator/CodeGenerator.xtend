@@ -12,25 +12,15 @@ import org.eclipse.emf.ecore.resource.Resource
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl
 import org.eclipse.emf.ecore.xmi.impl.EcoreResourceFactoryImpl
 
+
 class CodeGenerator {
 
-	Template template = new Template
 
+	TestGenerator testGenerator = new TestGenerator
 	EPackage thePackage
-
 	Resource model
-
 	EPackage modelPackage
 	
-	//String cmsUrl
-	
-	//String consumerUser
-	
-	//String consumerPass
-	
-	//String cmsTechnology
-	
-	//EMap<String, String> sourceCmsInformation
 
 	def doGenerate(EPackage input, IFolder srcGenFolder) {
 
@@ -52,11 +42,16 @@ class CodeGenerator {
 					classAnnotation.put(detail.key, detail.value)
 				}
 				// Call the generator
-				val content = template.generateEntitiesClasses(modelClass, classAnnotation, superClasses)
+				val template = new Template(modelClass, classAnnotation, superClasses);
+				val content = template.generateEntitiesClasses()
 				// Create File
 				val resultFile = srcGenFolder.getFile(modelClass.getName+".java")
 				resultFile.create(new ByteArrayInputStream(content.toString().getBytes()), IResource.FORCE, new NullProgressMonitor())
 			}
+			// Generate Manager Class
+			val resultFile = srcGenFolder.getFile("test.java")
+			val testcontent = testGenerator.getTest();
+			resultFile.create(new ByteArrayInputStream(testcontent.toString().getBytes()), IResource.FORCE, new NullProgressMonitor())
 			
 		}
 	}

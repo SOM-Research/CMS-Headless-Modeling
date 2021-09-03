@@ -2,6 +2,7 @@ package edu.uoc.som.cmsdiscover.generator;
 
 import com.google.common.collect.Iterables;
 import edu.uoc.som.cmsdiscover.generator.Template;
+import edu.uoc.som.cmsdiscover.generator.TestGenerator;
 import java.io.ByteArrayInputStream;
 import java.util.Map;
 import org.eclipse.core.resources.IFile;
@@ -25,7 +26,7 @@ import org.eclipse.xtext.xbase.lib.IterableExtensions;
 
 @SuppressWarnings("all")
 public class CodeGenerator {
-  private Template template = new Template();
+  private TestGenerator testGenerator = new TestGenerator();
   
   private EPackage thePackage;
   
@@ -51,7 +52,8 @@ public class CodeGenerator {
             for (final Map.Entry<String, String> detail : sourceCmsInformation) {
               classAnnotation.put(detail.getKey(), detail.getValue());
             }
-            final CharSequence content = this.template.generateEntitiesClasses(modelClass, classAnnotation, superClasses);
+            final Template template = new Template(modelClass, classAnnotation, superClasses);
+            final CharSequence content = template.generateEntitiesClasses();
             String _name = modelClass.getName();
             String _plus = (_name + ".java");
             final IFile resultFile = srcGenFolder.getFile(_plus);
@@ -61,6 +63,12 @@ public class CodeGenerator {
             resultFile.create(_byteArrayInputStream, IResource.FORCE, _nullProgressMonitor);
           }
         }
+        final IFile resultFile = srcGenFolder.getFile("test.java");
+        final CharSequence testcontent = this.testGenerator.getTest();
+        byte[] _bytes = testcontent.toString().getBytes();
+        ByteArrayInputStream _byteArrayInputStream = new ByteArrayInputStream(_bytes);
+        NullProgressMonitor _nullProgressMonitor = new NullProgressMonitor();
+        resultFile.create(_byteArrayInputStream, IResource.FORCE, _nullProgressMonitor);
       }
     } catch (Throwable _e) {
       throw Exceptions.sneakyThrow(_e);

@@ -6,65 +6,70 @@ import org.eclipse.emf.common.util.EList
 import org.eclipse.emf.common.util.EMap
 
 class Template {
-	def generateEntitiesClasses(EClass modelClass, EMap<String, String> Annotations, EList<EClass> superClasses) '''
-	package org.middleware.generator;
+	
+	String cmsTechnology
+	String modelClassName
+	EClass modelClass
+	EList<EAttribute> classAttributes
+	EMap<String, String> Annotations
+	EList<EClass> superClasses
+	
+	new(EClass modelClass, EMap<String, String> Annotations, EList<EClass> superClasses) {
+		this.modelClass = modelClass
+		this.modelClassName = modelClass.getName()
+		this.classAttributes = modelClass.getEAllAttributes()
+		this.Annotations = Annotations
+		this.superClasses = superClasses
+	}
+	
+	
+	def generateEntitiesClasses() '''
 
-	import org.eclipse.emf.ecore.EClass;
-	import org.eclipse.emf.ecore.EAttribute;
+// package org.connector.generator;
+
+
+import java.io.IOException;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse.BodyHandlers;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParser;
+import java.util.Map.Entry;
+import java.util.List;
+import java.util.Arrays;
+import java.util.ArrayList;
 	
-	import java.io.IOException;
-	import java.net.URI;
-	import java.net.URL;
-	import java.net.http.HttpClient;
-	import java.net.http.HttpRequest;
-	import java.net.http.HttpResponse.BodyHandlers;
-	import java.util.ArrayList;
-	import java.util.Base64;
-	import java.util.HashMap;
-	import java.util.List;
-	import java.util.Map;
-	import java.util.Map.Entry;
-	
-	import org.eclipse.emf.ecore.EAttribute;
-	import org.eclipse.emf.ecore.EClass;
-	import org.eclipse.emf.ecore.EPackage;
-	import org.eclipse.emf.ecore.EReference;
-	import org.eclipse.emf.ecore.EcoreFactory;
-	import org.eclipse.emf.ecore.EcorePackage;
-	import org.eclipse.emf.ecore.EObject;
-	import org.eclipse.emf.ecore.EInt;
-	import org.eclipse.emf.ecore.EBoolean;
-	import org.eclipse.emf.ecore.EString;
-	
-	import com.google.gson.JsonArray;
-	import com.google.gson.JsonElement;
-	import com.google.gson.JsonObject;
-	import com.google.gson.JsonParser;
-	
-	public class «modelClass.getName()» extends « IF !superClasses.isEmpty()»« superClasses.get(0).getName()» «ENDIF»{
+public class «this.modelClassName» {
 		
 		// STATIC VALUES
-		«FOR Annotation : Annotations»
-		public static final String «Annotation.getKey()» = "«Annotation.getValue»"
+		«FOR Annotation : this.Annotations»
+		public static final String «Annotation.getKey()» = "«Annotation.getValue»";
+		«IF Annotation.getKey() == "cmsTechnology"»
+		//	«this.cmsTechnology = Annotation.getValue »
+		«ENDIF»
 		«ENDFOR»
 		
+		List<String> attributesList = Arrays.asList(«FOR String attribute : this.classAttributes.map[name] SEPARATOR ","»"«attribute»"«ENDFOR»);
+		
+		
 		// Attributes
-		« FOR EAttribute attribute : modelClass.getEAllAttributes()»
+		« FOR EAttribute attribute : this.classAttributes»
 			«addAttribute(attribute)»
 		«ENDFOR»
 		
-		// Constructor
-		 ««««»»«addConstructor(modelClass)»
-		
-		// Getters & Setters
-		« FOR EAttribute attribute : modelClass.getEAllAttributes()»
-		«ENDFOR»
-		// Main Methods
-		«««»»«addSingleGetter(modelClass)»
-		«addCollectionGetter()»
-		«addRequester()»
 
-	}
+		// Main Methods
+		«addCollectionGetter()»
+		«addSingleGetter()»
+		
+		«addRequester()»
+		
+		«mapDrupalAnswer()»
+		
+		«mapWordpressAnswer()»
+		
+}
 	'''
 	
 	def addConstructor(EClass entity) '''
@@ -76,41 +81,110 @@ class Template {
 		  // Technology type
 		}
 	'''
-
 	
-	def addGetter(EAttribute attribute) '''
-		public Entity get«attribute.getEAttributeType().getName()» () {
-			return this.«attribute.getEAttributeType().getName()»;
-		}
-	'''
-	def addSetter(EAttribute attribute) '''
-		public Entity get«attribute.getEAttributeType().getName()» (String «attribute.getEAttributeType().getName()» ) {
-			this.«attribute.getEAttributeType().getName()» = «attribute.getEAttributeType().getName()» 
-		}
-	'''
-	
-	def addSingleGetter(EClass modelClass) '''
-		public «modelClass.getName()» get«modelClass.getName()»(String entityID) {
-			// request (URL, Resource + name)
-			JsonElement answer = ResourceRequest(this.endpoint, "GET")
-			// map()
-			return List<Entity>
+	def addSingleGetter() '''
+	public «this.modelClassName» getSingle(String Id) {
+			JsonElement answer = ResourceRequest("/"+Id,"GET");
+			«this.modelClassName» return«this.modelClassName» = null;
+			if (this.cmsTechnology.contains("Drupal")) {
+				return«this.modelClassName» = mapSingleDrupalAnswer(answer); 
+			} else {
+				//return«this.modelClassName» = mapWordpressAnswer(answer); 
+			}
+			return return«this.modelClassName»;
 		}
 	'''
 	
 	def addCollectionGetter() '''
-	public List<Entity> getCollection() {
+	public List<«this.modelClassName»> getCollection() {
 		JsonElement answer = ResourceRequest("","GET");
-		System.out.println(answer);
-		// request (URL, Resource + name)
-		// For answer : aswers
-		// map()
-		return List<Entity>
+		List<«this.modelClassName»> «this.modelClassName»Collection;
+		if (this.cmsTechnology.contains("Drupal")) {
+			«this.modelClassName»Collection = mapDrupalAnswer(answer); 
+		} else {
+			«this.modelClassName»Collection = mapWordpressAnswer(answer); 
+		}
+		return «this.modelClassName»Collection;
 	}
 	'''
 	
+	def mapWordpressAnswer() '''
+	public List<«this.modelClassName»> mapWordpressAnswer(JsonElement answer) {
+		List<«this.modelClassName»> «this.modelClassName»Collection = null;
+		return «this.modelClassName»Collection;
+	}
+	'''
+	
+	def mapDrupalAnswer() '''
+	
+	public List<«this.modelClassName»> mapDrupalAnswer(JsonElement answer) {
+		
+		List<«this.modelClassName»> «this.modelClassName»Collection = new ArrayList<«this.modelClassName»>();
+		answer.getAsJsonObject().get("data").getAsJsonArray().forEach((content) -> {
+			«this.modelClassName» returnInstance = new «this.modelClassName»();
+			for (Entry<String, JsonElement> element : content.getAsJsonObject().entrySet()) {
+				if (element.getKey().contains("id")) {
+					returnInstance.uuid = element.getValue().toString().replaceAll("\"","");
+				}
+				if(element.getKey().contains("attributes")) {
+					for( Entry<String, JsonElement> attribute: element.getValue().getAsJsonObject().entrySet()) {
+						System.out.println(attribute.getKey()+": "+attribute.getValue());
+						« val names = this.classAttributes.map[name]»
+						« FOR EAttribute attribute: this.classAttributes »
+							
+							if(attribute.getKey().equals("«attribute.getName()»")) {
+							 returnInstance.«attribute.getName()» = attribute.getValue().toString();
+							}
+						«ENDFOR»
+						if(element.getValue().getAsJsonObject().get("drupal_internal__nid") != null) {
+							// returnInstance.contentId = element.getValue().getAsJsonObject().get("drupal_internal__nid").getAsJsonObject().get("value").toString();
+						}
+					}
+				}
+			}
+			«this.modelClassName»Collection.add(returnInstance);
+		});
+		
+		
+		return «this.modelClassName»Collection;
+		
+	}
+	
+	public «this.modelClassName» mapSingleDrupalAnswer(JsonElement answer) {
+		
+			«this.modelClassName» returnInstance = new «this.modelClassName»();
+			for (Entry<String, JsonElement> content: answer.getAsJsonObject().entrySet()) {
+				if (content.getKey().equals("data")) {
+					for (Entry<String, JsonElement> element : content.getValue().getAsJsonObject().entrySet()) {
+						if (element.getKey().contains("id")) {
+							returnInstance.uuid = element.getValue().toString().replaceAll("\"","");
+						}
+						if(element.getKey().contains("attributes")) {
+							for( Entry<String, JsonElement> attribute: element.getValue().getAsJsonObject().entrySet()) {
+								System.out.println(attribute.getKey()+": "+attribute.getValue());
+								« FOR EAttribute attribute: this.classAttributes »
+									if(attribute.getKey().equals("«attribute.getName()»")) {
+									 returnInstance.«attribute.getName()» = attribute.getValue().toString();
+									}
+								«ENDFOR»
+								if(element.getValue().getAsJsonObject().get("drupal_internal__nid") != null) {
+									// returnInstance.contentId = element.getValue().getAsJsonObject().get("drupal_internal__nid").getAsJsonObject().get("value").toString();
+								}
+							}
+						}
+					}
+				}
+			}
+		return returnInstance;
+		
+	}
+	'''
+	
+	
+	
 	def addAttribute(EAttribute attribute) '''
-		private «attribute.getEAttributeType().getName()» «attribute.getName()» ;
+	«««private «attribute.getEAttributeType().getInstanceClass().getName()» «attribute.getName()»;vate «attribute.getEAttributeType().getInstanceClass().getName()» «attribute.getName()»;
+	public String «attribute.getName()»;
 	'''
 	
 	def addRequester() '''

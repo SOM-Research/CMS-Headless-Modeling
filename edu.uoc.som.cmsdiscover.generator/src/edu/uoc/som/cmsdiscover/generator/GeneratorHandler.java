@@ -14,12 +14,12 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.handlers.HandlerUtil;
 
+
 public class GeneratorHandler extends AbstractHandler implements IHandler {
 
 	
 	private CodeGenerator generator = new CodeGenerator();
 
-	
 	
 
 	@Override
@@ -32,13 +32,31 @@ public class GeneratorHandler extends AbstractHandler implements IHandler {
 			if (firstElement instanceof IFile) {
 				IFile file = (IFile) firstElement;
 				IProject project = file.getProject();
-				IFolder srcGenFolder = project.getFolder("generator");
+				IFolder srcGenFolder = project.getFolder("src-gen");
 				if (!srcGenFolder.exists()) {
 					try {
 						srcGenFolder.create(true, true, new NullProgressMonitor());
+						srcGenFolder = srcGenFolder.getFolder("connector");
+						srcGenFolder.create(true, true,new NullProgressMonitor());
+						srcGenFolder = srcGenFolder.getFolder("generator");
+						srcGenFolder.create(true, true,new NullProgressMonitor());
 					} catch (CoreException e) {
+						e.getCause();
 						return null;
 					}
+				} else {
+					try {
+						srcGenFolder = srcGenFolder.getFolder("connector");
+						if (!srcGenFolder.exists()) { 
+							srcGenFolder.create(true, true,new NullProgressMonitor());
+							srcGenFolder = srcGenFolder =srcGenFolder.getFolder("generator");
+							srcGenFolder.create(true, true,new NullProgressMonitor());
+						}
+					} catch (CoreException e) {
+						e.getCause();
+						return null;
+					}
+					
 				}
 
 				EPackage extendedModel = generator.loadModel(file.getFullPath());		
