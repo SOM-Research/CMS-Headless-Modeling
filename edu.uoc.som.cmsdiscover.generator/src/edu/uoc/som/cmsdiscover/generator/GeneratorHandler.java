@@ -1,7 +1,5 @@
 package edu.uoc.som.cmsdiscover.generator;
 
-import java.io.ByteArrayInputStream;
-
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
@@ -9,23 +7,12 @@ import org.eclipse.core.commands.IHandler;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.emf.ecore.EPackage;
-import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.handlers.HandlerUtil;
-import org.eclipse.xtext.builder.EclipseResourceFileSystemAccess2;
-import org.eclipse.xtext.generator.IFileSystemAccess;
-import org.eclipse.xtext.generator.IGenerator;
-import org.eclipse.xtext.parser.IEncodingProvider;
-import org.eclipse.xtext.service.AbstractGenericModule;
-import com.google.inject.Guice;
-import com.google.inject.Inject;
-import com.google.inject.Provider;
-import org.eclipse.core.runtime.IProgressMonitor;
 
 public class GeneratorHandler extends AbstractHandler implements IHandler {
 

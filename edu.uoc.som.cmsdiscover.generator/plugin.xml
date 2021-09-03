@@ -35,8 +35,7 @@
          point="org.eclipse.ui.commands">
       <command
             id="edu.uoc.som.cmsdiscover.generator.Generation"
-            name="CMS Generator"
-            label="Generate CMS">
+            name="CMS Generator">
       </command>
    </extension>
    <extension

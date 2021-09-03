@@ -12,7 +12,6 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse.BodyHandlers;
 
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.preference.FileFieldEditor;
@@ -66,15 +65,13 @@ public class ImportWizardPage extends WizardNewFileCreationPage {
 		container.setLayout(layout);
 		layout.numColumns = 2;
 
+		// Create radios
 		Label labelRadio = new Label(container, SWT.NONE);
 		labelRadio.setText("Which technology are powering your CMS: ");
-
-		// Create radios
 		Group techGroup = new Group(container, SWT.NONE);
 		techGroup.setLayout(new RowLayout(SWT.HORIZONTAL));
 		buttonWp = new Button(techGroup, SWT.RADIO);
 		buttonWp.setText("Wordpress");
-
 		InputStream input = ImportWizardPage.class.getResourceAsStream("/icons/wordpress.png");
 		Image image = new Image(null, input);
 		final Image scaledWp = new Image(null, image.getImageData().scaledTo((int) (30), (int) (30)));
@@ -82,21 +79,19 @@ public class ImportWizardPage extends WizardNewFileCreationPage {
 
 		buttonDrupal = new Button(techGroup, SWT.RADIO);
 		buttonDrupal.setText("Drupal");
-
 		InputStream inputDru = ImportWizardPage.class.getResourceAsStream("/icons/drupal.png");
 		Image imageDru = new Image(null, inputDru);
 		final Image scaledDru = new Image(null, imageDru.getImageData().scaledTo((int) (30), (int) (30)));
 		buttonDrupal.setImage(scaledDru);
-		// buttonDrupal.setImage(imageDru);
 
+		// The URL
 		Label label1 = new Label(container, SWT.NONE);
 		label1.setText("Set the URL: (https://myurl.domain) ");
 		url = new Text(container, SWT.BORDER | SWT.SINGLE);
 		url.setText("");
 		urlValidation = false;
 
-	
-
+		// User & Password
 		Label label2 = new Label(container, SWT.NONE);
 		label2.setText("User: ");
 		user = new Text(container, SWT.BORDER | SWT.SINGLE);
@@ -107,9 +102,11 @@ public class ImportWizardPage extends WizardNewFileCreationPage {
 		pass = new Text(container, SWT.BORDER | SWT.PASSWORD);
 		pass.setText("");
 
-		String Workspace = ResourcesPlugin.getWorkspace().getRoot().getLocation().toString();
-		System.out.println("VAMOSSS:  " + Workspace);
-		File[] directories = new File(Workspace).listFiles(File::isDirectory);
+		// String Workspace =
+		// ResourcesPlugin.getWorkspace().getRoot().getLocation().toString();
+		// File[] directories = new File(Workspace).listFiles(File::isDirectory);
+
+		// URL Listener
 		url.addFocusListener(new FocusListener() {
 			public void focusGained(FocusEvent event) {
 
@@ -135,7 +132,7 @@ public class ImportWizardPage extends WizardNewFileCreationPage {
 									messageBox.setMessage("Please check your URL");
 									int result = messageBox.open();
 								}
-						
+
 							}
 						});
 					}
@@ -154,8 +151,7 @@ public class ImportWizardPage extends WizardNewFileCreationPage {
 			@Override
 			public void keyReleased(KeyEvent e) {
 				if (urlValidation && (buttonDrupal.getSelection() || buttonWp.getSelection())) {
-					//setPageComplete(true);
-
+					// setPageComplete(true);
 				}
 			}
 
@@ -197,11 +193,9 @@ public class ImportWizardPage extends WizardNewFileCreationPage {
 		// required to avoid an error in the system
 		setControl(container);
 		setPageComplete(false);
-		
 
 	}
 
-	
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -269,8 +263,7 @@ public class ImportWizardPage extends WizardNewFileCreationPage {
 			URL passUrl = new URL(url);
 			URI uri = URI.create(url);
 			// create a request
-			var request = HttpRequest.newBuilder().uri(uri).method("GET", HttpRequest.BodyPublishers.noBody())
-					.build();
+			var request = HttpRequest.newBuilder().uri(uri).method("GET", HttpRequest.BodyPublishers.noBody()).build();
 			request.method();
 			var response = client.send(request, BodyHandlers.ofString());
 			if (response.statusCode() == 200 || response.statusCode() == 301) {
@@ -282,14 +275,14 @@ public class ImportWizardPage extends WizardNewFileCreationPage {
 
 		} catch (MalformedURLException e) {
 			return false;
-			
+
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
-			//e.printStackTrace();
+			// e.printStackTrace();
 			return false;
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
-			//e.printStackTrace();
+			// e.printStackTrace();
 			return false;
 		}
 	}

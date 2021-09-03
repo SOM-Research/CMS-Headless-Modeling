@@ -1,31 +1,27 @@
 package edu.uoc.som.cmsdiscover.test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.fail;
 
-import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
-import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.eclipse.emf.ecore.xmi.impl.EcoreResourceFactoryImpl;
-import org.eclipse.xtext.builder.EclipseResourceFileSystemAccess2;
 import org.junit.jupiter.api.Test;
-import edu.uoc.som.cmsdiscover.generator.*;
-import org.eclipse.core.runtime.Path;
+
+import edu.uoc.som.cmsdiscover.generator.CodeGenerator;
 
 class GeneratorBasicTest {
 
 	@Test
 	void test() {
-		final EclipseResourceFileSystemAccess2 fsa = new EclipseResourceFileSystemAccess2();
-		fsa.setOutputPath("./src-gen");
+
 		CodeGenerator generator = new CodeGenerator();
 		
 		Resource.Factory.Registry.INSTANCE.getExtensionToFactoryMap().put("ecore", new EcoreResourceFactoryImpl());
