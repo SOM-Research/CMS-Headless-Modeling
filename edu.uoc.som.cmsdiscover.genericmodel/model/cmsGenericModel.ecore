@@ -89,7 +89,7 @@
   </eSubpackages>
   <eSubpackages name="user" nsURI="http://edu.uoc.som.cmsdiscoverer.genericmodel.user"
       nsPrefix="user">
-    <eClassifiers xsi:type="ecore:EClass" name="User">
+    <eClassifiers xsi:type="ecore:EClass" name="User" eSuperTypes="#//ContentEntity">
       <eStructuralFeatures xsi:type="ecore:EAttribute" name="uid" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"/>
       <eStructuralFeatures xsi:type="ecore:EAttribute" name="langcode" upperBound="-1"
           eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>

@@ -528,6 +528,7 @@ public class UserPackageImpl extends EPackageImpl implements UserPackage {
 		// Set bounds for type parameters
 
 		// Add supertypes to classes
+		userEClass.getESuperTypes().add(theGenericModelPackage.getContentEntity());
 		contactFormEClass.getESuperTypes().add(theGenericModelPackage.getContentEntity());
 
 		// Initialize classes and features; add operations and parameters

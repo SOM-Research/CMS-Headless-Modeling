@@ -27,7 +27,7 @@
    <extension point="org.eclipse.emf.ecore.generated_package">
       <!-- @generated cmsGenericModel -->
       <package
-            uri="http://user"
+            uri="http://edu.uoc.som.cmsdiscoverer.genericmodel.user"
             class="edu.uoc.som.cmsdiscover.GenericModel.user.UserPackage"
             genModel="model/cmsGenericModel.genmodel"/>
    </extension>
@@ -35,7 +35,7 @@
    <extension point="org.eclipse.emf.ecore.generated_package">
       <!-- @generated cmsGenericModel -->
       <package
-            uri="http://workflowmodel"
+            uri="http://edu.uoc.som.cmsdiscoverer.genericmodel.features.moderation"
             class="edu.uoc.som.cmsdiscover.GenericModel.features.moderation.ModerationPackage"
             genModel="model/cmsGenericModel.genmodel"/>
    </extension>
@@ -43,7 +43,7 @@
    <extension point="org.eclipse.emf.ecore.generated_package">
       <!-- @generated cmsGenericModel -->
       <package
-            uri="revisions"
+            uri="http://edu.uoc.som.cmsdiscoverer.genericmodel.features.revisions"
             class="edu.uoc.som.cmsdiscover.GenericModel.features.revisions.RevisionsPackage"
             genModel="model/cmsGenericModel.genmodel"/>
    </extension>
@@ -51,7 +51,7 @@
    <extension point="org.eclipse.emf.ecore.generated_package">
       <!-- @generated cmsGenericModel -->
       <package
-            uri="translations"
+            uri="http://edu.uoc.som.cmsdiscoverer.genericmodel.features.translations"
             class="edu.uoc.som.cmsdiscover.GenericModel.features.translations.TranslationsPackage"
             genModel="model/cmsGenericModel.genmodel"/>
    </extension>

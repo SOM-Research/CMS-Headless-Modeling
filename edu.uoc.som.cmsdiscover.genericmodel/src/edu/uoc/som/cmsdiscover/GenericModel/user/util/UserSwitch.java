@@ -71,6 +71,7 @@ public class UserSwitch<T> extends Switch<T> {
 			case UserPackage.USER: {
 				User user = (User)theEObject;
 				T result = caseUser(user);
+				if (result == null) result = caseContentEntity(user);
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}

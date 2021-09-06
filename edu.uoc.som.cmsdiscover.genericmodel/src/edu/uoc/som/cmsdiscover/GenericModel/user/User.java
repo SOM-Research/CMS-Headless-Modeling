@@ -2,11 +2,10 @@
  */
 package edu.uoc.som.cmsdiscover.GenericModel.user;
 
+import edu.uoc.som.cmsdiscover.GenericModel.ContentEntity;
 import java.util.Date;
 
 import org.eclipse.emf.common.util.EList;
-
-import org.eclipse.emf.ecore.EObject;
 
 /**
  * <!-- begin-user-doc -->
@@ -39,7 +38,7 @@ import org.eclipse.emf.ecore.EObject;
  * @model
  * @generated
  */
-public interface User extends EObject {
+public interface User extends ContentEntity {
 	/**
 	 * Returns the value of the '<em><b>Uid</b></em>' attribute.
 	 * <!-- begin-user-doc -->

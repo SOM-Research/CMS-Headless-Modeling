@@ -28,3 +28,4 @@ Export-Package: edu.uoc.som.cmsdiscover.GenericModel,
  edu.uoc.som.cmsdiscover.GenericModel.util
 Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.emf.ecore;visibility:=reexport
+Bundle-ActivationPolicy: lazy

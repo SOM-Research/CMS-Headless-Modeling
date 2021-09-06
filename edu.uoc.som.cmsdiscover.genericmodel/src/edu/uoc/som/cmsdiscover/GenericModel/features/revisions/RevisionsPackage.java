@@ -39,7 +39,7 @@ public interface RevisionsPackage extends EPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	String eNS_URI = "revisions";
+	String eNS_URI = "http://edu.uoc.som.cmsdiscoverer.genericmodel.features.revisions";
 
 	/**
 	 * The package namespace name.

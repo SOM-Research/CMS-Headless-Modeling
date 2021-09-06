@@ -36,7 +36,7 @@ public interface TranslationsPackage extends EPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	String eNS_URI = "translations";
+	String eNS_URI = "http://edu.uoc.som.cmsdiscoverer.genericmodel.features.translations";
 
 	/**
 	 * The package namespace name.

@@ -39,7 +39,7 @@ public interface UserPackage extends EPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	String eNS_URI = "http://user";
+	String eNS_URI = "http://edu.uoc.som.cmsdiscoverer.genericmodel.user";
 
 	/**
 	 * The package namespace name.
@@ -68,13 +68,22 @@ public interface UserPackage extends EPackage {
 	int USER = 0;
 
 	/**
+	 * The feature id for the '<em><b>Uuid</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int USER__UUID = GenericModelPackage.CONTENT_ENTITY__UUID;
+
+	/**
 	 * The feature id for the '<em><b>Uid</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int USER__UID = 0;
+	int USER__UID = GenericModelPackage.CONTENT_ENTITY_FEATURE_COUNT + 0;
 
 	/**
 	 * The feature id for the '<em><b>Langcode</b></em>' attribute list.
@@ -83,7 +92,7 @@ public interface UserPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int USER__LANGCODE = 1;
+	int USER__LANGCODE = GenericModelPackage.CONTENT_ENTITY_FEATURE_COUNT + 1;
 
 	/**
 	 * The feature id for the '<em><b>Preferred langcode</b></em>' attribute list.
@@ -92,7 +101,7 @@ public interface UserPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int USER__PREFERRED_LANGCODE = 2;
+	int USER__PREFERRED_LANGCODE = GenericModelPackage.CONTENT_ENTITY_FEATURE_COUNT + 2;
 
 	/**
 	 * The feature id for the '<em><b>Preferred admin langcode</b></em>' attribute list.
@@ -101,7 +110,7 @@ public interface UserPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int USER__PREFERRED_ADMIN_LANGCODE = 3;
+	int USER__PREFERRED_ADMIN_LANGCODE = GenericModelPackage.CONTENT_ENTITY_FEATURE_COUNT + 3;
 
 	/**
 	 * The feature id for the '<em><b>Name</b></em>' attribute.
@@ -110,7 +119,7 @@ public interface UserPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int USER__NAME = 4;
+	int USER__NAME = GenericModelPackage.CONTENT_ENTITY_FEATURE_COUNT + 4;
 
 	/**
 	 * The feature id for the '<em><b>Pass</b></em>' attribute.
@@ -119,7 +128,7 @@ public interface UserPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int USER__PASS = 5;
+	int USER__PASS = GenericModelPackage.CONTENT_ENTITY_FEATURE_COUNT + 5;
 
 	/**
 	 * The feature id for the '<em><b>Mail</b></em>' attribute.
@@ -128,7 +137,7 @@ public interface UserPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int USER__MAIL = 6;
+	int USER__MAIL = GenericModelPackage.CONTENT_ENTITY_FEATURE_COUNT + 6;
 
 	/**
 	 * The feature id for the '<em><b>Timezone</b></em>' attribute.
@@ -137,7 +146,7 @@ public interface UserPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int USER__TIMEZONE = 7;
+	int USER__TIMEZONE = GenericModelPackage.CONTENT_ENTITY_FEATURE_COUNT + 7;
 
 	/**
 	 * The feature id for the '<em><b>Status</b></em>' attribute.
@@ -146,7 +155,7 @@ public interface UserPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int USER__STATUS = 8;
+	int USER__STATUS = GenericModelPackage.CONTENT_ENTITY_FEATURE_COUNT + 8;
 
 	/**
 	 * The feature id for the '<em><b>Changed</b></em>' attribute.
@@ -155,7 +164,7 @@ public interface UserPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int USER__CHANGED = 9;
+	int USER__CHANGED = GenericModelPackage.CONTENT_ENTITY_FEATURE_COUNT + 9;
 
 	/**
 	 * The feature id for the '<em><b>Access</b></em>' attribute.
@@ -164,7 +173,7 @@ public interface UserPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int USER__ACCESS = 10;
+	int USER__ACCESS = GenericModelPackage.CONTENT_ENTITY_FEATURE_COUNT + 10;
 
 	/**
 	 * The feature id for the '<em><b>Login</b></em>' attribute.
@@ -173,7 +182,7 @@ public interface UserPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int USER__LOGIN = 11;
+	int USER__LOGIN = GenericModelPackage.CONTENT_ENTITY_FEATURE_COUNT + 11;
 
 	/**
 	 * The feature id for the '<em><b>Init</b></em>' attribute.
@@ -182,7 +191,7 @@ public interface UserPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int USER__INIT = 12;
+	int USER__INIT = GenericModelPackage.CONTENT_ENTITY_FEATURE_COUNT + 12;
 
 	/**
 	 * The feature id for the '<em><b>Created</b></em>' attribute.
@@ -191,7 +200,7 @@ public interface UserPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int USER__CREATED = 13;
+	int USER__CREATED = GenericModelPackage.CONTENT_ENTITY_FEATURE_COUNT + 13;
 
 	/**
 	 * The feature id for the '<em><b>Default langcode</b></em>' attribute list.
@@ -200,7 +209,7 @@ public interface UserPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int USER__DEFAULT_LANGCODE = 14;
+	int USER__DEFAULT_LANGCODE = GenericModelPackage.CONTENT_ENTITY_FEATURE_COUNT + 14;
 
 	/**
 	 * The feature id for the '<em><b>Roles</b></em>' reference list.
@@ -209,7 +218,7 @@ public interface UserPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int USER__ROLES = 15;
+	int USER__ROLES = GenericModelPackage.CONTENT_ENTITY_FEATURE_COUNT + 15;
 
 	/**
 	 * The number of structural features of the '<em>User</em>' class.
@@ -218,7 +227,7 @@ public interface UserPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int USER_FEATURE_COUNT = 16;
+	int USER_FEATURE_COUNT = GenericModelPackage.CONTENT_ENTITY_FEATURE_COUNT + 16;
 
 	/**
 	 * The meta object id for the '{@link edu.uoc.som.cmsdiscover.GenericModel.user.impl.RolesImpl <em>Roles</em>}' class.

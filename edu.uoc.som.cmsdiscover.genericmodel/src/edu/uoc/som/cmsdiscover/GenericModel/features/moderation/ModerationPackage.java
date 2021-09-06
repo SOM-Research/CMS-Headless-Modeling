@@ -39,7 +39,7 @@ public interface ModerationPackage extends EPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	String eNS_URI = "http://workflowmodel";
+	String eNS_URI = "http://edu.uoc.som.cmsdiscoverer.genericmodel.features.moderation";
 
 	/**
 	 * The package namespace name.
