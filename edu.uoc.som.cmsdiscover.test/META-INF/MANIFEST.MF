@@ -11,5 +11,6 @@ Require-Bundle: org.junit;bundle-version="4.13.0",
  edu.uoc.som.cmsdiscover.genericmodel;bundle-version="0.1.0",
  org.eclipse.emf.ecore.xmi,
  org.eclipse.core.runtime;bundle-version="3.18.0",
- org.junit.jupiter.api;bundle-version="5.6.0"
+ org.junit.jupiter.api;bundle-version="5.6.0",
+ org.eclipse.core.resources;bundle-version="3.13.700"
 Import-Package: org.eclipse.core.resources

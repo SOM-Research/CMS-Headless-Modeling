@@ -39,26 +39,26 @@ public class DrupalSchemaExtractor {
 	String password;
 
 	public DrupalSchemaExtractor(URL url, String user, String pass) {
-		
+
 		coreFactory = EcoreFactory.eINSTANCE;
 		corePackage = EcorePackage.eINSTANCE;
-				
+
 		// Initialize parameters.
 		apiUrl = url;
 		userName = user;
 		password = pass;
 		extendedEPackage = coreFactory.createEPackage();
-		
+
 		// Create annotations
 		EAnnotation sourceInformation = coreFactory.createEAnnotation();
 		sourceInformation.setSource("Source CMS information");
-		
+
 		sourceInformation.getDetails().put("cmsUrl", apiUrl.toString());
 		sourceInformation.getDetails().put("consumerUser", userName);
 		sourceInformation.getDetails().put("consumerPass", password);
 		sourceInformation.getDetails().put("cmsTechnology", "Drupal");
 		extendedEPackage.getEAnnotations().add(sourceInformation);
-		
+
 		fieldsEPackage = coreFactory.createEPackage();
 		fieldsEPackage.setName("Custom_Attributes");
 		extendedEPackage.getESubpackages().add(fieldsEPackage);
@@ -95,7 +95,7 @@ public class DrupalSchemaExtractor {
 				break;
 			}
 			case ("basePath"): {
-				this.basePath = entryValue.toString().replaceAll("\"","");
+				this.basePath = entryValue.toString().replaceAll("\"", "");
 				break;
 			}
 			case ("paths"): {
@@ -139,7 +139,7 @@ public class DrupalSchemaExtractor {
 			// Get the type of the definition.
 			int iend = definition.getKey().indexOf("--");
 			String definitionType = definition.getKey().substring(0, iend).substring(0, 1).toUpperCase()
-							+ definition.getKey().substring(0, iend).substring(1);
+					+ definition.getKey().substring(0, iend).substring(1);
 			String normalizedType = normalizeDefinition(definitionType);
 			String classTitle = definition.getKey().substring(iend + 2).substring(0, 1).toUpperCase()
 					+ definition.getKey().substring(iend + 2).substring(1);
@@ -209,6 +209,8 @@ public class DrupalSchemaExtractor {
 	 * @param definitions Model the relationships between the detected entities
 	 */
 	public void extractRelationships(JsonElement definitions) {
+		
+		String referencedClass = "";
 
 		// Iterate again over definitions and create EReferences.
 		for (
@@ -252,7 +254,7 @@ public class DrupalSchemaExtractor {
 					JsonObject properties = propertiesJson.getAsJsonObject("properties");
 					for (Map.Entry<String, JsonElement> singleProp : properties.entrySet()) {
 						String referencedClassLowerCase;
-						String referencedClass;
+					
 						if (singleProp.getKey().startsWith("pid")) {
 							referencedClass = classTitle;
 						} else if (singleProp.getKey().startsWith("entity_id")) {
@@ -263,23 +265,17 @@ public class DrupalSchemaExtractor {
 							if (referencedClass_temp.get("type").getAsString().startsWith("array")) {
 								referencedClassLowerCase = referencedClass_temp.get("items").getAsJsonObject()
 										.get("properties").getAsJsonObject().get("type").getAsJsonObject().get("enum")
-										.getAsString().replaceAll("--", "_");
-								int index = referencedClassLowerCase.indexOf("--");
-								// Get the custom name of the definition.
-								referencedClass = referencedClassLowerCase.substring(index + 2).substring(0, 1)
-										.toUpperCase() + referencedClassLowerCase.substring(index + 2).substring(1);
+										.getAsString();
+								
 							} else {
 								referencedClassLowerCase = referencedClass_temp.get("properties").getAsJsonObject()
 										.get("type").getAsJsonObject().get("enum").getAsString()
 										.replaceAll("file--", "").replaceAll("user--", "")
-										.replaceAll("contact_form--", "").replaceAll("--", "_");
+										.replaceAll("contact_form--", "");
+							}
 								int index = referencedClassLowerCase.indexOf("--");
-								// Get the custom name of the definition.
 								referencedClass = referencedClassLowerCase.substring(index + 2).substring(0, 1)
 										.toUpperCase() + referencedClassLowerCase.substring(index + 2).substring(1);
-							}
-							referencedClass = referencedClassLowerCase.substring(0, 1).toUpperCase()
-									+ referencedClassLowerCase.substring(1);
 						}
 
 						// Check if the referenced class is present in the model or in the generic
@@ -335,12 +331,12 @@ public class DrupalSchemaExtractor {
 		EClass dynamicEClass = coreFactory.createEClass();
 		dynamicEClass.setName(title);
 		System.out.println("Class created: " + title);
-		
-		String route = this.basePath +"/"+ definitionType.toLowerCase() + "/"+ title.toLowerCase();
+
+		String route = this.basePath + "/" + definitionType.toLowerCase() + "/" + title.toLowerCase();
 		// Create annotations
 		EAnnotation classInformation = coreFactory.createEAnnotation();
 		classInformation.setSource("Source Resource information");
-	
+
 		classInformation.getDetails().put("resourceRoute", route);
 		dynamicEClass.getEAnnotations().add(classInformation);
 
@@ -365,7 +361,7 @@ public class DrupalSchemaExtractor {
 					// Is a object with custom DataType.
 					EClass extraDynamicEClass;
 					if (fieldsEPackage.getEClassifier(featureName) == null) {
-						extraDynamicEClass = createDynamicEClass(featureName,"noRoute");
+						extraDynamicEClass = createDynamicEClass(featureName, "noRoute");
 						JsonObject attributeProperties = featureValues.get("properties").getAsJsonObject();
 						for (Map.Entry<String, JsonElement> singleProperty : attributeProperties.entrySet()) {
 							String propName = singleProperty.getKey();
@@ -453,7 +449,6 @@ public class DrupalSchemaExtractor {
 	 */
 	public void initDynamicEPackage() {
 
-	
 	}
 
 	/***

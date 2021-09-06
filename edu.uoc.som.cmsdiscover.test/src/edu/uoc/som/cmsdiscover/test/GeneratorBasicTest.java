@@ -3,6 +3,8 @@ package edu.uoc.som.cmsdiscover.test;
 import static org.junit.jupiter.api.Assertions.fail;
 
 import org.eclipse.core.resources.IFolder;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
@@ -30,8 +32,12 @@ class GeneratorBasicTest {
 		Resource model = resourceSet.getResource(file, true);
 		EPackage input = (EPackage) model.getContents().get(0);
 		
+		
 		// HERE
-		IFolder srcGenFolder = ResourcesPlugin.getWorkspace().getRoot().getFolder(new Path(System.getProperty("user.dir")+"/src-gen"));		
+		IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject();
+		IWorkspaceRoot srcFolder = ResourcesPlugin.getWorkspace().getRoot();
+	
+		IFolder srcGenFolder = srcFolder.getFolder(srcFolder.getLocation().append("generator"));
 		if (!srcGenFolder.exists()) {
 			try {
 				srcGenFolder.create(true, true, new NullProgressMonitor());
@@ -39,7 +45,7 @@ class GeneratorBasicTest {
 				
 			}
 		}
-		generator.doGenerate(input, srcGenFolder);
+		//generator.doGenerate(input, srcGenFolder);
 		fail("Not yet implemented");
 	}
 

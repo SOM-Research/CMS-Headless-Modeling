@@ -7,12 +7,14 @@ import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.common.util.EMap;
 import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
+import org.eclipse.emf.ecore.EReference;
 import org.eclipse.xtend2.lib.StringConcatenation;
 import org.eclipse.xtext.xbase.lib.Functions.Function1;
+import org.eclipse.xtext.xbase.lib.IterableExtensions;
 import org.eclipse.xtext.xbase.lib.ListExtensions;
 
 @SuppressWarnings("all")
-public class Template {
+public class EntityTemplate {
   private String cmsTechnology;
   
   private String modelClassName;
@@ -21,23 +23,30 @@ public class Template {
   
   private EList<EAttribute> classAttributes;
   
+  private EList<EReference> classReferences;
+  
   private EMap<String, String> Annotations;
   
-  private EList<EClass> superClasses;
+  private Iterable<String> modelClasses;
   
-  public Template(final EClass modelClass, final EMap<String, String> Annotations, final EList<EClass> superClasses) {
+  private String packageName;
+  
+  public EntityTemplate(final EClass modelClass, final EMap<String, String> Annotations, final Iterable<String> modelClasses, final String packageName) {
     this.modelClass = modelClass;
     this.modelClassName = modelClass.getName();
     this.classAttributes = modelClass.getEAllAttributes();
+    this.classReferences = modelClass.getEAllReferences();
     this.Annotations = Annotations;
-    this.superClasses = superClasses;
+    this.modelClasses = modelClasses;
+    this.packageName = packageName;
   }
   
   public CharSequence generateEntitiesClasses() {
     StringConcatenation _builder = new StringConcatenation();
-    _builder.newLine();
-    _builder.append("// package org.connector.generator;");
-    _builder.newLine();
+    _builder.append("package ");
+    _builder.append(this.packageName);
+    _builder.append(";");
+    _builder.newLineIfNotEmpty();
     _builder.newLine();
     _builder.newLine();
     _builder.append("import java.io.IOException;");
@@ -47,6 +56,8 @@ public class Template {
     _builder.append("import java.net.http.HttpClient;");
     _builder.newLine();
     _builder.append("import java.net.http.HttpRequest;");
+    _builder.newLine();
+    _builder.append("import java.net.http.HttpResponse;");
     _builder.newLine();
     _builder.append("import java.net.http.HttpResponse.BodyHandlers;");
     _builder.newLine();
@@ -131,6 +142,19 @@ public class Template {
         _builder.append("\t\t");
         CharSequence _addAttribute = this.addAttribute(attribute_1);
         _builder.append(_addAttribute, "\t\t");
+        _builder.newLineIfNotEmpty();
+      }
+    }
+    _builder.append("\t\t");
+    _builder.newLine();
+    _builder.append("\t\t");
+    _builder.append("// Relationships");
+    _builder.newLine();
+    {
+      for(final EReference reference : this.classReferences) {
+        _builder.append("\t\t");
+        CharSequence _addReference = this.addReference(reference);
+        _builder.append(_addReference, "\t\t");
         _builder.newLineIfNotEmpty();
       }
     }
@@ -334,80 +358,7 @@ public class Template {
     _builder.newLine();
     _builder.append("\t\t");
     _builder.append(this.modelClassName, "\t\t");
-    _builder.append(" returnInstance = new ");
-    _builder.append(this.modelClassName, "\t\t");
-    _builder.append("();");
-    _builder.newLineIfNotEmpty();
-    _builder.append("\t\t");
-    _builder.append("for (Entry<String, JsonElement> element : content.getAsJsonObject().entrySet()) {");
-    _builder.newLine();
-    _builder.append("\t\t\t");
-    _builder.append("if (element.getKey().contains(\"id\")) {");
-    _builder.newLine();
-    _builder.append("\t\t\t\t");
-    _builder.append("returnInstance.uuid = element.getValue().toString().replaceAll(\"\\\"\",\"\");");
-    _builder.newLine();
-    _builder.append("\t\t\t");
-    _builder.append("}");
-    _builder.newLine();
-    _builder.append("\t\t\t");
-    _builder.append("if(element.getKey().contains(\"attributes\")) {");
-    _builder.newLine();
-    _builder.append("\t\t\t\t");
-    _builder.append("for( Entry<String, JsonElement> attribute: element.getValue().getAsJsonObject().entrySet()) {");
-    _builder.newLine();
-    _builder.append("\t\t\t\t\t");
-    _builder.append("System.out.println(attribute.getKey()+\": \"+attribute.getValue());");
-    _builder.newLine();
-    _builder.append("\t\t\t\t\t");
-    final Function1<EAttribute, String> _function = (EAttribute it) -> {
-      return it.getName();
-    };
-    final List<String> names = ListExtensions.<EAttribute, String>map(this.classAttributes, _function);
-    _builder.newLineIfNotEmpty();
-    {
-      for(final EAttribute attribute : this.classAttributes) {
-        _builder.append("\t\t\t\t\t");
-        _builder.newLine();
-        _builder.append("\t\t\t\t\t");
-        _builder.append("if(attribute.getKey().equals(\"");
-        String _name = attribute.getName();
-        _builder.append(_name, "\t\t\t\t\t");
-        _builder.append("\")) {");
-        _builder.newLineIfNotEmpty();
-        _builder.append("\t\t\t\t\t");
-        _builder.append(" ");
-        _builder.append("returnInstance.");
-        String _name_1 = attribute.getName();
-        _builder.append(_name_1, "\t\t\t\t\t ");
-        _builder.append(" = attribute.getValue().toString();");
-        _builder.newLineIfNotEmpty();
-        _builder.append("\t\t\t\t\t");
-        _builder.append("}");
-        _builder.newLine();
-      }
-    }
-    _builder.append("\t\t\t\t\t");
-    _builder.append("if(element.getValue().getAsJsonObject().get(\"drupal_internal__nid\") != null) {");
-    _builder.newLine();
-    _builder.append("\t\t\t\t\t\t");
-    _builder.append("// returnInstance.contentId = element.getValue().getAsJsonObject().get(\"drupal_internal__nid\").getAsJsonObject().get(\"value\").toString();");
-    _builder.newLine();
-    _builder.append("\t\t\t\t\t");
-    _builder.append("}");
-    _builder.newLine();
-    _builder.append("\t\t\t\t");
-    _builder.append("}");
-    _builder.newLine();
-    _builder.append("\t\t\t");
-    _builder.append("}");
-    _builder.newLine();
-    _builder.append("\t\t");
-    _builder.append("}");
-    _builder.newLine();
-    _builder.append("\t\t");
-    _builder.append(this.modelClassName, "\t\t");
-    _builder.append("Collection.add(returnInstance);");
+    _builder.append("Collection.add(mapSingleDrupalAnswer(content));");
     _builder.newLineIfNotEmpty();
     _builder.append("\t");
     _builder.append("});");
@@ -438,64 +389,154 @@ public class Template {
     _builder.append(this.modelClassName, "\t\t");
     _builder.append("();");
     _builder.newLineIfNotEmpty();
+    _builder.newLine();
     _builder.append("\t\t");
-    _builder.append("for (Entry<String, JsonElement> content: answer.getAsJsonObject().entrySet()) {");
+    _builder.append("for (Entry<String, JsonElement> element : answer.getAsJsonObject().entrySet()) {{");
     _builder.newLine();
     _builder.append("\t\t\t");
-    _builder.append("if (content.getKey().equals(\"data\")) {");
+    _builder.append("if (element.getKey().contains(\"relationships\")) {");
     _builder.newLine();
     _builder.append("\t\t\t\t");
-    _builder.append("for (Entry<String, JsonElement> element : content.getValue().getAsJsonObject().entrySet()) {");
+    _builder.append("for (Entry<String, JsonElement> singleRelation : element.getValue().getAsJsonObject().entrySet()) {");
     _builder.newLine();
     _builder.append("\t\t\t\t\t");
-    _builder.append("if (element.getKey().contains(\"id\")) {");
+    _builder.append("JsonElement relationData = singleRelation.getValue().getAsJsonObject().get(\"data\");");
+    _builder.newLine();
+    _builder.append("\t\t\t\t\t");
+    _builder.append("String entityType = null;");
+    _builder.newLine();
+    _builder.append("\t\t\t\t\t");
+    _builder.append("String entityId = null;");
+    _builder.newLine();
+    _builder.append("\t\t\t\t\t");
+    _builder.append("if (relationData.isJsonObject()) {");
     _builder.newLine();
     _builder.append("\t\t\t\t\t\t");
-    _builder.append("returnInstance.uuid = element.getValue().toString().replaceAll(\"\\\"\",\"\");");
+    _builder.append("entityType = relationData.getAsJsonObject().get(\"type\").getAsJsonPrimitive().getAsString();");
+    _builder.newLine();
+    _builder.append("\t\t\t\t\t\t");
+    _builder.append("entityId = relationData.getAsJsonObject().get(\"id\").getAsJsonPrimitive().getAsString();");
+    _builder.newLine();
+    _builder.append("\t\t\t\t\t");
+    _builder.append("} else {");
+    _builder.newLine();
+    _builder.append("\t\t\t\t\t\t");
+    _builder.append("if(!relationData.getAsJsonArray().isEmpty()) {");
+    _builder.newLine();
+    _builder.append("\t\t\t\t\t\t\t");
+    _builder.append("entityType = relationData.getAsJsonArray().get(0).getAsJsonObject().get(\"type\").getAsString();");
+    _builder.newLine();
+    _builder.append("\t\t\t\t\t\t\t");
+    _builder.append("entityId = relationData.getAsJsonArray().get(0).getAsJsonObject().get(\"id\").getAsString();");
+    _builder.newLine();
+    _builder.append("\t\t\t\t\t\t");
+    _builder.append("}");
     _builder.newLine();
     _builder.append("\t\t\t\t\t");
     _builder.append("}");
     _builder.newLine();
     _builder.append("\t\t\t\t\t");
-    _builder.append("if(element.getKey().contains(\"attributes\")) {");
+    _builder.append("if (!(entityType == null)) {");
     _builder.newLine();
     _builder.append("\t\t\t\t\t\t");
+    _builder.append("int index = entityType.indexOf(\"--\");");
+    _builder.newLine();
+    _builder.append("\t\t\t\t\t\t");
+    _builder.append("String referencedClass = entityType.substring(index + 2).substring(0, 1)");
+    _builder.newLine();
+    _builder.append("\t\t\t\t\t\t\t\t");
+    _builder.append(".toUpperCase() + entityType.substring(index + 2).substring(1);");
+    _builder.newLine();
+    {
+      for(final EReference reference : this.classReferences) {
+        {
+          boolean _contains = IterableExtensions.contains(this.modelClasses, reference.getEReferenceType().getName());
+          if (_contains) {
+            _builder.append("\t\t\t\t\t\t");
+            _builder.append("if(entityType.equals(\"");
+            String _name = reference.getEReferenceType().getName();
+            _builder.append(_name, "\t\t\t\t\t\t");
+            _builder.append("\")) {");
+            _builder.newLineIfNotEmpty();
+            _builder.append("\t\t\t\t\t\t\t");
+            String _name_1 = reference.getEReferenceType().getName();
+            _builder.append(_name_1, "\t\t\t\t\t\t\t");
+            _builder.append(" ");
+            String _string = reference.getName().toString();
+            _builder.append(_string, "\t\t\t\t\t\t\t");
+            _builder.append(" = new ");
+            String _name_2 = reference.getEReferenceType().getName();
+            _builder.append(_name_2, "\t\t\t\t\t\t\t");
+            _builder.append("();");
+            _builder.newLineIfNotEmpty();
+            _builder.append("\t\t\t\t\t\t");
+            _builder.append("returnInstance.");
+            String _string_1 = reference.getName().toString();
+            _builder.append(_string_1, "\t\t\t\t\t\t");
+            _builder.append(" = ");
+            String _string_2 = reference.getName().toString();
+            _builder.append(_string_2, "\t\t\t\t\t\t");
+            _builder.append(".getSingle(entityId);");
+            _builder.newLineIfNotEmpty();
+            _builder.append("\t\t\t\t\t\t\t");
+            _builder.append("}");
+            _builder.newLine();
+          }
+        }
+      }
+    }
+    _builder.append("\t\t\t\t\t");
+    _builder.append("}");
+    _builder.newLine();
+    _builder.append("\t\t\t\t");
+    _builder.append("}");
+    _builder.newLine();
+    _builder.append("\t\t\t");
+    _builder.append("}");
+    _builder.newLine();
+    _builder.append("\t\t\t");
+    _builder.append("if (element.getKey().contains(\"id\")) {");
+    _builder.newLine();
+    _builder.append("\t\t\t\t");
+    _builder.append("returnInstance.uuid = element.getValue().toString().replaceAll(\"\\\"\",\"\");");
+    _builder.newLine();
+    _builder.append("\t\t\t");
+    _builder.append("}");
+    _builder.newLine();
+    _builder.append("\t\t\t");
+    _builder.append("if(element.getKey().contains(\"attributes\")) {");
+    _builder.newLine();
+    _builder.append("\t\t\t\t");
     _builder.append("for( Entry<String, JsonElement> attribute: element.getValue().getAsJsonObject().entrySet()) {");
     _builder.newLine();
-    _builder.append("\t\t\t\t\t\t\t");
+    _builder.append("\t\t\t\t\t");
     _builder.append("System.out.println(attribute.getKey()+\": \"+attribute.getValue());");
     _builder.newLine();
     {
-      for(final EAttribute attribute_1 : this.classAttributes) {
-        _builder.append("\t\t\t\t\t\t\t");
+      for(final EAttribute attribute : this.classAttributes) {
+        _builder.append("\t\t\t\t\t");
         _builder.append("if(attribute.getKey().equals(\"");
-        String _name_2 = attribute_1.getName();
-        _builder.append(_name_2, "\t\t\t\t\t\t\t");
+        String _name_3 = attribute.getName();
+        _builder.append(_name_3, "\t\t\t\t\t");
         _builder.append("\")) {");
         _builder.newLineIfNotEmpty();
-        _builder.append("\t\t\t\t\t\t\t");
+        _builder.append("\t\t\t\t\t");
         _builder.append(" ");
         _builder.append("returnInstance.");
-        String _name_3 = attribute_1.getName();
-        _builder.append(_name_3, "\t\t\t\t\t\t\t ");
+        String _name_4 = attribute.getName();
+        _builder.append(_name_4, "\t\t\t\t\t ");
         _builder.append(" = attribute.getValue().toString();");
         _builder.newLineIfNotEmpty();
-        _builder.append("\t\t\t\t\t\t\t");
+        _builder.append("\t\t\t\t\t");
         _builder.append("}");
         _builder.newLine();
       }
     }
-    _builder.append("\t\t\t\t\t\t\t");
+    _builder.append("\t\t\t\t\t");
     _builder.append("if(element.getValue().getAsJsonObject().get(\"drupal_internal__nid\") != null) {");
     _builder.newLine();
-    _builder.append("\t\t\t\t\t\t\t\t");
-    _builder.append("// returnInstance.contentId = element.getValue().getAsJsonObject().get(\"drupal_internal__nid\").getAsJsonObject().get(\"value\").toString();");
-    _builder.newLine();
-    _builder.append("\t\t\t\t\t\t\t");
-    _builder.append("}");
-    _builder.newLine();
     _builder.append("\t\t\t\t\t\t");
-    _builder.append("}");
+    _builder.append("// returnInstance.contentId = element.getValue().getAsJsonObject().get(\"drupal_internal__nid\").getAsJsonObject().get(\"value\").toString();");
     _builder.newLine();
     _builder.append("\t\t\t\t\t");
     _builder.append("}");
@@ -507,6 +548,9 @@ public class Template {
     _builder.append("}");
     _builder.newLine();
     _builder.append("\t\t");
+    _builder.append("}");
+    _builder.newLine();
+    _builder.append("\t");
     _builder.append("}");
     _builder.newLine();
     _builder.append("\t");
@@ -529,6 +573,24 @@ public class Template {
     return _builder;
   }
   
+  public CharSequence addReference(final EReference reference) {
+    StringConcatenation _builder = new StringConcatenation();
+    {
+      boolean _contains = IterableExtensions.contains(this.modelClasses, reference.getEReferenceType().getName());
+      if (_contains) {
+        _builder.append("public ");
+        String _name = reference.getEReferenceType().getName();
+        _builder.append(_name);
+        _builder.append(" ");
+        String _string = reference.getName().toString();
+        _builder.append(_string);
+        _builder.append(";");
+        _builder.newLineIfNotEmpty();
+      }
+    }
+    return _builder;
+  }
+  
   public CharSequence addRequester() {
     StringConcatenation _builder = new StringConcatenation();
     _builder.append("public JsonElement ResourceRequest(String singleResource, String method) {");
@@ -538,14 +600,14 @@ public class Template {
     _builder.append("// create a client");
     _builder.newLine();
     _builder.append("\t");
-    _builder.append("var client = HttpClient.newHttpClient();");
+    _builder.append("HttpClient client = HttpClient.newHttpClient();");
     _builder.newLine();
     _builder.newLine();
     _builder.append("\t");
     _builder.append("// create a request");
     _builder.newLine();
     _builder.append("\t");
-    _builder.append("var request = HttpRequest.newBuilder().uri(URI.create(this.cmsUrl + this.resourceRoute + singleResource))");
+    _builder.append("HttpRequest request = HttpRequest.newBuilder().uri(URI.create(this.cmsUrl + this.resourceRoute + singleResource))");
     _builder.newLine();
     _builder.append("\t\t\t");
     _builder.append(".method(method, HttpRequest.BodyPublishers.noBody()).header(\"accept\", \"application/json\")");
@@ -567,7 +629,7 @@ public class Template {
     _builder.append("request.method();");
     _builder.newLine();
     _builder.append("\t\t");
-    _builder.append("var response = client.send(request, BodyHandlers.ofString());");
+    _builder.append("HttpResponse<String> response = client.send(request, BodyHandlers.ofString());");
     _builder.newLine();
     _builder.append("\t\t");
     _builder.append("if (response.statusCode() == 200) {");
