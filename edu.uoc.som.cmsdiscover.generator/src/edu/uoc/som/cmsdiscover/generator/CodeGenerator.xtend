@@ -61,8 +61,7 @@ class CodeGenerator {
 	   		new NullProgressMonitor())
 			// Generate POM
 
-			val rootFolder = project.getFolder("test");
-			val pomFile = rootFolder.getFile("pom.xml")
+			val pomFile = project.getFile("pom.xml")
 			val pomContent = pomTeamplate.getPom();
 			pomFile.create(new ByteArrayInputStream(pomContent.toString().getBytes()), IResource.FORCE,
 		   		new NullProgressMonitor())

@@ -82,8 +82,7 @@ public class CodeGenerator {
         ByteArrayInputStream _byteArrayInputStream = new ByteArrayInputStream(_bytes);
         NullProgressMonitor _nullProgressMonitor_1 = new NullProgressMonitor();
         testFile.create(_byteArrayInputStream, IResource.FORCE, _nullProgressMonitor_1);
-        final IFolder rootFolder = project.getFolder("test");
-        final IFile pomFile = rootFolder.getFile("pom.xml");
+        final IFile pomFile = project.getFile("pom.xml");
         final CharSequence pomContent = this.pomTeamplate.getPom();
         byte[] _bytes_1 = pomContent.toString().getBytes();
         ByteArrayInputStream _byteArrayInputStream_1 = new ByteArrayInputStream(_bytes_1);

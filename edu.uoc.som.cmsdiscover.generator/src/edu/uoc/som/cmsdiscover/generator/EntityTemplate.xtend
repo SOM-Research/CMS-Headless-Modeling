@@ -79,6 +79,8 @@ public class «this.modelClassName» {
 		
 		«mapWordpressAnswer()»
 		
+		«addReferenceMethods()»
+		
 }
 	'''
 	
@@ -99,7 +101,7 @@ public class «this.modelClassName» {
 			JsonElement answer = ResourceRequest("/"+Id,"GET");
 			«this.modelClassName» return«this.modelClassName» = null;
 			if (this.cmsTechnology.contains("Drupal")) {
-				return«this.modelClassName» = mapSingleDrupalAnswer(answer); 
+				return«this.modelClassName» = mapSingleDrupalAnswer(answer.getAsJsonObject().get("data")); 
 			} else {
 				//return«this.modelClassName» = mapWordpressAnswer(answer); 
 			}
@@ -166,9 +168,8 @@ public class «this.modelClassName» {
 									.toUpperCase() + entityType.substring(index + 2).substring(1);
 							« FOR EReference reference: this.classReferences » 
 							«IF(this.modelClasses.contains(reference.getEReferenceType().getName())) »
-							 if(entityType.equals("«reference.getEReferenceType().getName()»")) {
-							«reference.getEReferenceType().getName()» «reference.getName().toString» = new «reference.getEReferenceType().getName()»();
-							 returnInstance.«reference.getName().toString» = «reference.getName().toString».getSingle(entityId);
+							 if(singleRelation.getKey().equals("«reference.getName().toString()»")) {
+							 returnInstance.«reference.getName().toString» = entityId;
 							}
 								«ENDIF»
 							«ENDFOR»
@@ -207,8 +208,19 @@ public class «this.modelClassName» {
 	
 	def addReference(EReference reference) '''
 	«IF(this.modelClasses.contains(reference.getEReferenceType().getName())) »
-	public «reference.getEReferenceType().getName()» «reference.getName().toString()»;
+	public String «reference.getName().toString()»;
 	«ENDIF»
+	'''
+	
+	def addReferenceMethods()'''
+		« FOR EReference reference: this.classReferences » 
+		«IF(this.modelClasses.contains(reference.getEReferenceType().getName())) »
+		public «reference.getEReferenceType().getName()» get«reference.getName()» (String entityId) {
+			«reference.getEReferenceType().getName()» referencedEntity = new «reference.getEReferenceType().getName()»();
+			return referencedEntity.getSingle(entityId);
+		}
+		«ENDIF»
+		«ENDFOR»
 	'''
 	
 	

@@ -12,7 +12,7 @@ public class TestsTeamplate {
     _builder.append("import java.util.List;");
     _builder.newLine();
     _builder.newLine();
-    _builder.append("public class Testing {");
+    _builder.append("public class mainTest {");
     _builder.newLine();
     _builder.newLine();
     _builder.append("\t");

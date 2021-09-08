@@ -30,6 +30,9 @@ import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.launching.LibraryLocation;
 
 public class GeneratorHandler extends AbstractHandler implements IHandler {
+	
+	private EPackage extendedModel;
+	private IFolder srcGenFolder;
 
 	private CodeGenerator generator = new CodeGenerator();
 
@@ -43,34 +46,11 @@ public class GeneratorHandler extends AbstractHandler implements IHandler {
 			if (firstElement instanceof IFile) {
 				IFile file = (IFile) firstElement;
 				// Get Selected Resource.
-				EPackage extendedModel = generator.loadModel(file.getFullPath());
+				this.extendedModel = generator.loadModel(file.getFullPath());
 
 				IProject project = generateProject(file.getWorkspace(), extendedModel.getName());
 
-				// Create tree folder structure.
-				IFolder src = project.getFolder("src");
-				IFolder srcMain = src.getFolder("main");
-				IFolder srcJava = srcMain.getFolder("java");
-				
-				try {
-				IFolder generated = srcJava.getFolder("generated");
-				if (!generated.exists())
-					generated.create(true, true, new NullProgressMonitor());
-
-				IFolder connector = generated.getFolder("middleware");
-				if (!connector.exists())
-					connector.create(true, true, new NullProgressMonitor());
-
-				IFolder srcGenFolder = connector.getFolder(extendedModel.getName());
-				if (!srcGenFolder.exists())
-					srcGenFolder.create(true, true, new NullProgressMonitor());
-				
-					generator.doGenerate(extendedModel, srcGenFolder, project);
-				} catch (CoreException e) { 
-					e.getCause(); return
-					null; 
-				} 
-
+				generator.doGenerate(extendedModel, srcGenFolder, project);
 			
 
 			}
@@ -148,6 +128,27 @@ public class GeneratorHandler extends AbstractHandler implements IHandler {
 						new Path[] {}, classes.getFullPath());
 
 				javaProject.setRawClasspath(newEntries, null);
+				
+
+				
+				try {
+				IFolder generated = srcMainJava.getFolder("generated");
+				if (!generated.exists())
+					generated.create(true, true, new NullProgressMonitor());
+
+				IFolder connector = generated.getFolder("middleware");
+				if (!connector.exists())
+					connector.create(true, true, new NullProgressMonitor());
+
+				this.srcGenFolder = connector.getFolder(extendedModel.getName());
+				if (!srcGenFolder.exists())
+					this.srcGenFolder.create(true, true, new NullProgressMonitor());
+				
+				
+				} catch (CoreException e) { 
+					e.getCause(); return
+					null; 
+				} 
 	
 
 				return project;

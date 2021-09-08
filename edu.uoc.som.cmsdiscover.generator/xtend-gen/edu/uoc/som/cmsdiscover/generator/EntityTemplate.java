@@ -192,6 +192,12 @@ public class EntityTemplate {
     _builder.newLineIfNotEmpty();
     _builder.append("\t\t");
     _builder.newLine();
+    _builder.append("\t\t");
+    CharSequence _addReferenceMethods = this.addReferenceMethods();
+    _builder.append(_addReferenceMethods, "\t\t");
+    _builder.newLineIfNotEmpty();
+    _builder.append("\t\t");
+    _builder.newLine();
     _builder.append("}");
     _builder.newLine();
     return _builder;
@@ -245,7 +251,7 @@ public class EntityTemplate {
     _builder.append("\t\t\t");
     _builder.append("return");
     _builder.append(this.modelClassName, "\t\t\t");
-    _builder.append(" = mapSingleDrupalAnswer(answer); ");
+    _builder.append(" = mapSingleDrupalAnswer(answer.getAsJsonObject().get(\"data\")); ");
     _builder.newLineIfNotEmpty();
     _builder.append("\t\t");
     _builder.append("} else {");
@@ -453,30 +459,16 @@ public class EntityTemplate {
           boolean _contains = IterableExtensions.contains(this.modelClasses, reference.getEReferenceType().getName());
           if (_contains) {
             _builder.append("\t\t\t\t\t\t");
-            _builder.append("if(entityType.equals(\"");
-            String _name = reference.getEReferenceType().getName();
-            _builder.append(_name, "\t\t\t\t\t\t");
-            _builder.append("\")) {");
-            _builder.newLineIfNotEmpty();
-            _builder.append("\t\t\t\t\t\t\t");
-            String _name_1 = reference.getEReferenceType().getName();
-            _builder.append(_name_1, "\t\t\t\t\t\t\t");
-            _builder.append(" ");
+            _builder.append("if(singleRelation.getKey().equals(\"");
             String _string = reference.getName().toString();
-            _builder.append(_string, "\t\t\t\t\t\t\t");
-            _builder.append(" = new ");
-            String _name_2 = reference.getEReferenceType().getName();
-            _builder.append(_name_2, "\t\t\t\t\t\t\t");
-            _builder.append("();");
+            _builder.append(_string, "\t\t\t\t\t\t");
+            _builder.append("\")) {");
             _builder.newLineIfNotEmpty();
             _builder.append("\t\t\t\t\t\t");
             _builder.append("returnInstance.");
             String _string_1 = reference.getName().toString();
             _builder.append(_string_1, "\t\t\t\t\t\t");
-            _builder.append(" = ");
-            String _string_2 = reference.getName().toString();
-            _builder.append(_string_2, "\t\t\t\t\t\t");
-            _builder.append(".getSingle(entityId);");
+            _builder.append(" = entityId;");
             _builder.newLineIfNotEmpty();
             _builder.append("\t\t\t\t\t\t\t");
             _builder.append("}");
@@ -516,15 +508,15 @@ public class EntityTemplate {
       for(final EAttribute attribute : this.classAttributes) {
         _builder.append("\t\t\t\t\t");
         _builder.append("if(attribute.getKey().equals(\"");
-        String _name_3 = attribute.getName();
-        _builder.append(_name_3, "\t\t\t\t\t");
+        String _name = attribute.getName();
+        _builder.append(_name, "\t\t\t\t\t");
         _builder.append("\")) {");
         _builder.newLineIfNotEmpty();
         _builder.append("\t\t\t\t\t");
         _builder.append(" ");
         _builder.append("returnInstance.");
-        String _name_4 = attribute.getName();
-        _builder.append(_name_4, "\t\t\t\t\t ");
+        String _name_1 = attribute.getName();
+        _builder.append(_name_1, "\t\t\t\t\t ");
         _builder.append(" = attribute.getValue().toString();");
         _builder.newLineIfNotEmpty();
         _builder.append("\t\t\t\t\t");
@@ -578,14 +570,46 @@ public class EntityTemplate {
     {
       boolean _contains = IterableExtensions.contains(this.modelClasses, reference.getEReferenceType().getName());
       if (_contains) {
-        _builder.append("public ");
-        String _name = reference.getEReferenceType().getName();
-        _builder.append(_name);
-        _builder.append(" ");
+        _builder.append("public String ");
         String _string = reference.getName().toString();
         _builder.append(_string);
         _builder.append(";");
         _builder.newLineIfNotEmpty();
+      }
+    }
+    return _builder;
+  }
+  
+  public CharSequence addReferenceMethods() {
+    StringConcatenation _builder = new StringConcatenation();
+    {
+      for(final EReference reference : this.classReferences) {
+        {
+          boolean _contains = IterableExtensions.contains(this.modelClasses, reference.getEReferenceType().getName());
+          if (_contains) {
+            _builder.append("public ");
+            String _name = reference.getEReferenceType().getName();
+            _builder.append(_name);
+            _builder.append(" get");
+            String _name_1 = reference.getName();
+            _builder.append(_name_1);
+            _builder.append(" (String entityId) {");
+            _builder.newLineIfNotEmpty();
+            _builder.append("\t");
+            String _name_2 = reference.getEReferenceType().getName();
+            _builder.append(_name_2, "\t");
+            _builder.append(" referencedEntity = new ");
+            String _name_3 = reference.getEReferenceType().getName();
+            _builder.append(_name_3, "\t");
+            _builder.append("();");
+            _builder.newLineIfNotEmpty();
+            _builder.append("\t");
+            _builder.append("return referencedEntity.getSingle(entityId);");
+            _builder.newLine();
+            _builder.append("}");
+            _builder.newLine();
+          }
+        }
       }
     }
     return _builder;
