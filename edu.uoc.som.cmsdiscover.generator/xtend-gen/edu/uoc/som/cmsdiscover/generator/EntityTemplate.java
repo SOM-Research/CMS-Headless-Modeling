@@ -73,6 +73,10 @@ public class EntityTemplate {
     _builder.newLine();
     _builder.append("import java.util.ArrayList;");
     _builder.newLine();
+    _builder.append("import java.text.ParseException;");
+    _builder.newLine();
+    _builder.append("import java.text.SimpleDateFormat;");
+    _builder.newLine();
     _builder.append("\t");
     _builder.newLine();
     _builder.append("public class ");
@@ -81,7 +85,7 @@ public class EntityTemplate {
     _builder.newLineIfNotEmpty();
     _builder.append("\t\t");
     _builder.newLine();
-    _builder.append("\t\t");
+    _builder.append("\t");
     _builder.append("// STATIC VALUES");
     _builder.newLine();
     {
@@ -107,9 +111,9 @@ public class EntityTemplate {
         }
       }
     }
-    _builder.append("\t\t");
+    _builder.append("\t");
     _builder.newLine();
-    _builder.append("\t\t");
+    _builder.append("\t");
     _builder.append("List<String> attributesList = Arrays.asList(");
     {
       final Function1<EAttribute, String> _function = (EAttribute it) -> {
@@ -121,20 +125,20 @@ public class EntityTemplate {
         if (!_hasElements) {
           _hasElements = true;
         } else {
-          _builder.appendImmediate(",", "\t\t");
+          _builder.appendImmediate(",", "\t");
         }
         _builder.append("\"");
-        _builder.append(attribute, "\t\t");
+        _builder.append(attribute, "\t");
         _builder.append("\"");
       }
     }
     _builder.append(");");
     _builder.newLineIfNotEmpty();
-    _builder.append("\t\t");
+    _builder.append("\t");
     _builder.newLine();
-    _builder.append("\t\t");
+    _builder.append("\t");
     _builder.newLine();
-    _builder.append("\t\t");
+    _builder.append("\t");
     _builder.append("// Attributes");
     _builder.newLine();
     {
@@ -147,7 +151,7 @@ public class EntityTemplate {
     }
     _builder.append("\t\t");
     _builder.newLine();
-    _builder.append("\t\t");
+    _builder.append("\t");
     _builder.append("// Relationships");
     _builder.newLine();
     {
@@ -160,41 +164,42 @@ public class EntityTemplate {
     }
     _builder.append("\t\t");
     _builder.newLine();
-    _builder.newLine();
-    _builder.append("\t\t");
+    _builder.append("\t");
     _builder.append("// Main Methods");
     _builder.newLine();
-    _builder.append("\t\t");
+    _builder.append("\t");
     CharSequence _addCollectionGetter = this.addCollectionGetter();
-    _builder.append(_addCollectionGetter, "\t\t");
+    _builder.append(_addCollectionGetter, "\t");
     _builder.newLineIfNotEmpty();
-    _builder.append("\t\t");
+    _builder.append("\t");
+    _builder.newLine();
+    _builder.append("\t");
     CharSequence _addSingleGetter = this.addSingleGetter();
-    _builder.append(_addSingleGetter, "\t\t");
+    _builder.append(_addSingleGetter, "\t");
     _builder.newLineIfNotEmpty();
-    _builder.append("\t\t");
+    _builder.append("\t");
     _builder.newLine();
-    _builder.append("\t\t");
+    _builder.append("\t");
     CharSequence _addRequester = this.addRequester();
-    _builder.append(_addRequester, "\t\t");
+    _builder.append(_addRequester, "\t");
     _builder.newLineIfNotEmpty();
-    _builder.append("\t\t");
+    _builder.append("\t");
     _builder.newLine();
-    _builder.append("\t\t");
+    _builder.append("\t");
     CharSequence _mapDrupalAnswer = this.mapDrupalAnswer();
-    _builder.append(_mapDrupalAnswer, "\t\t");
+    _builder.append(_mapDrupalAnswer, "\t");
     _builder.newLineIfNotEmpty();
-    _builder.append("\t\t");
+    _builder.append("\t");
     _builder.newLine();
-    _builder.append("\t\t");
+    _builder.append("\t");
     CharSequence _mapWordpressAnswer = this.mapWordpressAnswer();
-    _builder.append(_mapWordpressAnswer, "\t\t");
+    _builder.append(_mapWordpressAnswer, "\t");
     _builder.newLineIfNotEmpty();
-    _builder.append("\t\t");
+    _builder.append("\t");
     _builder.newLine();
-    _builder.append("\t\t");
+    _builder.append("\t");
     CharSequence _addReferenceMethods = this.addReferenceMethods();
-    _builder.append(_addReferenceMethods, "\t\t");
+    _builder.append(_addReferenceMethods, "\t");
     _builder.newLineIfNotEmpty();
     _builder.append("\t\t");
     _builder.newLine();
@@ -320,7 +325,7 @@ public class EntityTemplate {
   
   public CharSequence mapWordpressAnswer() {
     StringConcatenation _builder = new StringConcatenation();
-    _builder.append("public List<");
+    _builder.append("protected List<");
     _builder.append(this.modelClassName);
     _builder.append("> mapWordpressAnswer(JsonElement answer) {");
     _builder.newLineIfNotEmpty();
@@ -344,7 +349,7 @@ public class EntityTemplate {
   public CharSequence mapDrupalAnswer() {
     StringConcatenation _builder = new StringConcatenation();
     _builder.newLine();
-    _builder.append("public List<");
+    _builder.append("protected List<");
     _builder.append(this.modelClassName);
     _builder.append("> mapDrupalAnswer(JsonElement answer) {");
     _builder.newLineIfNotEmpty();
@@ -470,7 +475,7 @@ public class EntityTemplate {
             _builder.append(_string_1, "\t\t\t\t\t\t");
             _builder.append(" = entityId;");
             _builder.newLineIfNotEmpty();
-            _builder.append("\t\t\t\t\t\t\t");
+            _builder.append("\t\t\t\t\t\t\t\t");
             _builder.append("}");
             _builder.newLine();
           }
@@ -490,7 +495,16 @@ public class EntityTemplate {
     _builder.append("if (element.getKey().contains(\"id\")) {");
     _builder.newLine();
     _builder.append("\t\t\t\t");
-    _builder.append("returnInstance.uuid = element.getValue().toString().replaceAll(\"\\\"\",\"\");");
+    _builder.append("String value = element.getValue().toString().replaceAll(\"\\\"\",\"\");");
+    _builder.newLine();
+    _builder.append("\t\t\t\t");
+    _builder.append("if(value != null && value.matches(\"[0-9.]+\")){");
+    _builder.newLine();
+    _builder.append("\t\t\t\t\t");
+    _builder.append("returnInstance.uuid = Integer.parseInt(value);");
+    _builder.newLine();
+    _builder.append("\t\t\t\t");
+    _builder.append("}");
     _builder.newLine();
     _builder.append("\t\t\t");
     _builder.append("}");
@@ -512,13 +526,61 @@ public class EntityTemplate {
         _builder.append(_name, "\t\t\t\t\t");
         _builder.append("\")) {");
         _builder.newLineIfNotEmpty();
-        _builder.append("\t\t\t\t\t");
-        _builder.append(" ");
-        _builder.append("returnInstance.");
-        String _name_1 = attribute.getName();
-        _builder.append(_name_1, "\t\t\t\t\t ");
-        _builder.append(" = attribute.getValue().toString();");
-        _builder.newLineIfNotEmpty();
+        {
+          boolean _contains_1 = attribute.getEAttributeType().getInstanceTypeName().contains("Integer");
+          if (_contains_1) {
+            _builder.append("\t\t\t\t\t");
+            _builder.append("returnInstance.");
+            String _name_1 = attribute.getName();
+            _builder.append(_name_1, "\t\t\t\t\t");
+            _builder.append(" = attribute.getValue().getAsInt();");
+            _builder.newLineIfNotEmpty();
+          } else {
+            boolean _contains_2 = attribute.getEAttributeType().getInstanceTypeName().contains("String");
+            if (_contains_2) {
+              _builder.append("\t\t\t\t\t");
+              _builder.append("returnInstance.");
+              String _name_2 = attribute.getName();
+              _builder.append(_name_2, "\t\t\t\t\t");
+              _builder.append(" = attribute.getValue().toString();");
+              _builder.newLineIfNotEmpty();
+            } else {
+              boolean _contains_3 = attribute.getEAttributeType().getInstanceTypeName().contains("boolean");
+              if (_contains_3) {
+                _builder.append("\t\t\t\t\t");
+                _builder.append("returnInstance.");
+                String _name_3 = attribute.getName();
+                _builder.append(_name_3, "\t\t\t\t\t");
+                _builder.append(" = attribute.getValue().getAsBoolean();");
+                _builder.newLineIfNotEmpty();
+              } else {
+                boolean _contains_4 = attribute.getEAttributeType().getInstanceTypeName().contains("Date");
+                if (_contains_4) {
+                  _builder.append("\t\t\t\t\t");
+                  _builder.append("try{");
+                  _builder.newLine();
+                  _builder.append("\t\t\t\t\t");
+                  _builder.append("\t");
+                  _builder.append("returnInstance.");
+                  String _name_4 = attribute.getName();
+                  _builder.append(_name_4, "\t\t\t\t\t\t");
+                  _builder.append(" = new SimpleDateFormat(\"YYYY-MM-DD[T]HH:mm:ss. SSS[Z]\").parse(attribute.getValue().getAsString());");
+                  _builder.newLineIfNotEmpty();
+                  _builder.append("\t\t\t\t\t");
+                  _builder.append("} catch ( ParseException e) {");
+                  _builder.newLine();
+                  _builder.append("\t\t\t\t\t");
+                  _builder.append("\t");
+                  _builder.append("e.printStackTrace();");
+                  _builder.newLine();
+                  _builder.append("\t\t\t\t\t");
+                  _builder.append("}");
+                  _builder.newLine();
+                }
+              }
+            }
+          }
+        }
         _builder.append("\t\t\t\t\t");
         _builder.append("}");
         _builder.newLine();
@@ -557,7 +619,10 @@ public class EntityTemplate {
   
   public CharSequence addAttribute(final EAttribute attribute) {
     StringConcatenation _builder = new StringConcatenation();
-    _builder.append("public String ");
+    _builder.append("private ");
+    String _instanceTypeName = attribute.getEAttributeType().getInstanceTypeName();
+    _builder.append(_instanceTypeName);
+    _builder.append(" ");
     String _name = attribute.getName();
     _builder.append(_name);
     _builder.append(";");

@@ -15,6 +15,7 @@ import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -52,7 +53,7 @@ public class GeneratorHandler extends AbstractHandler implements IHandler {
 
 				generator.doGenerate(extendedModel, srcGenFolder, project);
 			
-
+			
 			}
 		}
 		return null;
