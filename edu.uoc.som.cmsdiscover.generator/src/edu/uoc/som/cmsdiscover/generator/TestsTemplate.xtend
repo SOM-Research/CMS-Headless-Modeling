@@ -1,6 +1,6 @@
 package edu.uoc.som.cmsdiscover.generator
 
-class TestsTeamplate {
+class TestsTemplate {
 	
 		def getTest() '''
 package generated.middleware.Umami_Food_Magazine_API___JSON_API;

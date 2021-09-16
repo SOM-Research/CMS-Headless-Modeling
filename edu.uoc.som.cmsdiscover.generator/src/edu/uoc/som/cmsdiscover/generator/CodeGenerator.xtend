@@ -17,8 +17,11 @@ import org.eclipse.core.resources.ResourcesPlugin
 
 class CodeGenerator {
 
-	PomTeamplate pomTeamplate = new PomTeamplate
-	TestsTeamplate testsTeamplate = new TestsTeamplate
+	PomTemplate pomTemplate = new PomTemplate
+	TestsTemplate testsTemplate = new TestsTemplate
+	DriverTemplate driverTemplate = new DriverTemplate
+	DriverInterface interfaceTemplate = new DriverInterface
+	GenericEntityTemplate genericTemplate = new GenericEntityTemplate
 	EPackage thePackage
 	Resource model
 	EPackage modelPackage
@@ -27,14 +30,16 @@ class CodeGenerator {
 
 		if (input !== null && input instanceof EPackage) {
 			thePackage = input as EPackage;
-			// Get classes
 			val eClasses = thePackage.EClassifiers.filter(EClass)
 			val classesName = eClasses.map[name]
-			// Get Annotation information	
 			val sourceCmsInformation = thePackage.EAnnotations.get(0).details
 
+			// Generate drivers
+			generateDrivers(input, srcGenFolder)
+
 			println("Generating")
-			// For every class we call the generator template
+
+			// Generate Entities
 			for (EClass modelClass : eClasses) {
 				val superClasses = modelClass.getESuperTypes()
 				val classAnnotation = modelClass.EAnnotations.get(0).details
@@ -42,34 +47,68 @@ class CodeGenerator {
 					classAnnotation.put(detail.key, detail.value)
 				}
 				// Call the generator
-				val template = new EntityTemplate(modelClass, classAnnotation, classesName, "generated.middleware."+ thePackage.getName());
+				val template = new EntityTemplate(modelClass, classAnnotation, classesName,
+					"generated.middleware." + thePackage.getName());
 				val content = template.generateEntitiesClasses()
 				// Create File
 				val resultFile = srcGenFolder.getFile(modelClass.getName + ".java")
 				resultFile.create(new ByteArrayInputStream(content.toString().getBytes()), IResource.FORCE,
 					new NullProgressMonitor())
 			}
-			
-			
-			// Generate Test
-		   	val testFolder = project.getFolder("test")
-		   	if (!testFolder.exists()) testFolder.create(true, true, new NullProgressMonitor());
-		   	
-		   	val testFile = srcGenFolder.getFile("mainTest.java")
-		   	val testcontent = testsTeamplate.getTest();
-	   		testFile.create(new ByteArrayInputStream(testcontent.toString().getBytes()), IResource.FORCE,
-	   		new NullProgressMonitor())
-			// Generate POM
 
+			// Generate Test
+			val testFolder = project.getFolder("test")
+			if(!testFolder.exists()) testFolder.create(true, true, new NullProgressMonitor());
+
+			val testFile = srcGenFolder.getFile("mainTest.java")
+			val testcontent = testsTemplate.getTest();
+			testFile.create(new ByteArrayInputStream(testcontent.toString().getBytes()), IResource.FORCE,
+				new NullProgressMonitor())
+
+			// Generate POM
 			val pomFile = project.getFile("pom.xml")
-			val pomContent = pomTeamplate.getPom();
+			val pomContent = pomTemplate.getPom();
 			pomFile.create(new ByteArrayInputStream(pomContent.toString().getBytes()), IResource.FORCE,
-		   		new NullProgressMonitor())
-		   		
-	
+				new NullProgressMonitor())
+
 		}
 	}
-	
+
+	def generateDrivers(EPackage input, IFolder srcGenFolder) {
+		// Generate drivers folder
+		val driversFolder = srcGenFolder.getFolder("drivers");
+		if(!driversFolder.exists()) driversFolder.create(true, true, new NullProgressMonitor());
+
+		// Generate Interface
+		val interface = interfaceTemplate.generate(thePackage.getName());
+		val interfaceFile = driversFolder.getFile("DriverInterface.java");
+		interfaceFile.create(new ByteArrayInputStream(interface.toString().getBytes()), IResource.FORCE,
+			new NullProgressMonitor())
+
+		// Generate drivers
+		val driver = driverTemplate.generateDriver(thePackage);
+		val resultDriver = driversFolder.getFile("DrupalDriver.java")
+		resultDriver.create(new ByteArrayInputStream(driver.toString().getBytes()), IResource.FORCE,
+			new NullProgressMonitor())
+			
+		// Generate Generic Entities
+		val genericAttribute = genericTemplate.generateGenericAttribute(input)
+		val resultAttribute = driversFolder.getFile("GenericAttribute.java")
+		resultAttribute.create(new ByteArrayInputStream(genericAttribute.toString().getBytes()), IResource.FORCE,
+			new NullProgressMonitor())
+			
+		val genericReference = genericTemplate.generateGenericReference(input)
+		val resultReference = driversFolder.getFile("GenericReference.java")
+		resultReference.create(new ByteArrayInputStream(genericReference.toString().getBytes()), IResource.FORCE,
+			new NullProgressMonitor())
+			
+		val genericEntity = genericTemplate.generateGenericEntity(input)
+		val resultEntity = driversFolder.getFile("GenericEntity.java")
+		resultEntity.create(new ByteArrayInputStream(genericEntity.toString().getBytes()), IResource.FORCE,
+			new NullProgressMonitor())
+			
+			
+	}
 
 	def EPackage loadModel(IPath path) {
 

@@ -1,9 +1,12 @@
 package edu.uoc.som.cmsdiscover.generator;
 
 import com.google.common.collect.Iterables;
+import edu.uoc.som.cmsdiscover.generator.DriverInterface;
+import edu.uoc.som.cmsdiscover.generator.DriverTemplate;
 import edu.uoc.som.cmsdiscover.generator.EntityTemplate;
-import edu.uoc.som.cmsdiscover.generator.PomTeamplate;
-import edu.uoc.som.cmsdiscover.generator.TestsTeamplate;
+import edu.uoc.som.cmsdiscover.generator.GenericEntityTemplate;
+import edu.uoc.som.cmsdiscover.generator.PomTemplate;
+import edu.uoc.som.cmsdiscover.generator.TestsTemplate;
 import java.io.ByteArrayInputStream;
 import java.util.Map;
 import org.eclipse.core.resources.IFile;
@@ -28,9 +31,15 @@ import org.eclipse.xtext.xbase.lib.IterableExtensions;
 
 @SuppressWarnings("all")
 public class CodeGenerator {
-  private PomTeamplate pomTeamplate = new PomTeamplate();
+  private PomTemplate pomTemplate = new PomTemplate();
   
-  private TestsTeamplate testsTeamplate = new TestsTeamplate();
+  private TestsTemplate testsTemplate = new TestsTemplate();
+  
+  private DriverTemplate driverTemplate = new DriverTemplate();
+  
+  private DriverInterface interfaceTemplate = new DriverInterface();
+  
+  private GenericEntityTemplate genericTemplate = new GenericEntityTemplate();
   
   private EPackage thePackage;
   
@@ -48,6 +57,7 @@ public class CodeGenerator {
         };
         final Iterable<String> classesName = IterableExtensions.<EClass, String>map(eClasses, _function);
         final EMap<String, String> sourceCmsInformation = this.thePackage.getEAnnotations().get(0).getDetails();
+        this.generateDrivers(input, srcGenFolder);
         InputOutput.<String>println("Generating");
         for (final EClass modelClass : eClasses) {
           {
@@ -77,18 +87,62 @@ public class CodeGenerator {
           testFolder.create(true, true, _nullProgressMonitor);
         }
         final IFile testFile = srcGenFolder.getFile("mainTest.java");
-        final CharSequence testcontent = this.testsTeamplate.getTest();
+        final CharSequence testcontent = this.testsTemplate.getTest();
         byte[] _bytes = testcontent.toString().getBytes();
         ByteArrayInputStream _byteArrayInputStream = new ByteArrayInputStream(_bytes);
         NullProgressMonitor _nullProgressMonitor_1 = new NullProgressMonitor();
         testFile.create(_byteArrayInputStream, IResource.FORCE, _nullProgressMonitor_1);
         final IFile pomFile = project.getFile("pom.xml");
-        final CharSequence pomContent = this.pomTeamplate.getPom();
+        final CharSequence pomContent = this.pomTemplate.getPom();
         byte[] _bytes_1 = pomContent.toString().getBytes();
         ByteArrayInputStream _byteArrayInputStream_1 = new ByteArrayInputStream(_bytes_1);
         NullProgressMonitor _nullProgressMonitor_2 = new NullProgressMonitor();
         pomFile.create(_byteArrayInputStream_1, IResource.FORCE, _nullProgressMonitor_2);
       }
+    } catch (Throwable _e) {
+      throw Exceptions.sneakyThrow(_e);
+    }
+  }
+  
+  public void generateDrivers(final EPackage input, final IFolder srcGenFolder) {
+    try {
+      final IFolder driversFolder = srcGenFolder.getFolder("drivers");
+      boolean _exists = driversFolder.exists();
+      boolean _not = (!_exists);
+      if (_not) {
+        NullProgressMonitor _nullProgressMonitor = new NullProgressMonitor();
+        driversFolder.create(true, true, _nullProgressMonitor);
+      }
+      final CharSequence interface_ = this.interfaceTemplate.generate(this.thePackage.getName());
+      final IFile interfaceFile = driversFolder.getFile("DriverInterface.java");
+      byte[] _bytes = interface_.toString().getBytes();
+      ByteArrayInputStream _byteArrayInputStream = new ByteArrayInputStream(_bytes);
+      NullProgressMonitor _nullProgressMonitor_1 = new NullProgressMonitor();
+      interfaceFile.create(_byteArrayInputStream, IResource.FORCE, _nullProgressMonitor_1);
+      final CharSequence driver = this.driverTemplate.generateDriver(this.thePackage);
+      final IFile resultDriver = driversFolder.getFile("DrupalDriver.java");
+      byte[] _bytes_1 = driver.toString().getBytes();
+      ByteArrayInputStream _byteArrayInputStream_1 = new ByteArrayInputStream(_bytes_1);
+      NullProgressMonitor _nullProgressMonitor_2 = new NullProgressMonitor();
+      resultDriver.create(_byteArrayInputStream_1, IResource.FORCE, _nullProgressMonitor_2);
+      final CharSequence genericAttribute = this.genericTemplate.generateGenericAttribute(input);
+      final IFile resultAttribute = driversFolder.getFile("GenericAttribute.java");
+      byte[] _bytes_2 = genericAttribute.toString().getBytes();
+      ByteArrayInputStream _byteArrayInputStream_2 = new ByteArrayInputStream(_bytes_2);
+      NullProgressMonitor _nullProgressMonitor_3 = new NullProgressMonitor();
+      resultAttribute.create(_byteArrayInputStream_2, IResource.FORCE, _nullProgressMonitor_3);
+      final CharSequence genericReference = this.genericTemplate.generateGenericReference(input);
+      final IFile resultReference = driversFolder.getFile("GenericReference.java");
+      byte[] _bytes_3 = genericReference.toString().getBytes();
+      ByteArrayInputStream _byteArrayInputStream_3 = new ByteArrayInputStream(_bytes_3);
+      NullProgressMonitor _nullProgressMonitor_4 = new NullProgressMonitor();
+      resultReference.create(_byteArrayInputStream_3, IResource.FORCE, _nullProgressMonitor_4);
+      final CharSequence genericEntity = this.genericTemplate.generateGenericEntity(input);
+      final IFile resultEntity = driversFolder.getFile("GenericEntity.java");
+      byte[] _bytes_4 = genericEntity.toString().getBytes();
+      ByteArrayInputStream _byteArrayInputStream_4 = new ByteArrayInputStream(_bytes_4);
+      NullProgressMonitor _nullProgressMonitor_5 = new NullProgressMonitor();
+      resultEntity.create(_byteArrayInputStream_4, IResource.FORCE, _nullProgressMonitor_5);
     } catch (Throwable _e) {
       throw Exceptions.sneakyThrow(_e);
     }

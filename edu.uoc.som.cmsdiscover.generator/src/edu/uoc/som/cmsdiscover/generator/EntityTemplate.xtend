@@ -25,10 +25,13 @@ class EntityTemplate {
 		this.Annotations = Annotations
 		this.modelClasses = modelClasses
 		this.packageName = packageName
+		for (Annotation : this.Annotations) {
+			if (Annotation.getKey().contains("cmsTechnology")) this.cmsTechnology = Annotation.getValue();
+		}
 	}
-	
-	
+		
 	def generateEntitiesClasses() '''
+
 	package «packageName»;
 	
 	
@@ -45,234 +48,168 @@ class EntityTemplate {
 	import java.util.Arrays;
 	import java.util.ArrayList;
 	import java.text.ParseException;
-	import java.text.SimpleDateFormat;
+	import org.joda.time.DateTime;
+	import generated.middleware.Umami_Food_Magazine_API___JSON_API.drivers.GenericEntity;
+	import «packageName».drivers.DriverInterface;
+	«IF this.cmsTechnology.contains("Drupal")»
+	import «packageName».drivers.DrupalDriver;
+	«ELSEIF this.cmsTechnology.contains("Wordpress")»
+	import «packageName».drivers.WordpressDriver;
+	«ENDIF»
 		
 	public class «this.modelClassName» {
 			
 		// STATIC VALUES
-			«FOR Annotation : this.Annotations»
-			public static final String «Annotation.getKey()» = "«Annotation.getValue»";
-			«IF Annotation.getKey() == "cmsTechnology"»
-			//	«this.cmsTechnology = Annotation.getValue »
-			«ENDIF»
-			«ENDFOR»
+		«FOR Annotation : this.Annotations»
+		public static final String «Annotation.getKey()» = "«Annotation.getValue»";
+		«ENDFOR»
+		
+		public DriverInterface driver;
+	
 		
 		List<String> attributesList = Arrays.asList(«FOR String attribute : this.classAttributes.map[name] SEPARATOR ","»"«attribute»"«ENDFOR»);
 		
 		
 		// Attributes
-			« FOR EAttribute attribute : this.classAttributes»
-			«addAttribute(attribute)»
-			«ENDFOR»
-			
+		« FOR EAttribute attribute : this.classAttributes»
+		«addAttribute(attribute)»
+		«ENDFOR»
+		
 		// Relationships
-			« FOR EReference reference : this.classReferences»
-			«addReference(reference)»
-			«ENDFOR»
+		« FOR EReference reference : this.classReferences»
+		«addReference(reference)»
+		«ENDFOR»
+		
+		«addConstructor()»
 			
 		// Main Methods
 		«addCollectionGetter()»
 		
 		«addSingleGetter()»
 		
-		«addRequester()»
-		
-		«mapDrupalAnswer()»
-		
-		«mapWordpressAnswer()»
-		
+
+		«mapAnswer()»
+
 		«addReferenceMethods()»
+		
+		// Attributes
+		« FOR EAttribute attribute : this.classAttributes»
+		«addGettersAndSetters(attribute)»
+		«ENDFOR»
 			
 	}
+
 		'''
-		
 	
-		
-	def addConstructor(EClass entity) '''
-		public «entity.getName()»(params) {
-		  // URL
-		  // Endpoint
-		  // User
-		  // Password
-		  // Technology type
-		}
+	def addGettersAndSetters(EAttribute attribute) '''
+	public «attribute.getEAttributeType().getInstanceTypeName()» get_«attribute.getName()» () {
+		return 	this.«attribute.getName()»;
+	}
+	
+	public void set_«attribute.getName()» («attribute.getEAttributeType().getInstanceTypeName()» value) {
+		this.«attribute.getName()» = value;
+	}
+	
+	'''	
+	def addConstructor() '''
+	public «this.modelClassName»() {
+		this.driver = new «this.cmsTechnology»Driver();
+	}
 	'''
 	
 	def addSingleGetter() '''
 	public «this.modelClassName» getSingle(String Id) {
-			JsonElement answer = ResourceRequest("/"+Id,"GET");
-			«this.modelClassName» return«this.modelClassName» = null;
-			if (this.cmsTechnology.contains("Drupal")) {
-				return«this.modelClassName» = mapSingleDrupalAnswer(answer.getAsJsonObject().get("data")); 
-			} else {
-				//return«this.modelClassName» = mapWordpressAnswer(answer); 
-			}
-			return return«this.modelClassName»;
-		}
+		GenericEntity singleAnswer = driver.getSingle(resourceRoute+"/",Id);
+		«this.modelClassName» return«this.modelClassName» = null;
+		return«this.modelClassName» = mapSingleAnswer(singleAnswer);
+		return return«this.modelClassName»;
+	}
 	'''
 	
 	def addCollectionGetter() '''
 	public List<«this.modelClassName»> getCollection() {
-		JsonElement answer = ResourceRequest("","GET");
-		List<«this.modelClassName»> «this.modelClassName»Collection;
-		if (this.cmsTechnology.contains("Drupal")) {
-			«this.modelClassName»Collection = mapDrupalAnswer(answer); 
-		} else {
-			«this.modelClassName»Collection = mapWordpressAnswer(answer); 
-		}
+		List<GenericEntity> answer = driver.getCollection(resourceRoute);
+		List<«this.modelClassName»> «this.modelClassName»Collection = mapAnswer(answer); 
 		return «this.modelClassName»Collection;
 	}
 	'''
 	
-	def mapWordpressAnswer() '''
-	protected List<«this.modelClassName»> mapWordpressAnswer(JsonElement answer) {
-		List<«this.modelClassName»> «this.modelClassName»Collection = null;
+		
+	def mapAnswer() '''
+		
+	protected List<«this.modelClassName»> mapAnswer(List<GenericEntity> answer) {
+		
+		List<«this.modelClassName»> «this.modelClassName»Collection = new ArrayList<«this.modelClassName»>();
+		answer.forEach((singleAnswer) -> {
+			«this.modelClassName»Collection.add(mapSingleAnswer(singleAnswer));
+		});
+		
+		
 		return «this.modelClassName»Collection;
+		
+	}
+	
+	protected «this.modelClassName» mapSingleAnswer(GenericEntity singleAnswer) {
+		
+		«this.modelClassName» returnInstance = new «this.modelClassName»();
+		
+		singleAnswer.attributesList.forEach((attribute) -> {
+			« FOR EAttribute attribute: this.classAttributes »
+				if(attribute.getName().equals("«attribute.getName()»")) {
+					if (attribute.getValue()!= null) {
+				«IF attribute.getEAttributeType().getInstanceTypeName().contains("Integer")  »	
+				 returnInstance.«attribute.getName()» = Integer.parseInt(attribute.getValue());
+				«ELSEIF attribute.getEAttributeType().getInstanceTypeName().contains("String") »
+				 returnInstance.«attribute.getName()» = attribute.getValue().toString();
+				«ELSEIF attribute.getEAttributeType().getInstanceTypeName().contains("boolean") »
+				 returnInstance.«attribute.getName()» = Boolean.parseBoolean(attribute.getValue());
+				«ELSEIF attribute.getEAttributeType().getInstanceTypeName().contains("Date") »
+				 returnInstance.«attribute.getName()» = new DateTime(attribute.getValue().replace("\"", "")).toDate();
+				 «ENDIF»
+				 }
+				}
+			«ENDFOR»
+		});
+
+		singleAnswer.referenceList.forEach((reference) -> {
+		« FOR EReference reference: this.classReferences » 
+			«IF(this.modelClasses.contains(reference.getEReferenceType().getName())) »
+			if(reference.getName().equals("«reference.getName().toString()»")) {
+			  returnInstance.«reference.getName().toString».add(reference.getValue());
+			}
+			«ENDIF»
+		«ENDFOR»
+		});
+		return returnInstance;
 	}
 	'''
-		
-	def mapDrupalAnswer() '''
-		
-		protected List<«this.modelClassName»> mapDrupalAnswer(JsonElement answer) {
 			
-			List<«this.modelClassName»> «this.modelClassName»Collection = new ArrayList<«this.modelClassName»>();
-			answer.getAsJsonObject().get("data").getAsJsonArray().forEach((content) -> {
-				«this.modelClassName»Collection.add(mapSingleDrupalAnswer(content));
-			});
-			
-			
-			return «this.modelClassName»Collection;
-			
-		}
-		
-		public «this.modelClassName» mapSingleDrupalAnswer(JsonElement answer) {
-			
-				«this.modelClassName» returnInstance = new «this.modelClassName»();
-		
-				for (Entry<String, JsonElement> element : answer.getAsJsonObject().entrySet()) {{
-					if (element.getKey().contains("relationships")) {
-						for (Entry<String, JsonElement> singleRelation : element.getValue().getAsJsonObject().entrySet()) {
-							JsonElement relationData = singleRelation.getValue().getAsJsonObject().get("data");
-							String entityType = null;
-							String entityId = null;
-							if (relationData.isJsonObject()) {
-								entityType = relationData.getAsJsonObject().get("type").getAsJsonPrimitive().getAsString();
-								entityId = relationData.getAsJsonObject().get("id").getAsJsonPrimitive().getAsString();
-							} else {
-								if(!relationData.getAsJsonArray().isEmpty()) {
-									entityType = relationData.getAsJsonArray().get(0).getAsJsonObject().get("type").getAsString();
-									entityId = relationData.getAsJsonArray().get(0).getAsJsonObject().get("id").getAsString();
-								}
-							}
-							if (!(entityType == null)) {
-								int index = entityType.indexOf("--");
-								String referencedClass = entityType.substring(index + 2).substring(0, 1)
-										.toUpperCase() + entityType.substring(index + 2).substring(1);
-								« FOR EReference reference: this.classReferences » 
-								«IF(this.modelClasses.contains(reference.getEReferenceType().getName())) »
-								 if(singleRelation.getKey().equals("«reference.getName().toString()»")) {
-								 returnInstance.«reference.getName().toString» = entityId;
-								}
-									«ENDIF»
-								«ENDFOR»
-							}
-						}
-					}
-					if (element.getKey().contains("id")) {
-						String value = element.getValue().toString().replaceAll("\"","");
-						if(value != null && value.matches("[0-9.]+")){
-							returnInstance.uuid = Integer.parseInt(value);
-						}
-					}
-					if(element.getKey().contains("attributes")) {
-						for( Entry<String, JsonElement> attribute: element.getValue().getAsJsonObject().entrySet()) {
-							System.out.println(attribute.getKey()+": "+attribute.getValue());
-							« FOR EAttribute attribute: this.classAttributes »
-								if(attribute.getKey().equals("«attribute.getName()»")) {
-								«IF attribute.getEAttributeType().getInstanceTypeName().contains("Integer")  »	
-								 returnInstance.«attribute.getName()» = attribute.getValue().getAsInt();
-								«ELSEIF attribute.getEAttributeType().getInstanceTypeName().contains("String") »
-								 returnInstance.«attribute.getName()» = attribute.getValue().toString();
-								«ELSEIF attribute.getEAttributeType().getInstanceTypeName().contains("boolean") »
-								 returnInstance.«attribute.getName()» = attribute.getValue().getAsBoolean();
-								«ELSEIF attribute.getEAttributeType().getInstanceTypeName().contains("Date") »
-								 try{
-								 	returnInstance.«attribute.getName()» = new SimpleDateFormat("YYYY-MM-DD[T]HH:mm:ss. SSS[Z]").parse(attribute.getValue().getAsString());
-								 } catch ( ParseException e) {
-								 	e.printStackTrace();
-								 }
-								 «ENDIF»
-								}
-							«ENDFOR»
-							if(element.getValue().getAsJsonObject().get("drupal_internal__nid") != null) {
-								// returnInstance.contentId = element.getValue().getAsJsonObject().get("drupal_internal__nid").getAsJsonObject().get("value").toString();
-							}
-						}
-					}
-				}
-			}
-			return returnInstance;
-			
-		}
-		'''
-		
-		
-		
 	def addAttribute(EAttribute attribute) '''
 	private «attribute.getEAttributeType().getInstanceTypeName()» «attribute.getName()»;
 	«««»»// public String «attribute.getName()»;
-		'''
+	'''
 		
 	def addReference(EReference reference) '''
 	«IF(this.modelClasses.contains(reference.getEReferenceType().getName())) »
-	public String «reference.getName().toString()»;
+	public List<String> «reference.getName().toString()»  = new ArrayList<String>();
 	«ENDIF»
 	'''
 		
 	def addReferenceMethods()'''
-		« FOR EReference reference: this.classReferences » 
-		«IF(this.modelClasses.contains(reference.getEReferenceType().getName())) »
-		public «reference.getEReferenceType().getName()» get«reference.getName()» (String entityId) {
+	« FOR EReference reference: this.classReferences » 
+	«IF(this.modelClasses.contains(reference.getEReferenceType().getName())) »
+	public List<«reference.getEReferenceType().getName()»> get_«reference.getName()» () {
+
+		List<«reference.getEReferenceType().getName()»> referenceList = new ArrayList<«reference.getEReferenceType().getName()»>();
+		this.«reference.getName()».forEach((element) -> {
 			«reference.getEReferenceType().getName()» referencedEntity = new «reference.getEReferenceType().getName()»();
-			return referencedEntity.getSingle(entityId);
-		}
-		«ENDIF»
-		«ENDFOR»
+			referenceList.add(referencedEntity.getSingle(element));
+		});
+		return referenceList;
+
+	}
+	«ENDIF»
+	«ENDFOR»
 	'''
-		
-		
-	def addRequester() '''
-		public JsonElement ResourceRequest(String singleResource, String method) {
-
-			// create a client
-			HttpClient client = HttpClient.newHttpClient();
-
-			// create a request
-			HttpRequest request = HttpRequest.newBuilder().uri(URI.create(this.cmsUrl + this.resourceRoute + singleResource))
-					.method(method, HttpRequest.BodyPublishers.noBody()).header("accept", "application/json")
-					//.header("Authorization", basicAuth(this.consumerUser, this.consumerPass))
-					.build();
-
-			// use the client to send the request
-			try {
-				request.method();
-				HttpResponse<String> response = client.send(request, BodyHandlers.ofString());
-				if (response.statusCode() == 200) {
-					JsonElement res = new JsonParser().parse(response.body());
-					return res;
-				} else {
-					System.out.println("Opps route: " + singleResource + " has returned status: " + response.statusCode());
-					return null;
-				}
-
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			return null;
-		}
-	'''
+				
 }

@@ -67,7 +67,7 @@ public class ImportWizardPage extends WizardNewFileCreationPage {
 
 		// Create radios
 		Label labelRadio = new Label(container, SWT.NONE);
-		labelRadio.setText("Which technology are powering your CMS: ");
+		labelRadio.setText("What technology is powering your CMS? ");
 		Group techGroup = new Group(container, SWT.NONE);
 		techGroup.setLayout(new RowLayout(SWT.HORIZONTAL));
 		buttonWp = new Button(techGroup, SWT.RADIO);
@@ -98,7 +98,7 @@ public class ImportWizardPage extends WizardNewFileCreationPage {
 		user.setText("");
 
 		Label label3 = new Label(container, SWT.NONE);
-		label3.setText("Passwrod: ");
+		label3.setText("Password: ");
 		pass = new Text(container, SWT.BORDER | SWT.PASSWORD);
 		pass.setText("");
 

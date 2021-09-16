@@ -3,7 +3,7 @@ package edu.uoc.som.cmsdiscover.generator;
 import org.eclipse.xtend2.lib.StringConcatenation;
 
 @SuppressWarnings("all")
-public class PomTeamplate {
+public class PomTemplate {
   public CharSequence getPom() {
     StringConcatenation _builder = new StringConcatenation();
     _builder.append("<project xmlns=\"http://maven.apache.org/POM/4.0.0\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd\">");
@@ -70,6 +70,21 @@ public class PomTeamplate {
     _builder.newLine();
     _builder.append("\t    ");
     _builder.append("<version>2.8.7</version>");
+    _builder.newLine();
+    _builder.append("\t");
+    _builder.append("</dependency>");
+    _builder.newLine();
+    _builder.append("\t");
+    _builder.append("<dependency>");
+    _builder.newLine();
+    _builder.append("\t  ");
+    _builder.append("<groupId>joda-time</groupId>");
+    _builder.newLine();
+    _builder.append("\t  ");
+    _builder.append("<artifactId>joda-time</artifactId>");
+    _builder.newLine();
+    _builder.append("\t  ");
+    _builder.append("<version>2.10.10</version>");
     _builder.newLine();
     _builder.append("\t");
     _builder.append("</dependency>");

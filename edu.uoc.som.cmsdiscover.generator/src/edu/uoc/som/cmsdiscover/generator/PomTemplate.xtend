@@ -2,7 +2,7 @@ package edu.uoc.som.cmsdiscover.generator
 
 
 
-class PomTeamplate {
+class PomTemplate {
 	
 	def getPom() '''
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
@@ -27,6 +27,11 @@ class PomTeamplate {
 	    <groupId>com.google.code.gson</groupId>
 	    <artifactId>gson</artifactId>
 	    <version>2.8.7</version>
+	</dependency>
+	<dependency>
+	  <groupId>joda-time</groupId>
+	  <artifactId>joda-time</artifactId>
+	  <version>2.10.10</version>
 	</dependency>
   </dependencies>
   <properties>

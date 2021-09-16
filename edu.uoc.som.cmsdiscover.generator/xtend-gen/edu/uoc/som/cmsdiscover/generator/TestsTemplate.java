@@ -3,7 +3,7 @@ package edu.uoc.som.cmsdiscover.generator;
 import org.eclipse.xtend2.lib.StringConcatenation;
 
 @SuppressWarnings("all")
-public class TestsTeamplate {
+public class TestsTemplate {
   public CharSequence getTest() {
     StringConcatenation _builder = new StringConcatenation();
     _builder.append("package generated.middleware.Umami_Food_Magazine_API___JSON_API;");

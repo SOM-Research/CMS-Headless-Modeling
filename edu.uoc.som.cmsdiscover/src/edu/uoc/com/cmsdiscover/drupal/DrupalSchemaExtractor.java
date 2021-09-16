@@ -209,7 +209,7 @@ public class DrupalSchemaExtractor {
 	 * @param definitions Model the relationships between the detected entities
 	 */
 	public void extractRelationships(JsonElement definitions) {
-		
+
 		String referencedClass = "";
 
 		// Iterate again over definitions and create EReferences.
@@ -254,7 +254,7 @@ public class DrupalSchemaExtractor {
 					JsonObject properties = propertiesJson.getAsJsonObject("properties");
 					for (Map.Entry<String, JsonElement> singleProp : properties.entrySet()) {
 						String referencedClassLowerCase;
-					
+
 						if (singleProp.getKey().startsWith("pid")) {
 							referencedClass = classTitle;
 						} else if (singleProp.getKey().startsWith("entity_id")) {
@@ -266,16 +266,16 @@ public class DrupalSchemaExtractor {
 								referencedClassLowerCase = referencedClass_temp.get("items").getAsJsonObject()
 										.get("properties").getAsJsonObject().get("type").getAsJsonObject().get("enum")
 										.getAsString();
-								
+
 							} else {
 								referencedClassLowerCase = referencedClass_temp.get("properties").getAsJsonObject()
 										.get("type").getAsJsonObject().get("enum").getAsString()
 										.replaceAll("file--", "").replaceAll("user--", "")
 										.replaceAll("contact_form--", "");
 							}
-								int index = referencedClassLowerCase.indexOf("--");
-								referencedClass = referencedClassLowerCase.substring(index + 2).substring(0, 1)
-										.toUpperCase() + referencedClassLowerCase.substring(index + 2).substring(1);
+							int index = referencedClassLowerCase.indexOf("--");
+							referencedClass = referencedClassLowerCase.substring(index + 2).substring(0, 1)
+									.toUpperCase() + referencedClassLowerCase.substring(index + 2).substring(1);
 						}
 
 						// Check if the referenced class is present in the model or in the generic
@@ -377,6 +377,10 @@ public class DrupalSchemaExtractor {
 					EReference EReferenceObject = createDynamicEReference(featureName, extraDynamicEClass, true);
 					return (EStructuralFeature) EReferenceObject;
 				}
+			case "number":
+				if (featureValues.get("format").getAsString().contains("utc-")) {
+
+				}
 			default:
 				EAttribute EAttributeObject = createDynamicEAttributes(featureName, featureValues);
 				return (EStructuralFeature) EAttributeObject;
@@ -398,8 +402,13 @@ public class DrupalSchemaExtractor {
 		String attrType = singleAttr.get("type").getAsString();
 
 		// Check Attribute type
-		if (attrType.startsWith("integer") || attrType.startsWith("number")) {
+		if (attrType.startsWith("integer")) {
 			dynamicEAttribute.setEType(corePackage.getEIntegerObject());
+		} else if (attrType.startsWith("number")) {
+			if (singleAttr.get("format").getAsString().contains("utc"))
+				dynamicEAttribute.setEType(corePackage.getEDate());
+			else
+				dynamicEAttribute.setEType(corePackage.getEIntegerObject());
 		} else if (attrType.startsWith("string")) {
 			dynamicEAttribute.setEType(corePackage.getEString());
 		} else if (attrType.startsWith("boolean")) {
