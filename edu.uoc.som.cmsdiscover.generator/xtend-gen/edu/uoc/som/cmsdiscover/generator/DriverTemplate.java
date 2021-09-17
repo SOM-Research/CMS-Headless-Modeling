@@ -394,7 +394,7 @@ public class DriverTemplate {
     _builder.append("String value = element.getValue().toString().replaceAll(\"\\\"\",\"\");");
     _builder.newLine();
     _builder.append("\t\t\t\t");
-    _builder.append("if(value != null && value.matches(\"[0-9.]+\")){");
+    _builder.append("if(value != null ){");
     _builder.newLine();
     _builder.append("\t\t\t\t\t");
     _builder.append("// Create the attribute");
@@ -403,7 +403,7 @@ public class DriverTemplate {
     _builder.append("GenericAttribute genericAttribute = new GenericAttribute();");
     _builder.newLine();
     _builder.append("\t\t\t\t\t");
-    _builder.append("genericAttribute.setName(element.getKey());");
+    _builder.append("genericAttribute.setName(\"uuid\");");
     _builder.newLine();
     _builder.append("\t\t\t\t\t");
     _builder.append("genericAttribute.setValue(value);");

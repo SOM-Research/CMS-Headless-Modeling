@@ -14,6 +14,8 @@ import org.eclipse.emf.ecore.xmi.impl.EcoreResourceFactoryImpl
 import org.eclipse.core.resources.IProject
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.resources.ResourcesPlugin
+import java.util.List
+import java.util.ArrayList
 
 class CodeGenerator {
 
@@ -22,6 +24,7 @@ class CodeGenerator {
 	DriverTemplate driverTemplate = new DriverTemplate
 	DriverInterface interfaceTemplate = new DriverInterface
 	GenericEntityTemplate genericTemplate = new GenericEntityTemplate
+	FieldTemplate fieldTemplate = new FieldTemplate
 	EPackage thePackage
 	Resource model
 	EPackage modelPackage
@@ -30,11 +33,19 @@ class CodeGenerator {
 
 		if (input !== null && input instanceof EPackage) {
 			thePackage = input as EPackage;
-			val eClasses = thePackage.EClassifiers.filter(EClass)
+
+
+			val eClasses = thePackage.EClassifiers.filter(EClass);
+	
 			val classesName = eClasses.map[name]
+
+			// Add field classes
+			val eFieldClasses = thePackage.getESubpackages().get(0).EClassifiers.filter(EClass)
+	
+			val fieldClassesName = eFieldClasses.map[name]
 			val sourceCmsInformation = thePackage.EAnnotations.get(0).details
 
-			// Generate drivers
+			// Generate Drivers
 			generateDrivers(input, srcGenFolder)
 
 			println("Generating")
@@ -47,12 +58,22 @@ class CodeGenerator {
 					classAnnotation.put(detail.key, detail.value)
 				}
 				// Call the generator
-				val template = new EntityTemplate(modelClass, classAnnotation, classesName,
+				val template = new EntityTemplate(modelClass, classAnnotation, classesName, fieldClassesName,
 					"generated.middleware." + thePackage.getName());
 				val content = template.generateEntitiesClasses()
 				// Create File
 				val resultFile = srcGenFolder.getFile(modelClass.getName + ".java")
 				resultFile.create(new ByteArrayInputStream(content.toString().getBytes()), IResource.FORCE,
+					new NullProgressMonitor())
+			}
+			
+			// Generate Fields
+			val srcGenField = srcGenFolder.getFolder("customAttributes");
+			if(!srcGenField.exists()) srcGenField.create(true,true, new NullProgressMonitor());
+			for (EClass fieldClass : eFieldClasses) {
+				val fieldTemplate = fieldTemplate.generate(fieldClass, "generated.middleware." + thePackage.getName() + ".customAttributes");
+				val fieldFile = srcGenField.getFile(fieldClass.getName + ".java")
+				fieldFile.create(new ByteArrayInputStream(fieldTemplate.toString().getBytes()), IResource.FORCE,
 					new NullProgressMonitor())
 			}
 

@@ -30,13 +30,16 @@ public class EntityTemplate {
   
   private String packageName;
   
-  public EntityTemplate(final EClass modelClass, final EMap<String, String> Annotations, final Iterable<String> modelClasses, final String packageName) {
+  private Iterable<String> fieldClassesName;
+  
+  public EntityTemplate(final EClass modelClass, final EMap<String, String> Annotations, final Iterable<String> modelClasses, final Iterable<String> fieldClassesName, final String packageName) {
     this.modelClass = modelClass;
     this.modelClassName = modelClass.getName();
     this.classAttributes = modelClass.getEAllAttributes();
     this.classReferences = modelClass.getEAllReferences();
     this.Annotations = Annotations;
     this.modelClasses = modelClasses;
+    this.fieldClassesName = fieldClassesName;
     this.packageName = packageName;
     for (final Map.Entry<String, String> Annotation : this.Annotations) {
       boolean _contains = Annotation.getKey().contains("cmsTechnology");
@@ -55,23 +58,6 @@ public class EntityTemplate {
     _builder.newLineIfNotEmpty();
     _builder.newLine();
     _builder.newLine();
-    _builder.append("import java.io.IOException;");
-    _builder.newLine();
-    _builder.append("import java.net.URI;");
-    _builder.newLine();
-    _builder.append("import java.net.http.HttpClient;");
-    _builder.newLine();
-    _builder.append("import java.net.http.HttpRequest;");
-    _builder.newLine();
-    _builder.append("import java.net.http.HttpResponse;");
-    _builder.newLine();
-    _builder.append("import java.net.http.HttpResponse.BodyHandlers;");
-    _builder.newLine();
-    _builder.append("import com.google.gson.JsonElement;");
-    _builder.newLine();
-    _builder.append("import com.google.gson.JsonParser;");
-    _builder.newLine();
-    _builder.append("import java.util.Map.Entry;");
     _builder.newLine();
     _builder.append("import java.util.List;");
     _builder.newLine();
@@ -79,9 +65,9 @@ public class EntityTemplate {
     _builder.newLine();
     _builder.append("import java.util.ArrayList;");
     _builder.newLine();
-    _builder.append("import java.text.ParseException;");
-    _builder.newLine();
     _builder.append("import org.joda.time.DateTime;");
+    _builder.newLine();
+    _builder.append("import generated.middleware.Umami_Food_Magazine_API___JSON_API.customAttributes.*;");
     _builder.newLine();
     _builder.append("import generated.middleware.Umami_Food_Magazine_API___JSON_API.drivers.GenericEntity;");
     _builder.newLine();
@@ -474,6 +460,18 @@ public class EntityTemplate {
         _builder.newLine();
       }
     }
+    {
+      for(final EReference reference : this.classReferences) {
+        {
+          boolean _contains_4 = IterableExtensions.contains(this.fieldClassesName, reference.getEReferenceType().getName());
+          if (_contains_4) {
+            _builder.append("\t\t");
+            _builder.append("// To do full custom classes");
+            _builder.newLine();
+          }
+        }
+      }
+    }
     _builder.append("\t");
     _builder.append("});");
     _builder.newLine();
@@ -482,20 +480,20 @@ public class EntityTemplate {
     _builder.append("singleAnswer.referenceList.forEach((reference) -> {");
     _builder.newLine();
     {
-      for(final EReference reference : this.classReferences) {
+      for(final EReference reference_1 : this.classReferences) {
         {
-          boolean _contains_4 = IterableExtensions.contains(this.modelClasses, reference.getEReferenceType().getName());
-          if (_contains_4) {
+          boolean _contains_5 = IterableExtensions.contains(this.modelClasses, reference_1.getEReferenceType().getName());
+          if (_contains_5) {
             _builder.append("\t");
             _builder.append("if(reference.getName().equals(\"");
-            String _string = reference.getName().toString();
+            String _string = reference_1.getName().toString();
             _builder.append(_string, "\t");
             _builder.append("\")) {");
             _builder.newLineIfNotEmpty();
             _builder.append("\t");
             _builder.append("  ");
             _builder.append("returnInstance.");
-            String _string_1 = reference.getName().toString();
+            String _string_1 = reference_1.getName().toString();
             _builder.append(_string_1, "\t  ");
             _builder.append(".add(reference.getValue());");
             _builder.newLineIfNotEmpty();
@@ -542,6 +540,24 @@ public class EntityTemplate {
         _builder.newLineIfNotEmpty();
       }
     }
+    _builder.newLine();
+    {
+      boolean _contains_1 = IterableExtensions.contains(this.fieldClassesName, reference.getEReferenceType().getName());
+      if (_contains_1) {
+        _builder.append("public ");
+        String _name = reference.getEReferenceType().getName();
+        _builder.append(_name);
+        _builder.append(" ");
+        String _string_1 = reference.getName().toString();
+        _builder.append(_string_1);
+        _builder.append("  = new ");
+        String _name_1 = reference.getEReferenceType().getName();
+        _builder.append(_name_1);
+        _builder.append("();");
+        _builder.newLineIfNotEmpty();
+      }
+    }
+    _builder.newLine();
     return _builder;
   }
   

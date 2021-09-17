@@ -148,10 +148,10 @@ class DriverTemplate {
 						}
 				if (element.getKey().contains("id")) {
 					String value = element.getValue().toString().replaceAll("\"","");
-					if(value != null && value.matches("[0-9.]+")){
+					if(value != null ){
 						// Create the attribute
 						GenericAttribute genericAttribute = new GenericAttribute();
-						genericAttribute.setName(element.getKey());
+						genericAttribute.setName("uuid");
 						genericAttribute.setValue(value);
 						// Add attribute to instance
 						genericInstance.attributesList.add(genericAttribute);

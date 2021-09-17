@@ -4,6 +4,7 @@ import com.google.common.collect.Iterables;
 import edu.uoc.som.cmsdiscover.generator.DriverInterface;
 import edu.uoc.som.cmsdiscover.generator.DriverTemplate;
 import edu.uoc.som.cmsdiscover.generator.EntityTemplate;
+import edu.uoc.som.cmsdiscover.generator.FieldTemplate;
 import edu.uoc.som.cmsdiscover.generator.GenericEntityTemplate;
 import edu.uoc.som.cmsdiscover.generator.PomTemplate;
 import edu.uoc.som.cmsdiscover.generator.TestsTemplate;
@@ -41,6 +42,8 @@ public class CodeGenerator {
   
   private GenericEntityTemplate genericTemplate = new GenericEntityTemplate();
   
+  private FieldTemplate fieldTemplate = new FieldTemplate();
+  
   private EPackage thePackage;
   
   private Resource model;
@@ -56,6 +59,11 @@ public class CodeGenerator {
           return it.getName();
         };
         final Iterable<String> classesName = IterableExtensions.<EClass, String>map(eClasses, _function);
+        final Iterable<EClass> eFieldClasses = Iterables.<EClass>filter(this.thePackage.getESubpackages().get(0).getEClassifiers(), EClass.class);
+        final Function1<EClass, String> _function_1 = (EClass it) -> {
+          return it.getName();
+        };
+        final Iterable<String> fieldClassesName = IterableExtensions.<EClass, String>map(eFieldClasses, _function_1);
         final EMap<String, String> sourceCmsInformation = this.thePackage.getEAnnotations().get(0).getDetails();
         this.generateDrivers(input, srcGenFolder);
         InputOutput.<String>println("Generating");
@@ -68,7 +76,7 @@ public class CodeGenerator {
             }
             String _name = this.thePackage.getName();
             String _plus = ("generated.middleware." + _name);
-            final EntityTemplate template = new EntityTemplate(modelClass, classAnnotation, classesName, _plus);
+            final EntityTemplate template = new EntityTemplate(modelClass, classAnnotation, classesName, fieldClassesName, _plus);
             final CharSequence content = template.generateEntitiesClasses();
             String _name_1 = modelClass.getName();
             String _plus_1 = (_name_1 + ".java");
@@ -79,25 +87,47 @@ public class CodeGenerator {
             resultFile.create(_byteArrayInputStream, IResource.FORCE, _nullProgressMonitor);
           }
         }
-        final IFolder testFolder = project.getFolder("test");
-        boolean _exists = testFolder.exists();
+        final IFolder srcGenField = srcGenFolder.getFolder("customAttributes");
+        boolean _exists = srcGenField.exists();
         boolean _not = (!_exists);
         if (_not) {
           NullProgressMonitor _nullProgressMonitor = new NullProgressMonitor();
-          testFolder.create(true, true, _nullProgressMonitor);
+          srcGenField.create(true, true, _nullProgressMonitor);
+        }
+        for (final EClass fieldClass : eFieldClasses) {
+          {
+            String _name = this.thePackage.getName();
+            String _plus = ("generated.middleware." + _name);
+            String _plus_1 = (_plus + ".customAttributes");
+            final CharSequence fieldTemplate = this.fieldTemplate.generate(fieldClass, _plus_1);
+            String _name_1 = fieldClass.getName();
+            String _plus_2 = (_name_1 + ".java");
+            final IFile fieldFile = srcGenField.getFile(_plus_2);
+            byte[] _bytes = fieldTemplate.toString().getBytes();
+            ByteArrayInputStream _byteArrayInputStream = new ByteArrayInputStream(_bytes);
+            NullProgressMonitor _nullProgressMonitor_1 = new NullProgressMonitor();
+            fieldFile.create(_byteArrayInputStream, IResource.FORCE, _nullProgressMonitor_1);
+          }
+        }
+        final IFolder testFolder = project.getFolder("test");
+        boolean _exists_1 = testFolder.exists();
+        boolean _not_1 = (!_exists_1);
+        if (_not_1) {
+          NullProgressMonitor _nullProgressMonitor_1 = new NullProgressMonitor();
+          testFolder.create(true, true, _nullProgressMonitor_1);
         }
         final IFile testFile = srcGenFolder.getFile("mainTest.java");
         final CharSequence testcontent = this.testsTemplate.getTest();
         byte[] _bytes = testcontent.toString().getBytes();
         ByteArrayInputStream _byteArrayInputStream = new ByteArrayInputStream(_bytes);
-        NullProgressMonitor _nullProgressMonitor_1 = new NullProgressMonitor();
-        testFile.create(_byteArrayInputStream, IResource.FORCE, _nullProgressMonitor_1);
+        NullProgressMonitor _nullProgressMonitor_2 = new NullProgressMonitor();
+        testFile.create(_byteArrayInputStream, IResource.FORCE, _nullProgressMonitor_2);
         final IFile pomFile = project.getFile("pom.xml");
         final CharSequence pomContent = this.pomTemplate.getPom();
         byte[] _bytes_1 = pomContent.toString().getBytes();
         ByteArrayInputStream _byteArrayInputStream_1 = new ByteArrayInputStream(_bytes_1);
-        NullProgressMonitor _nullProgressMonitor_2 = new NullProgressMonitor();
-        pomFile.create(_byteArrayInputStream_1, IResource.FORCE, _nullProgressMonitor_2);
+        NullProgressMonitor _nullProgressMonitor_3 = new NullProgressMonitor();
+        pomFile.create(_byteArrayInputStream_1, IResource.FORCE, _nullProgressMonitor_3);
       }
     } catch (Throwable _e) {
       throw Exceptions.sneakyThrow(_e);

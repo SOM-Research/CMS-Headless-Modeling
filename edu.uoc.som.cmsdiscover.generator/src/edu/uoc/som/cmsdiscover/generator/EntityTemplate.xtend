@@ -17,13 +17,16 @@ class EntityTemplate {
 	Iterable<String> modelClasses
 	String packageName
 	
-	new(EClass modelClass, EMap<String, String> Annotations, Iterable<String> modelClasses, String packageName) {
+	Iterable<String> fieldClassesName
+	
+	new(EClass modelClass, EMap<String, String> Annotations, Iterable<String> modelClasses, Iterable<String> fieldClassesName, String packageName) {
 		this.modelClass = modelClass
 		this.modelClassName = modelClass.getName()
 		this.classAttributes = modelClass.getEAllAttributes()
 		this.classReferences = modelClass.getEAllReferences()
 		this.Annotations = Annotations
 		this.modelClasses = modelClasses
+		this.fieldClassesName = fieldClassesName
 		this.packageName = packageName
 		for (Annotation : this.Annotations) {
 			if (Annotation.getKey().contains("cmsTechnology")) this.cmsTechnology = Annotation.getValue();
@@ -35,20 +38,12 @@ class EntityTemplate {
 	package «packageName»;
 	
 	
-	import java.io.IOException;
-	import java.net.URI;
-	import java.net.http.HttpClient;
-	import java.net.http.HttpRequest;
-	import java.net.http.HttpResponse;
-	import java.net.http.HttpResponse.BodyHandlers;
-	import com.google.gson.JsonElement;
-	import com.google.gson.JsonParser;
-	import java.util.Map.Entry;
+
 	import java.util.List;
 	import java.util.Arrays;
 	import java.util.ArrayList;
-	import java.text.ParseException;
 	import org.joda.time.DateTime;
+	import generated.middleware.Umami_Food_Magazine_API___JSON_API.customAttributes.*;
 	import generated.middleware.Umami_Food_Magazine_API___JSON_API.drivers.GenericEntity;
 	import «packageName».drivers.DriverInterface;
 	«IF this.cmsTechnology.contains("Drupal")»
@@ -169,6 +164,11 @@ class EntityTemplate {
 				 }
 				}
 			«ENDFOR»
+			« FOR EReference reference: this.classReferences » 
+				«IF(this.fieldClassesName.contains(reference.getEReferenceType().getName())) »
+					// To do full custom classes
+				«ENDIF»
+			«ENDFOR»
 		});
 
 		singleAnswer.referenceList.forEach((reference) -> {
@@ -193,6 +193,11 @@ class EntityTemplate {
 	«IF(this.modelClasses.contains(reference.getEReferenceType().getName())) »
 	public List<String> «reference.getName().toString()»  = new ArrayList<String>();
 	«ENDIF»
+
+	«IF(this.fieldClassesName.contains(reference.getEReferenceType().getName())) »
+	public «reference.getEReferenceType().getName()» «reference.getName().toString()»  = new «reference.getEReferenceType().getName()»();
+	«ENDIF»
+
 	'''
 		
 	def addReferenceMethods()'''

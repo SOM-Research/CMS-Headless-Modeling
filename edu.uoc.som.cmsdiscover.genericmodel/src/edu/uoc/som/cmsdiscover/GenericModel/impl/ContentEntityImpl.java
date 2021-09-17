@@ -34,7 +34,7 @@ public class ContentEntityImpl extends MinimalEObjectImpl.Container implements C
 	 * @generated
 	 * @ordered
 	 */
-	protected static final int UUID_EDEFAULT = 0;
+	protected static final String UUID_EDEFAULT = null;
 
 	/**
 	 * The cached value of the '{@link #getUuid() <em>Uuid</em>}' attribute.
@@ -44,7 +44,7 @@ public class ContentEntityImpl extends MinimalEObjectImpl.Container implements C
 	 * @generated
 	 * @ordered
 	 */
-	protected int uuid = UUID_EDEFAULT;
+	protected String uuid = UUID_EDEFAULT;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -70,7 +70,7 @@ public class ContentEntityImpl extends MinimalEObjectImpl.Container implements C
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public int getUuid() {
+	public String getUuid() {
 		return uuid;
 	}
 
@@ -79,8 +79,8 @@ public class ContentEntityImpl extends MinimalEObjectImpl.Container implements C
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public void setUuid(int newUuid) {
-		int oldUuid = uuid;
+	public void setUuid(String newUuid) {
+		String oldUuid = uuid;
 		uuid = newUuid;
 		if (eNotificationRequired())
 			eNotify(new ENotificationImpl(this, Notification.SET, GenericModelPackage.CONTENT_ENTITY__UUID, oldUuid, uuid));
@@ -109,7 +109,7 @@ public class ContentEntityImpl extends MinimalEObjectImpl.Container implements C
 	public void eSet(int featureID, Object newValue) {
 		switch (featureID) {
 			case GenericModelPackage.CONTENT_ENTITY__UUID:
-				setUuid((Integer)newValue);
+				setUuid((String)newValue);
 				return;
 		}
 		super.eSet(featureID, newValue);
@@ -139,7 +139,7 @@ public class ContentEntityImpl extends MinimalEObjectImpl.Container implements C
 	public boolean eIsSet(int featureID) {
 		switch (featureID) {
 			case GenericModelPackage.CONTENT_ENTITY__UUID:
-				return uuid != UUID_EDEFAULT;
+				return UUID_EDEFAULT == null ? uuid != null : !UUID_EDEFAULT.equals(uuid);
 		}
 		return super.eIsSet(featureID);
 	}

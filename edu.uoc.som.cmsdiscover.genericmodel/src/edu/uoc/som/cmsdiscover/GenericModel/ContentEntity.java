@@ -26,12 +26,12 @@ public interface ContentEntity extends EObject {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @return the value of the '<em>Uuid</em>' attribute.
-	 * @see #setUuid(int)
+	 * @see #setUuid(String)
 	 * @see edu.uoc.som.cmsdiscover.GenericModel.GenericModelPackage#getContentEntity_Uuid()
 	 * @model
 	 * @generated
 	 */
-	int getUuid();
+	String getUuid();
 
 	/**
 	 * Sets the value of the '{@link edu.uoc.som.cmsdiscover.GenericModel.ContentEntity#getUuid <em>Uuid</em>}' attribute.
@@ -41,6 +41,6 @@ public interface ContentEntity extends EObject {
 	 * @see #getUuid()
 	 * @generated
 	 */
-	void setUuid(int value);
+	void setUuid(String value);
 
 } // ContentEntity

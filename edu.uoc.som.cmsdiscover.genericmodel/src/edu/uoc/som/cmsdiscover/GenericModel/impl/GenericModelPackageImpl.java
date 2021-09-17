@@ -224,7 +224,7 @@ public class GenericModelPackageImpl extends EPackageImpl implements GenericMode
 
 		// Initialize classes and features; add operations and parameters
 		initEClass(contentEntityEClass, ContentEntity.class, "ContentEntity", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-		initEAttribute(getContentEntity_Uuid(), ecorePackage.getEInt(), "uuid", null, 0, 1, ContentEntity.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getContentEntity_Uuid(), ecorePackage.getEString(), "uuid", null, 0, 1, ContentEntity.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		// Create resource
 		createResource(eNS_URI);
