@@ -1,11 +1,14 @@
 package edu.uoc.som.cmsdiscover.generator;
 
+import com.google.common.collect.Iterables;
 import java.util.List;
 import java.util.Map;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.common.util.EMap;
 import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
+import org.eclipse.emf.ecore.EClassifier;
+import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EReference;
 import org.eclipse.xtend2.lib.StringConcatenation;
 import org.eclipse.xtext.xbase.lib.Functions.Function1;
@@ -32,14 +35,20 @@ public class EntityTemplate {
   
   private Iterable<String> fieldClassesName;
   
-  public EntityTemplate(final EClass modelClass, final EMap<String, String> Annotations, final Iterable<String> modelClasses, final Iterable<String> fieldClassesName, final String packageName) {
+  private EPackage eFieldPackage;
+  
+  public EntityTemplate(final EClass modelClass, final EMap<String, String> Annotations, final Iterable<String> modelClasses, final EPackage eFieldPackage, final String packageName) {
     this.modelClass = modelClass;
     this.modelClassName = modelClass.getName();
     this.classAttributes = modelClass.getEAllAttributes();
     this.classReferences = modelClass.getEAllReferences();
     this.Annotations = Annotations;
     this.modelClasses = modelClasses;
-    this.fieldClassesName = fieldClassesName;
+    final Function1<EClass, String> _function = (EClass it) -> {
+      return it.getName();
+    };
+    this.fieldClassesName = IterableExtensions.<EClass, String>map(Iterables.<EClass>filter(eFieldPackage.getEClassifiers(), EClass.class), _function);
+    this.eFieldPackage = eFieldPackage;
     this.packageName = packageName;
     for (final Map.Entry<String, String> Annotation : this.Annotations) {
       boolean _contains = Annotation.getKey().contains("cmsTechnology");
@@ -64,6 +73,10 @@ public class EntityTemplate {
     _builder.append("import java.util.Arrays;");
     _builder.newLine();
     _builder.append("import java.util.ArrayList;");
+    _builder.newLine();
+    _builder.append("import com.google.gson.JsonElement;");
+    _builder.newLine();
+    _builder.append("import com.google.gson.JsonParser;");
     _builder.newLine();
     _builder.append("import org.joda.time.DateTime;");
     _builder.newLine();
@@ -119,13 +132,16 @@ public class EntityTemplate {
     _builder.append("\t");
     _builder.newLine();
     _builder.append("\t");
-    _builder.append("public DriverInterface driver;");
+    _builder.append("private DriverInterface driver;");
+    _builder.newLine();
+    _builder.append("\t");
+    _builder.append("private JsonParser parser;");
     _builder.newLine();
     _builder.newLine();
     _builder.append("\t");
     _builder.newLine();
     _builder.append("\t");
-    _builder.append("List<String> attributesList = Arrays.asList(");
+    _builder.append("private List<String> attributesList = Arrays.asList(");
     {
       final Function1<EAttribute, String> _function = (EAttribute it) -> {
         return it.getName();
@@ -185,17 +201,10 @@ public class EntityTemplate {
     _builder.append("// Main Methods");
     _builder.newLine();
     _builder.append("\t");
-    CharSequence _addCollectionGetter = this.addCollectionGetter();
-    _builder.append(_addCollectionGetter, "\t");
+    CharSequence _addDriverWrapperMethods = this.addDriverWrapperMethods();
+    _builder.append(_addDriverWrapperMethods, "\t");
     _builder.newLineIfNotEmpty();
     _builder.append("\t");
-    _builder.newLine();
-    _builder.append("\t");
-    CharSequence _addSingleGetter = this.addSingleGetter();
-    _builder.append(_addSingleGetter, "\t");
-    _builder.newLineIfNotEmpty();
-    _builder.append("\t");
-    _builder.newLine();
     _builder.newLine();
     _builder.append("\t");
     CharSequence _mapAnswer = this.mapAnswer();
@@ -220,6 +229,91 @@ public class EntityTemplate {
       }
     }
     _builder.append("\t\t");
+    _builder.newLine();
+    _builder.append("}");
+    _builder.newLine();
+    _builder.newLine();
+    return _builder;
+  }
+  
+  public CharSequence addDriverWrapperMethods() {
+    StringConcatenation _builder = new StringConcatenation();
+    _builder.append("public ");
+    _builder.append(this.modelClassName);
+    _builder.append(" getSingle(String Id) {");
+    _builder.newLineIfNotEmpty();
+    _builder.append("\t");
+    _builder.append("GenericEntity singleAnswer = driver.getSingle(resourceRoute+\"/\",Id);");
+    _builder.newLine();
+    _builder.append("\t");
+    _builder.append(this.modelClassName, "\t");
+    _builder.append(" return");
+    _builder.append(this.modelClassName, "\t");
+    _builder.append(" = null;");
+    _builder.newLineIfNotEmpty();
+    _builder.append("\t");
+    _builder.append("return");
+    _builder.append(this.modelClassName, "\t");
+    _builder.append(" = mapSingleAnswer(singleAnswer);");
+    _builder.newLineIfNotEmpty();
+    _builder.append("\t");
+    _builder.append("return return");
+    _builder.append(this.modelClassName, "\t");
+    _builder.append(";");
+    _builder.newLineIfNotEmpty();
+    _builder.append("}");
+    _builder.newLine();
+    _builder.newLine();
+    _builder.append("public List<");
+    _builder.append(this.modelClassName);
+    _builder.append("> getCollection() {");
+    _builder.newLineIfNotEmpty();
+    _builder.append("\t");
+    _builder.append("List<GenericEntity> answer = driver.getCollection(resourceRoute);");
+    _builder.newLine();
+    _builder.append("\t");
+    _builder.append("List<");
+    _builder.append(this.modelClassName, "\t");
+    _builder.append("> ");
+    _builder.append(this.modelClassName, "\t");
+    _builder.append("Collection = mapAnswer(answer); ");
+    _builder.newLineIfNotEmpty();
+    _builder.append("\t");
+    _builder.append("return ");
+    _builder.append(this.modelClassName, "\t");
+    _builder.append("Collection;");
+    _builder.newLineIfNotEmpty();
+    _builder.append("}");
+    _builder.newLine();
+    _builder.newLine();
+    _builder.append("public void setPagination(int offset, int page) {");
+    _builder.newLine();
+    _builder.append("\t");
+    _builder.append("driver.addPagination(offset, page);");
+    _builder.newLine();
+    _builder.append("}");
+    _builder.newLine();
+    _builder.newLine();
+    _builder.append("public void setFilter(String fieldName, String value) {");
+    _builder.newLine();
+    _builder.append("\t");
+    _builder.append("driver.addFilter(fieldName, value);");
+    _builder.newLine();
+    _builder.append("}");
+    _builder.newLine();
+    _builder.newLine();
+    _builder.append("public void setOrder(String fieldName, String sortType) {");
+    _builder.newLine();
+    _builder.append("\t");
+    _builder.append("driver.addSorter(fieldName, sortType);");
+    _builder.newLine();
+    _builder.append("}");
+    _builder.newLine();
+    _builder.newLine();
+    _builder.append("public void addEmbededReference(String referenceName) {");
+    _builder.newLine();
+    _builder.append("\t");
+    _builder.append("driver.addEmbedReference(referenceName);");
     _builder.newLine();
     _builder.append("}");
     _builder.newLine();
@@ -277,62 +371,9 @@ public class EntityTemplate {
     _builder.append(this.cmsTechnology, "\t");
     _builder.append("Driver();");
     _builder.newLineIfNotEmpty();
-    _builder.append("}");
+    _builder.append("\t");
+    _builder.append("this.parser = new JsonParser();");
     _builder.newLine();
-    return _builder;
-  }
-  
-  public CharSequence addSingleGetter() {
-    StringConcatenation _builder = new StringConcatenation();
-    _builder.append("public ");
-    _builder.append(this.modelClassName);
-    _builder.append(" getSingle(String Id) {");
-    _builder.newLineIfNotEmpty();
-    _builder.append("\t");
-    _builder.append("GenericEntity singleAnswer = driver.getSingle(resourceRoute+\"/\",Id);");
-    _builder.newLine();
-    _builder.append("\t");
-    _builder.append(this.modelClassName, "\t");
-    _builder.append(" return");
-    _builder.append(this.modelClassName, "\t");
-    _builder.append(" = null;");
-    _builder.newLineIfNotEmpty();
-    _builder.append("\t");
-    _builder.append("return");
-    _builder.append(this.modelClassName, "\t");
-    _builder.append(" = mapSingleAnswer(singleAnswer);");
-    _builder.newLineIfNotEmpty();
-    _builder.append("\t");
-    _builder.append("return return");
-    _builder.append(this.modelClassName, "\t");
-    _builder.append(";");
-    _builder.newLineIfNotEmpty();
-    _builder.append("}");
-    _builder.newLine();
-    return _builder;
-  }
-  
-  public CharSequence addCollectionGetter() {
-    StringConcatenation _builder = new StringConcatenation();
-    _builder.append("public List<");
-    _builder.append(this.modelClassName);
-    _builder.append("> getCollection() {");
-    _builder.newLineIfNotEmpty();
-    _builder.append("\t");
-    _builder.append("List<GenericEntity> answer = driver.getCollection(resourceRoute);");
-    _builder.newLine();
-    _builder.append("\t");
-    _builder.append("List<");
-    _builder.append(this.modelClassName, "\t");
-    _builder.append("> ");
-    _builder.append(this.modelClassName, "\t");
-    _builder.append("Collection = mapAnswer(answer); ");
-    _builder.newLineIfNotEmpty();
-    _builder.append("\t");
-    _builder.append("return ");
-    _builder.append(this.modelClassName, "\t");
-    _builder.append("Collection;");
-    _builder.newLineIfNotEmpty();
     _builder.append("}");
     _builder.newLine();
     return _builder;
@@ -366,8 +407,6 @@ public class EntityTemplate {
     _builder.newLineIfNotEmpty();
     _builder.append("\t");
     _builder.append("});");
-    _builder.newLine();
-    _builder.append("\t");
     _builder.newLine();
     _builder.append("\t");
     _builder.newLine();
@@ -452,7 +491,7 @@ public class EntityTemplate {
           }
         }
         _builder.append("\t\t");
-        _builder.append(" ");
+        _builder.append("\t");
         _builder.append("}");
         _builder.newLine();
         _builder.append("\t\t");
@@ -465,8 +504,104 @@ public class EntityTemplate {
         {
           boolean _contains_4 = IterableExtensions.contains(this.fieldClassesName, reference.getEReferenceType().getName());
           if (_contains_4) {
-            _builder.append("\t\t");
-            _builder.append("// To do full custom classes");
+            _builder.append("\t ");
+            _builder.append("if(attribute.getName().equals(\"");
+            String _name_5 = reference.getName();
+            _builder.append(_name_5, "\t ");
+            _builder.append("\")) {");
+            _builder.newLineIfNotEmpty();
+            _builder.append("\t \t");
+            _builder.append("if (attribute.getValue()!= null) {");
+            _builder.newLine();
+            _builder.append("\t \t");
+            _builder.append("JsonElement elm = parser.parse(attribute.getValue());");
+            _builder.newLine();
+            _builder.append("\t ");
+            EClassifier _eClassifier = this.eFieldPackage.getEClassifier(reference.getEReferenceType().getName());
+            final EClass fieldClass = ((EClass) _eClassifier);
+            _builder.newLineIfNotEmpty();
+            {
+              EList<EAttribute> _eAllAttributes = fieldClass.getEAllAttributes();
+              for(final EAttribute attribute_1 : _eAllAttributes) {
+                _builder.append("\t\t\t\t \t");
+                _builder.append("if(!elm.getAsJsonObject().get(\"");
+                String _name_6 = attribute_1.getName();
+                _builder.append(_name_6, "\t\t\t\t \t");
+                _builder.append("\").isJsonNull()) {");
+                _builder.newLineIfNotEmpty();
+                {
+                  boolean _contains_5 = attribute_1.getEAttributeType().getInstanceTypeName().contains("Integer");
+                  if (_contains_5) {
+                    _builder.append(" \t");
+                    _builder.append("returnInstance.");
+                    String _name_7 = reference.getEReferenceType().getName();
+                    _builder.append(_name_7, " \t");
+                    _builder.append(".set");
+                    String _FirstUpperCase = this.FirstUpperCase(attribute_1.getName());
+                    _builder.append(_FirstUpperCase, " \t");
+                    _builder.append("(Integer.parseInt(elm.getAsJsonObject().get(\"");
+                    String _name_8 = attribute_1.getName();
+                    _builder.append(_name_8, " \t");
+                    _builder.append("\").toString()));");
+                    _builder.newLineIfNotEmpty();
+                  } else {
+                    boolean _contains_6 = attribute_1.getEAttributeType().getInstanceTypeName().contains("String");
+                    if (_contains_6) {
+                      _builder.append(" \t");
+                      _builder.append("returnInstance.");
+                      String _name_9 = reference.getEReferenceType().getName();
+                      _builder.append(_name_9, " \t");
+                      _builder.append(".set");
+                      String _FirstUpperCase_1 = this.FirstUpperCase(attribute_1.getName());
+                      _builder.append(_FirstUpperCase_1, " \t");
+                      _builder.append("(elm.getAsJsonObject().get(\"");
+                      String _name_10 = attribute_1.getName();
+                      _builder.append(_name_10, " \t");
+                      _builder.append("\").toString());");
+                      _builder.newLineIfNotEmpty();
+                    } else {
+                      boolean _contains_7 = attribute_1.getEAttributeType().getInstanceTypeName().contains("boolean");
+                      if (_contains_7) {
+                        _builder.append(" \t");
+                        _builder.append("returnInstance.");
+                        String _name_11 = reference.getEReferenceType().getName();
+                        _builder.append(_name_11, " \t");
+                        _builder.append(".set");
+                        String _FirstUpperCase_2 = this.FirstUpperCase(attribute_1.getName());
+                        _builder.append(_FirstUpperCase_2, " \t");
+                        _builder.append("(Boolean.parseBoolean(elm.getAsJsonObject().get(\"");
+                        String _name_12 = attribute_1.getName();
+                        _builder.append(_name_12, " \t");
+                        _builder.append("\").toString()));");
+                        _builder.newLineIfNotEmpty();
+                      } else {
+                        boolean _contains_8 = attribute_1.getEAttributeType().getInstanceTypeName().contains("Date");
+                        if (_contains_8) {
+                          _builder.append(" \t");
+                          _builder.append("returnInstance.");
+                          String _name_13 = reference.getEReferenceType().getName();
+                          _builder.append(_name_13, " \t");
+                          _builder.append(".set");
+                          String _FirstUpperCase_3 = this.FirstUpperCase(attribute_1.getName());
+                          _builder.append(_FirstUpperCase_3, " \t");
+                          _builder.append("(new DateTime(elm.getAsJsonObject().get(\"");
+                          String _name_14 = attribute_1.getName();
+                          _builder.append(_name_14, " \t");
+                          _builder.append("\").toString()).toDate());");
+                          _builder.newLineIfNotEmpty();
+                        }
+                      }
+                    }
+                  }
+                }
+                _builder.append("}");
+                _builder.newLine();
+              }
+            }
+            _builder.append("\t \t");
+            _builder.append("}");
+            _builder.newLine();
+            _builder.append("}");
             _builder.newLine();
           }
         }
@@ -482,8 +617,8 @@ public class EntityTemplate {
     {
       for(final EReference reference_1 : this.classReferences) {
         {
-          boolean _contains_5 = IterableExtensions.contains(this.modelClasses, reference_1.getEReferenceType().getName());
-          if (_contains_5) {
+          boolean _contains_9 = IterableExtensions.contains(this.modelClasses, reference_1.getEReferenceType().getName());
+          if (_contains_9) {
             _builder.append("\t");
             _builder.append("if(reference.getName().equals(\"");
             String _string = reference_1.getName().toString();
@@ -540,7 +675,6 @@ public class EntityTemplate {
         _builder.newLineIfNotEmpty();
       }
     }
-    _builder.newLine();
     {
       boolean _contains_1 = IterableExtensions.contains(this.fieldClassesName, reference.getEReferenceType().getName());
       if (_contains_1) {
@@ -557,7 +691,6 @@ public class EntityTemplate {
         _builder.newLineIfNotEmpty();
       }
     }
-    _builder.newLine();
     return _builder;
   }
   
@@ -617,5 +750,12 @@ public class EntityTemplate {
       }
     }
     return _builder;
+  }
+  
+  public String FirstUpperCase(final String in) {
+    String _upperCase = in.substring(0, 1).toUpperCase();
+    String _substring = in.substring(1);
+    final String out = (_upperCase + _substring);
+    return out;
   }
 }

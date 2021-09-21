@@ -34,6 +34,8 @@ class DriverTemplate {
 			import java.util.List;
 			import java.util.ArrayList;
 			import java.util.Map.Entry;
+			import java.nio.charset.StandardCharsets;
+			import java.net.URLEncoder;
 				
 			public class «this.cmsTechnology»Driver implements DriverInterface {
 				
@@ -90,7 +92,7 @@ class DriverTemplate {
 	
 	def addSingleGetter() '''
 	public GenericEntity getSingle(String resourceRoute, String Id) {
-			JsonElement answer = resourceRequest(resourceRoute+"/"+Id,"GET");
+			JsonElement answer = resourceRequest(resourceRoute+Id,"GET");
 			GenericEntity returnEntity = mapSingleAnswer(answer.getAsJsonObject().get("data"));
 			return returnEntity;
 		}
@@ -246,7 +248,14 @@ class DriverTemplate {
 
 	def addDrupalFilterBuilder() '''
 		public void addFilter(String fieldName, String value) {
-			this.filterQuery = this.filterQuery + "&filter["+fieldName+"]="+value;
+			String filter;
+			try {
+				filter = URLEncoder.encode(value, StandardCharsets.UTF_8.toString());
+				this.filterQuery = this.filterQuery + "&filter["+fieldName+"]="+filter;
+			} catch (UnsupportedEncodingException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
 		}
 	'''
 
@@ -257,7 +266,7 @@ class DriverTemplate {
 			HttpClient client = HttpClient.newHttpClient();
 		
 			// create a request
-			HttpRequest request = HttpRequest.newBuilder().uri(URI.create(this.cmsUrl + resource + this.filterQuery + this.paginationQuery + this.sorterQuery + this.embedQuery))
+			HttpRequest request = HttpRequest.newBuilder().uri(URI.create(this.cmsUrl + resource +"?"+ this.filterQuery + this.paginationQuery + this.sorterQuery + this.embedQuery))
 				.method(method, HttpRequest.BodyPublishers.noBody()).header("accept", "application/json")
 				//.header("Authorization", basicAuth(this.consumerUser, this.consumerPass))
 				.build();

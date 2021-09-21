@@ -45,16 +45,18 @@ public class FieldTemplate {
         _builder.append("public ");
         String _instanceTypeName_1 = attribute_1.getEAttributeType().getInstanceTypeName();
         _builder.append(_instanceTypeName_1, "\t");
-        _builder.append(" get_");
-        String _name_2 = attribute_1.getName();
-        _builder.append(_name_2, "\t");
+        _builder.append(" get");
+        String _upperCase = attribute_1.getName().substring(0, 1).toUpperCase();
+        String _substring = attribute_1.getName().substring(1);
+        String _plus = (_upperCase + _substring);
+        _builder.append(_plus, "\t");
         _builder.append(" () {");
         _builder.newLineIfNotEmpty();
         _builder.append("\t");
         _builder.append("\t");
         _builder.append("return \tthis.");
-        String _name_3 = attribute_1.getName();
-        _builder.append(_name_3, "\t\t");
+        String _name_2 = attribute_1.getName();
+        _builder.append(_name_2, "\t\t");
         _builder.append(";");
         _builder.newLineIfNotEmpty();
         _builder.append("\t");
@@ -63,10 +65,12 @@ public class FieldTemplate {
         _builder.append("\t");
         _builder.newLine();
         _builder.append("\t");
-        _builder.append("public void set_");
-        String _name_4 = attribute_1.getName();
-        _builder.append(_name_4, "\t");
-        _builder.append(" (");
+        _builder.append("public void set");
+        String _upperCase_1 = attribute_1.getName().substring(0, 1).toUpperCase();
+        String _substring_1 = attribute_1.getName().substring(1);
+        String _plus_1 = (_upperCase_1 + _substring_1);
+        _builder.append(_plus_1, "\t");
+        _builder.append("(");
         String _instanceTypeName_2 = attribute_1.getEAttributeType().getInstanceTypeName();
         _builder.append(_instanceTypeName_2, "\t");
         _builder.append(" value) {");
@@ -74,8 +78,8 @@ public class FieldTemplate {
         _builder.append("\t");
         _builder.append("\t");
         _builder.append("this.");
-        String _name_5 = attribute_1.getName();
-        _builder.append(_name_5, "\t\t");
+        String _name_3 = attribute_1.getName();
+        _builder.append(_name_3, "\t\t");
         _builder.append(" = value;");
         _builder.newLineIfNotEmpty();
         _builder.append("\t");
@@ -86,5 +90,12 @@ public class FieldTemplate {
     _builder.append("}");
     _builder.newLine();
     return _builder;
+  }
+  
+  public String toUpperCase(final String in) {
+    String _upperCase = in.substring(0, 1).toUpperCase();
+    String _substring = in.substring(1);
+    final String out = (_upperCase + _substring);
+    return out;
   }
 }

@@ -59,11 +59,11 @@ public class CodeGenerator {
           return it.getName();
         };
         final Iterable<String> classesName = IterableExtensions.<EClass, String>map(eClasses, _function);
-        final Iterable<EClass> eFieldClasses = Iterables.<EClass>filter(this.thePackage.getESubpackages().get(0).getEClassifiers(), EClass.class);
+        final EPackage eFieldPackage = this.thePackage.getESubpackages().get(0);
         final Function1<EClass, String> _function_1 = (EClass it) -> {
           return it.getName();
         };
-        final Iterable<String> fieldClassesName = IterableExtensions.<EClass, String>map(eFieldClasses, _function_1);
+        final Iterable<String> fieldClassesName = IterableExtensions.<EClass, String>map(Iterables.<EClass>filter(this.thePackage.getESubpackages().get(0).getEClassifiers(), EClass.class), _function_1);
         final EMap<String, String> sourceCmsInformation = this.thePackage.getEAnnotations().get(0).getDetails();
         this.generateDrivers(input, srcGenFolder);
         InputOutput.<String>println("Generating");
@@ -76,7 +76,7 @@ public class CodeGenerator {
             }
             String _name = this.thePackage.getName();
             String _plus = ("generated.middleware." + _name);
-            final EntityTemplate template = new EntityTemplate(modelClass, classAnnotation, classesName, fieldClassesName, _plus);
+            final EntityTemplate template = new EntityTemplate(modelClass, classAnnotation, classesName, eFieldPackage, _plus);
             final CharSequence content = template.generateEntitiesClasses();
             String _name_1 = modelClass.getName();
             String _plus_1 = (_name_1 + ".java");
@@ -94,7 +94,8 @@ public class CodeGenerator {
           NullProgressMonitor _nullProgressMonitor = new NullProgressMonitor();
           srcGenField.create(true, true, _nullProgressMonitor);
         }
-        for (final EClass fieldClass : eFieldClasses) {
+        Iterable<EClass> _filter = Iterables.<EClass>filter(eFieldPackage.getEClassifiers(), EClass.class);
+        for (final EClass fieldClass : _filter) {
           {
             String _name = this.thePackage.getName();
             String _plus = ("generated.middleware." + _name);

@@ -40,9 +40,9 @@ class CodeGenerator {
 			val classesName = eClasses.map[name]
 
 			// Add field classes
-			val eFieldClasses = thePackage.getESubpackages().get(0).EClassifiers.filter(EClass)
+			val eFieldPackage = thePackage.getESubpackages().get(0)
 	
-			val fieldClassesName = eFieldClasses.map[name]
+			val fieldClassesName = thePackage.getESubpackages().get(0).EClassifiers.filter(EClass).map[name]
 			val sourceCmsInformation = thePackage.EAnnotations.get(0).details
 
 			// Generate Drivers
@@ -58,7 +58,7 @@ class CodeGenerator {
 					classAnnotation.put(detail.key, detail.value)
 				}
 				// Call the generator
-				val template = new EntityTemplate(modelClass, classAnnotation, classesName, fieldClassesName,
+				val template = new EntityTemplate(modelClass, classAnnotation, classesName, eFieldPackage,
 					"generated.middleware." + thePackage.getName());
 				val content = template.generateEntitiesClasses()
 				// Create File
@@ -70,7 +70,7 @@ class CodeGenerator {
 			// Generate Fields
 			val srcGenField = srcGenFolder.getFolder("customAttributes");
 			if(!srcGenField.exists()) srcGenField.create(true,true, new NullProgressMonitor());
-			for (EClass fieldClass : eFieldClasses) {
+			for (EClass fieldClass : eFieldPackage.EClassifiers.filter(EClass)) {
 				val fieldTemplate = fieldTemplate.generate(fieldClass, "generated.middleware." + thePackage.getName() + ".customAttributes");
 				val fieldFile = srcGenField.getFile(fieldClass.getName + ".java")
 				fieldFile.create(new ByteArrayInputStream(fieldTemplate.toString().getBytes()), IResource.FORCE,
