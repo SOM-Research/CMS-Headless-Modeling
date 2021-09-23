@@ -2,7 +2,7 @@ package edu.uoc.som.cmsdiscover.generator
 
 import org.eclipse.emf.ecore.EPackage
 
-class GenericEntityTemplate {
+class GenericResourceTemplate {
 	
 	def generateGenericEntity(EPackage thePackage) '''
 	
@@ -11,7 +11,7 @@ class GenericEntityTemplate {
 	import java.util.ArrayList;
 	import java.util.List;
 	
-	public class GenericEntity {
+	public class GenericResource {
 		
 		public List<GenericAttribute> attributesList = new ArrayList<GenericAttribute>();
 		public List<GenericReference> referenceList = new ArrayList<GenericReference>();

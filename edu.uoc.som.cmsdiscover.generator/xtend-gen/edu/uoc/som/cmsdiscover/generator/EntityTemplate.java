@@ -1,5 +1,6 @@
 package edu.uoc.som.cmsdiscover.generator;
 
+import com.google.common.base.CaseFormat;
 import com.google.common.collect.Iterables;
 import java.util.List;
 import java.util.Map;
@@ -72,6 +73,8 @@ public class EntityTemplate {
     _builder.newLine();
     _builder.append("import java.util.Arrays;");
     _builder.newLine();
+    _builder.append("import java.util.Date;");
+    _builder.newLine();
     _builder.append("import java.util.ArrayList;");
     _builder.newLine();
     _builder.append("import com.google.gson.JsonElement;");
@@ -80,10 +83,18 @@ public class EntityTemplate {
     _builder.newLine();
     _builder.append("import org.joda.time.DateTime;");
     _builder.newLine();
-    _builder.append("import generated.middleware.Umami_Food_Magazine_API___JSON_API.customAttributes.*;");
-    _builder.newLine();
-    _builder.append("import generated.middleware.Umami_Food_Magazine_API___JSON_API.drivers.GenericEntity;");
-    _builder.newLine();
+    _builder.append("import ");
+    _builder.append(this.packageName);
+    _builder.append(".customAttributes.*;");
+    _builder.newLineIfNotEmpty();
+    _builder.append("import ");
+    _builder.append(this.packageName);
+    _builder.append(".drivers.GenericResource;");
+    _builder.newLineIfNotEmpty();
+    _builder.append("import ");
+    _builder.append(this.packageName);
+    _builder.append(".drivers.SearchQuery;");
+    _builder.newLineIfNotEmpty();
     _builder.append("import ");
     _builder.append(this.packageName);
     _builder.append(".drivers.DriverInterface;");
@@ -205,11 +216,13 @@ public class EntityTemplate {
     _builder.append(_addDriverWrapperMethods, "\t");
     _builder.newLineIfNotEmpty();
     _builder.append("\t");
-    _builder.newLine();
-    _builder.append("\t");
     CharSequence _mapAnswer = this.mapAnswer();
     _builder.append(_mapAnswer, "\t");
     _builder.newLineIfNotEmpty();
+    _builder.append("\t");
+    _builder.newLine();
+    _builder.append("\t");
+    _builder.append("// Add References Methods");
     _builder.newLine();
     _builder.append("\t");
     CharSequence _addReferenceMethods = this.addReferenceMethods();
@@ -218,7 +231,7 @@ public class EntityTemplate {
     _builder.append("\t");
     _builder.newLine();
     _builder.append("\t");
-    _builder.append("// Attributes");
+    _builder.append("// Getters and Setters");
     _builder.newLine();
     {
       for(final EAttribute attribute_2 : this.classAttributes) {
@@ -243,7 +256,7 @@ public class EntityTemplate {
     _builder.append(" getSingle(String Id) {");
     _builder.newLineIfNotEmpty();
     _builder.append("\t");
-    _builder.append("GenericEntity singleAnswer = driver.getSingle(resourceRoute+\"/\",Id);");
+    _builder.append("GenericResource singleAnswer = driver.getSingle(resourceRoute+\"/\",Id);");
     _builder.newLine();
     _builder.append("\t");
     _builder.append(this.modelClassName, "\t");
@@ -266,10 +279,10 @@ public class EntityTemplate {
     _builder.newLine();
     _builder.append("public List<");
     _builder.append(this.modelClassName);
-    _builder.append("> getCollection() {");
+    _builder.append("> search(SearchQuery searchQuery) {");
     _builder.newLineIfNotEmpty();
     _builder.append("\t");
-    _builder.append("List<GenericEntity> answer = driver.getCollection(resourceRoute);");
+    _builder.append("List<GenericResource> answer = driver.getCollection(resourceRoute, searchQuery);");
     _builder.newLine();
     _builder.append("\t");
     _builder.append("List<");
@@ -286,72 +299,40 @@ public class EntityTemplate {
     _builder.append("}");
     _builder.newLine();
     _builder.newLine();
-    _builder.append("public void setPagination(int offset, int page) {");
-    _builder.newLine();
-    _builder.append("\t");
-    _builder.append("driver.addPagination(offset, page);");
-    _builder.newLine();
-    _builder.append("}");
-    _builder.newLine();
-    _builder.newLine();
-    _builder.append("public void setFilter(String fieldName, String value) {");
-    _builder.newLine();
-    _builder.append("\t");
-    _builder.append("driver.addFilter(fieldName, value);");
-    _builder.newLine();
-    _builder.append("}");
-    _builder.newLine();
-    _builder.newLine();
-    _builder.append("public void setOrder(String fieldName, String sortType) {");
-    _builder.newLine();
-    _builder.append("\t");
-    _builder.append("driver.addSorter(fieldName, sortType);");
-    _builder.newLine();
-    _builder.append("}");
-    _builder.newLine();
-    _builder.newLine();
-    _builder.append("public void addEmbededReference(String referenceName) {");
-    _builder.newLine();
-    _builder.append("\t");
-    _builder.append("driver.addEmbedReference(referenceName);");
-    _builder.newLine();
-    _builder.append("}");
-    _builder.newLine();
-    _builder.newLine();
     return _builder;
   }
   
   public CharSequence addGettersAndSetters(final EAttribute attribute) {
     StringConcatenation _builder = new StringConcatenation();
     _builder.append("public ");
-    String _instanceTypeName = attribute.getEAttributeType().getInstanceTypeName();
-    _builder.append(_instanceTypeName);
-    _builder.append(" get_");
-    String _name = attribute.getName();
-    _builder.append(_name);
+    String _simpleName = attribute.getEAttributeType().getInstanceClass().getSimpleName();
+    _builder.append(_simpleName);
+    _builder.append(" get");
+    String _camelCase = this.camelCase(this.FirstUpperCase(attribute.getName()));
+    _builder.append(_camelCase);
     _builder.append(" () {");
     _builder.newLineIfNotEmpty();
     _builder.append("\t");
     _builder.append("return \tthis.");
-    String _name_1 = attribute.getName();
-    _builder.append(_name_1, "\t");
+    String _name = attribute.getName();
+    _builder.append(_name, "\t");
     _builder.append(";");
     _builder.newLineIfNotEmpty();
     _builder.append("}");
     _builder.newLine();
     _builder.newLine();
-    _builder.append("public void set_");
-    String _name_2 = attribute.getName();
-    _builder.append(_name_2);
+    _builder.append("public void set");
+    String _camelCase_1 = this.camelCase(this.FirstUpperCase(attribute.getName()));
+    _builder.append(_camelCase_1);
     _builder.append(" (");
-    String _instanceTypeName_1 = attribute.getEAttributeType().getInstanceTypeName();
-    _builder.append(_instanceTypeName_1);
+    String _simpleName_1 = attribute.getEAttributeType().getInstanceClass().getSimpleName();
+    _builder.append(_simpleName_1);
     _builder.append(" value) {");
     _builder.newLineIfNotEmpty();
     _builder.append("\t");
     _builder.append("this.");
-    String _name_3 = attribute.getName();
-    _builder.append(_name_3, "\t");
+    String _name_1 = attribute.getName();
+    _builder.append(_name_1, "\t");
     _builder.append(" = value;");
     _builder.newLineIfNotEmpty();
     _builder.append("}");
@@ -383,9 +364,9 @@ public class EntityTemplate {
     StringConcatenation _builder = new StringConcatenation();
     _builder.append("\t");
     _builder.newLine();
-    _builder.append("protected List<");
+    _builder.append("private List<");
     _builder.append(this.modelClassName);
-    _builder.append("> mapAnswer(List<GenericEntity> answer) {");
+    _builder.append("> mapAnswer(List<GenericResource> answer) {");
     _builder.newLineIfNotEmpty();
     _builder.append("\t");
     _builder.newLine();
@@ -420,9 +401,9 @@ public class EntityTemplate {
     _builder.append("}");
     _builder.newLine();
     _builder.newLine();
-    _builder.append("protected ");
+    _builder.append("private ");
     _builder.append(this.modelClassName);
-    _builder.append(" mapSingleAnswer(GenericEntity singleAnswer) {");
+    _builder.append(" mapSingleAnswer(GenericResource singleAnswer) {");
     _builder.newLineIfNotEmpty();
     _builder.append("\t");
     _builder.newLine();
@@ -504,10 +485,10 @@ public class EntityTemplate {
         {
           boolean _contains_4 = IterableExtensions.contains(this.fieldClassesName, reference.getEReferenceType().getName());
           if (_contains_4) {
-            _builder.append("\t ");
+            _builder.append("\t");
             _builder.append("if(attribute.getName().equals(\"");
             String _name_5 = reference.getName();
-            _builder.append(_name_5, "\t ");
+            _builder.append(_name_5, "\t");
             _builder.append("\")) {");
             _builder.newLineIfNotEmpty();
             _builder.append("\t \t");
@@ -523,55 +504,51 @@ public class EntityTemplate {
             {
               EList<EAttribute> _eAllAttributes = fieldClass.getEAllAttributes();
               for(final EAttribute attribute_1 : _eAllAttributes) {
-                _builder.append("\t\t\t\t \t");
                 _builder.append("if(!elm.getAsJsonObject().get(\"");
                 String _name_6 = attribute_1.getName();
-                _builder.append(_name_6, "\t\t\t\t \t");
+                _builder.append(_name_6);
                 _builder.append("\").isJsonNull()) {");
                 _builder.newLineIfNotEmpty();
                 {
                   boolean _contains_5 = attribute_1.getEAttributeType().getInstanceTypeName().contains("Integer");
                   if (_contains_5) {
-                    _builder.append(" \t");
                     _builder.append("returnInstance.");
                     String _name_7 = reference.getEReferenceType().getName();
-                    _builder.append(_name_7, " \t");
+                    _builder.append(_name_7);
                     _builder.append(".set");
                     String _FirstUpperCase = this.FirstUpperCase(attribute_1.getName());
-                    _builder.append(_FirstUpperCase, " \t");
+                    _builder.append(_FirstUpperCase);
                     _builder.append("(Integer.parseInt(elm.getAsJsonObject().get(\"");
                     String _name_8 = attribute_1.getName();
-                    _builder.append(_name_8, " \t");
+                    _builder.append(_name_8);
                     _builder.append("\").toString()));");
                     _builder.newLineIfNotEmpty();
                   } else {
                     boolean _contains_6 = attribute_1.getEAttributeType().getInstanceTypeName().contains("String");
                     if (_contains_6) {
-                      _builder.append(" \t");
                       _builder.append("returnInstance.");
                       String _name_9 = reference.getEReferenceType().getName();
-                      _builder.append(_name_9, " \t");
+                      _builder.append(_name_9);
                       _builder.append(".set");
                       String _FirstUpperCase_1 = this.FirstUpperCase(attribute_1.getName());
-                      _builder.append(_FirstUpperCase_1, " \t");
+                      _builder.append(_FirstUpperCase_1);
                       _builder.append("(elm.getAsJsonObject().get(\"");
                       String _name_10 = attribute_1.getName();
-                      _builder.append(_name_10, " \t");
+                      _builder.append(_name_10);
                       _builder.append("\").toString());");
                       _builder.newLineIfNotEmpty();
                     } else {
                       boolean _contains_7 = attribute_1.getEAttributeType().getInstanceTypeName().contains("boolean");
                       if (_contains_7) {
-                        _builder.append(" \t");
                         _builder.append("returnInstance.");
                         String _name_11 = reference.getEReferenceType().getName();
-                        _builder.append(_name_11, " \t");
+                        _builder.append(_name_11);
                         _builder.append(".set");
                         String _FirstUpperCase_2 = this.FirstUpperCase(attribute_1.getName());
-                        _builder.append(_FirstUpperCase_2, " \t");
+                        _builder.append(_FirstUpperCase_2);
                         _builder.append("(Boolean.parseBoolean(elm.getAsJsonObject().get(\"");
                         String _name_12 = attribute_1.getName();
-                        _builder.append(_name_12, " \t");
+                        _builder.append(_name_12);
                         _builder.append("\").toString()));");
                         _builder.newLineIfNotEmpty();
                       } else {
@@ -626,10 +603,10 @@ public class EntityTemplate {
             _builder.append("\")) {");
             _builder.newLineIfNotEmpty();
             _builder.append("\t");
-            _builder.append("  ");
+            _builder.append("\t");
             _builder.append("returnInstance.");
             String _string_1 = reference_1.getName().toString();
-            _builder.append(_string_1, "\t  ");
+            _builder.append(_string_1, "\t\t");
             _builder.append(".add(reference.getValue());");
             _builder.newLineIfNotEmpty();
             _builder.append("\t");
@@ -653,8 +630,8 @@ public class EntityTemplate {
   public CharSequence addAttribute(final EAttribute attribute) {
     StringConcatenation _builder = new StringConcatenation();
     _builder.append("private ");
-    String _instanceTypeName = attribute.getEAttributeType().getInstanceTypeName();
-    _builder.append(_instanceTypeName);
+    String _simpleName = attribute.getEAttributeType().getInstanceClass().getSimpleName();
+    _builder.append(_simpleName);
     _builder.append(" ");
     String _name = attribute.getName();
     _builder.append(_name);
@@ -668,7 +645,7 @@ public class EntityTemplate {
     {
       boolean _contains = IterableExtensions.contains(this.modelClasses, reference.getEReferenceType().getName());
       if (_contains) {
-        _builder.append("public List<String> ");
+        _builder.append("private List<String> ");
         String _string = reference.getName().toString();
         _builder.append(_string);
         _builder.append("  = new ArrayList<String>();");
@@ -678,7 +655,7 @@ public class EntityTemplate {
     {
       boolean _contains_1 = IterableExtensions.contains(this.fieldClassesName, reference.getEReferenceType().getName());
       if (_contains_1) {
-        _builder.append("public ");
+        _builder.append("private ");
         String _name = reference.getEReferenceType().getName();
         _builder.append(_name);
         _builder.append(" ");
@@ -701,36 +678,36 @@ public class EntityTemplate {
         {
           boolean _contains = IterableExtensions.contains(this.modelClasses, reference.getEReferenceType().getName());
           if (_contains) {
+            _builder.newLine();
             _builder.append("public List<");
             String _name = reference.getEReferenceType().getName();
             _builder.append(_name);
-            _builder.append("> get_");
-            String _name_1 = reference.getName();
-            _builder.append(_name_1);
+            _builder.append("> get");
+            String _camelCase = this.camelCase(this.FirstUpperCase(reference.getName()));
+            _builder.append(_camelCase);
             _builder.append(" () {");
             _builder.newLineIfNotEmpty();
-            _builder.newLine();
             _builder.append("\t");
             _builder.append("List<");
+            String _name_1 = reference.getEReferenceType().getName();
+            _builder.append(_name_1, "\t");
+            _builder.append("> referenceList = new ArrayList<");
             String _name_2 = reference.getEReferenceType().getName();
             _builder.append(_name_2, "\t");
-            _builder.append("> referenceList = new ArrayList<");
-            String _name_3 = reference.getEReferenceType().getName();
-            _builder.append(_name_3, "\t");
             _builder.append(">();");
             _builder.newLineIfNotEmpty();
             _builder.append("\t");
             _builder.append("this.");
-            String _name_4 = reference.getName();
-            _builder.append(_name_4, "\t");
+            String _name_3 = reference.getName();
+            _builder.append(_name_3, "\t");
             _builder.append(".forEach((element) -> {");
             _builder.newLineIfNotEmpty();
             _builder.append("\t\t");
+            String _name_4 = reference.getEReferenceType().getName();
+            _builder.append(_name_4, "\t\t");
+            _builder.append(" referencedEntity = new ");
             String _name_5 = reference.getEReferenceType().getName();
             _builder.append(_name_5, "\t\t");
-            _builder.append(" referencedEntity = new ");
-            String _name_6 = reference.getEReferenceType().getName();
-            _builder.append(_name_6, "\t\t");
             _builder.append("();");
             _builder.newLineIfNotEmpty();
             _builder.append("\t\t");
@@ -741,7 +718,6 @@ public class EntityTemplate {
             _builder.newLine();
             _builder.append("\t");
             _builder.append("return referenceList;");
-            _builder.newLine();
             _builder.newLine();
             _builder.append("}");
             _builder.newLine();
@@ -755,7 +731,10 @@ public class EntityTemplate {
   public String FirstUpperCase(final String in) {
     String _upperCase = in.substring(0, 1).toUpperCase();
     String _substring = in.substring(1);
-    final String out = (_upperCase + _substring);
-    return out;
+    return (_upperCase + _substring);
+  }
+  
+  public String camelCase(final String in) {
+    return CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL, in);
   }
 }

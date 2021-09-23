@@ -10,3 +10,6 @@
 /.GenericClassTemplate.java._trace
 /.GenericEntityTemplate.java._trace
 /.FieldTemplate.java._trace
+/.SearchQueryInterface.java._trace
+/.SearchQueryTemplate.java._trace
+/.GenericResourceTemplate.java._trace

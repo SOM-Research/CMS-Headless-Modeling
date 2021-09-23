@@ -24,6 +24,7 @@ class DriverTemplate {
 			
 			
 			import java.io.IOException;
+			import java.io.UnsupportedEncodingException;
 			import java.net.URI;
 			import java.net.http.HttpClient;
 			import java.net.http.HttpRequest;
@@ -44,29 +45,11 @@ class DriverTemplate {
 				public static final String «Annotation.getKey()» = "«Annotation.getValue»";
 			«ENDFOR»
 			
-			// FilterRequest
-			String filterQuery = "";
-			// SortingRequest
-			String sorterQuery = "";
-			// EmbeddingRequest
-			String embedQuery = "";
-			// Pagination
-			String paginationQuery = "";
 			
+			«addGetSearchQuery()»
 			«addSingleGetter()»
 			
 			«addCollectionGetter()»
-			
-			«IF this.cmsTechnology.contains("Drupal")»
-			«addDrupalFilterBuilder()»
-			
-			«addDrupalSorterBuilder()»
-			
-			«addDrupalEmbedding()»
-			
-			«addDrupalPagination()»
-			
-			«addDrupalSessionManager()»
 				
 			«addDrupalRequester()»
 			
@@ -74,42 +57,36 @@ class DriverTemplate {
 			
 			«addDrupalSingleMapAnswer()»
 
-			«ENDIF»
-			«IF this.cmsTechnology.contains("Wordpress")»
-			«addWordpressFilterBuilder()»
-				
-			«addWordpressSorterBuilder()»
-				
-			«addWordpressEmbedding()»
-				
-			«addWordpressSessionManager()»
-					
-			«addWordpressRequester()»
-			«ENDIF»
 			}
 		
 	'''
 	
+	def addGetSearchQuery() '''
+	public SearchQuery getSearchQuery() {
+		return new SearchQuery();
+	}
+	'''
+	
 	def addSingleGetter() '''
-	public GenericEntity getSingle(String resourceRoute, String Id) {
-			JsonElement answer = resourceRequest(resourceRoute+Id,"GET");
-			GenericEntity returnEntity = mapSingleAnswer(answer.getAsJsonObject().get("data"));
+	public GenericResource getSingle(String resourceRoute, String Id) {
+			JsonElement answer = resourceRequest(resourceRoute+Id,"GET", new SearchQuery());
+			GenericResource returnEntity = mapSingleAnswer(answer.getAsJsonObject().get("data"));
 			return returnEntity;
 		}
 	'''
 	
 	def addCollectionGetter() '''
-	public List<GenericEntity> getCollection(String resourceRoute) {
-		JsonElement answer = resourceRequest(resourceRoute,"GET");
-		List<GenericEntity> entityCollection = mapAnswer(answer); 
+	public List<GenericResource> getCollection(String resourceRoute, SearchQuery searchQuery) {
+		JsonElement answer = resourceRequest(resourceRoute,"GET", searchQuery);
+		List<GenericResource> entityCollection = mapAnswer(answer); 
 		return entityCollection;
 	}
 	'''
 	
 	def addDrupalSingleMapAnswer() '''
-	private GenericEntity mapSingleAnswer(JsonElement res) {
+	private GenericResource mapSingleAnswer(JsonElement res) {
 			// TODO Auto-generated method stub
-			GenericEntity genericInstance = new GenericEntity();
+			GenericResource genericInstance = new GenericResource();
 			
 			for (Entry<String, JsonElement> element : res.getAsJsonObject().entrySet()) {
 				if (element.getKey().contains("relationships")) {
@@ -178,11 +155,11 @@ class DriverTemplate {
 	'''
 	
 	def addDrupalMapAnswer() '''
-	private List<GenericEntity> mapAnswer(JsonElement res) {
+	private List<GenericResource> mapAnswer(JsonElement res) {
 		// TODO Auto-generated method stub
-		GenericEntity generic = new GenericEntity();
+		GenericResource generic = new GenericResource();
 		
-		List<GenericEntity> entityCollection = new ArrayList<GenericEntity>();
+		List<GenericResource> entityCollection = new ArrayList<GenericResource>();
 		res.getAsJsonObject().get("data").getAsJsonArray().forEach((content) -> {
 			entityCollection.add(mapSingleAnswer(content));
 		});
@@ -192,81 +169,14 @@ class DriverTemplate {
 	'''
 	
 
-	
-	def addWordpressRequester() {
-		throw new UnsupportedOperationException("TODO: auto-generated method stub")
-	}
-	
-	def addWordpressSessionManager() {
-		throw new UnsupportedOperationException("TODO: auto-generated method stub")
-	}
-	
-	def addWordpressEmbedding() {
-		throw new UnsupportedOperationException("TODO: auto-generated method stub")
-	}
-	
-	def addWordpressSorterBuilder() {
-		throw new UnsupportedOperationException("TODO: auto-generated method stub")
-	}
-	
-	def addWordpressFilterBuilder() {
-		throw new UnsupportedOperationException("TODO: auto-generated method stub")
-	}
-
-	def addDrupalPagination() { '''
-		public void addPagination(int pageOffset, int pageLimit) {
-			if ((pageOffset != 0) && (pageLimit != 0)) this.paginationQuery = "&page[offset]="+pageOffset+"&page[limit]="+pageLimit;
-			if (pageOffset != 0) this.paginationQuery = "&page[offset]="+pageOffset;
-			if (pageLimit != 0) this.paginationQuery = "&page[limit]="+pageLimit;
-		}
-	'''
-	}
-	def addDrupalSessionManager() '''
-		@Override
-		public void manageConsumer(String user, String password) {
-			// TODO Auto-generated method stub
-			
-		}
-	'''
-
-	def addDrupalEmbedding() '''
-		public void addEmbedReference(String referenceName) {
-			this.embedQuery = "&include="+referenceName;
-		}
-	'''
-
-	def addDrupalSorterBuilder() '''
-		public void addSorter(String fieldName, String sortType) {
-			if(sortType.contains("ASC")) {
-				this.sorterQuery = "&sort="+fieldName;
-			}
-			else {
-				this.sorterQuery = "&sort=-"+fieldName;
-			}
-		}
-	'''
-
-	def addDrupalFilterBuilder() '''
-		public void addFilter(String fieldName, String value) {
-			String filter;
-			try {
-				filter = URLEncoder.encode(value, StandardCharsets.UTF_8.toString());
-				this.filterQuery = this.filterQuery + "&filter["+fieldName+"]="+filter;
-			} catch (UnsupportedEncodingException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			}
-		}
-	'''
-
 	def addDrupalRequester() '''
-		public JsonElement resourceRequest(String resource, String method) {
+		public JsonElement resourceRequest(String resource, String method, SearchQuery searchQuery) {
 		
 			// create a client
 			HttpClient client = HttpClient.newHttpClient();
 		
 			// create a request
-			HttpRequest request = HttpRequest.newBuilder().uri(URI.create(this.cmsUrl + resource +"?"+ this.filterQuery + this.paginationQuery + this.sorterQuery + this.embedQuery))
+			HttpRequest request = HttpRequest.newBuilder().uri(URI.create(this.cmsUrl + resource +"?"+ searchQuery.filterQuery + searchQuery.paginationQuery + searchQuery.sorterQuery + searchQuery.embedQuery))
 				.method(method, HttpRequest.BodyPublishers.noBody()).header("accept", "application/json")
 				//.header("Authorization", basicAuth(this.consumerUser, this.consumerPass))
 				.build();

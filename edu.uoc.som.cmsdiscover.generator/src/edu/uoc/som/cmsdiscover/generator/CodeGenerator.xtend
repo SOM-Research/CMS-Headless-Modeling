@@ -23,7 +23,9 @@ class CodeGenerator {
 	TestsTemplate testsTemplate = new TestsTemplate
 	DriverTemplate driverTemplate = new DriverTemplate
 	DriverInterface interfaceTemplate = new DriverInterface
-	GenericEntityTemplate genericTemplate = new GenericEntityTemplate
+	GenericResourceTemplate genericTemplate = new GenericResourceTemplate
+	SearchQueryInterface searchQueryInterface = new SearchQueryInterface
+	SearchQueryTemplate searchQueryTemplate = new SearchQueryTemplate
 	FieldTemplate fieldTemplate = new FieldTemplate
 	EPackage thePackage
 	Resource model
@@ -112,6 +114,18 @@ class CodeGenerator {
 		resultDriver.create(new ByteArrayInputStream(driver.toString().getBytes()), IResource.FORCE,
 			new NullProgressMonitor())
 			
+		// Generate SearchQuery Inteface
+		val searchTeamplate = searchQueryTemplate.generate(thePackage.getName());
+		val resultSearchTemplate = driversFolder.getFile("SearchQuery.java")
+		resultSearchTemplate.create(new ByteArrayInputStream(searchTeamplate.toString().getBytes()), IResource.FORCE,
+			new NullProgressMonitor())
+		// Generate SearchQuery Inteface
+		val searchInterface = searchQueryInterface.generate(thePackage.getName());
+		val resultSearchInterface = driversFolder.getFile("SearchQueryInterface.java")
+		resultSearchInterface.create(new ByteArrayInputStream(searchInterface.toString().getBytes()), IResource.FORCE,
+			new NullProgressMonitor())
+			
+			
 		// Generate Generic Entities
 		val genericAttribute = genericTemplate.generateGenericAttribute(input)
 		val resultAttribute = driversFolder.getFile("GenericAttribute.java")
@@ -124,7 +138,7 @@ class CodeGenerator {
 			new NullProgressMonitor())
 			
 		val genericEntity = genericTemplate.generateGenericEntity(input)
-		val resultEntity = driversFolder.getFile("GenericEntity.java")
+		val resultEntity = driversFolder.getFile("GenericResource.java")
 		resultEntity.create(new ByteArrayInputStream(genericEntity.toString().getBytes()), IResource.FORCE,
 			new NullProgressMonitor())
 			

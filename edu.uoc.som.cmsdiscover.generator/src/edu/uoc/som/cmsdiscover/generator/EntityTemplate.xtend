@@ -7,6 +7,8 @@ import org.eclipse.emf.common.util.EMap
 import org.eclipse.emf.ecore.EReference
 import org.eclipse.emf.ecore.EPackage
 import org.eclipse.emf.ecore.EClassifier
+import java.util.regex.Pattern
+import com.google.common.base.CaseFormat;
 
 class EntityTemplate {
 	
@@ -46,12 +48,14 @@ class EntityTemplate {
 
 	import java.util.List;
 	import java.util.Arrays;
+	import java.util.Date;
 	import java.util.ArrayList;
 	import com.google.gson.JsonElement;
 	import com.google.gson.JsonParser;
 	import org.joda.time.DateTime;
-	import generated.middleware.Umami_Food_Magazine_API___JSON_API.customAttributes.*;
-	import generated.middleware.Umami_Food_Magazine_API___JSON_API.drivers.GenericEntity;
+	import «packageName».customAttributes.*;
+	import «packageName».drivers.GenericResource;
+	import «packageName».drivers.SearchQuery;
 	import «packageName».drivers.DriverInterface;
 	«IF this.cmsTechnology.contains("Drupal")»
 	import «packageName».drivers.DrupalDriver;
@@ -87,12 +91,12 @@ class EntityTemplate {
 			
 		// Main Methods
 		«addDriverWrapperMethods()»
-		
 		«mapAnswer()»
-
+		
+		// Add References Methods
 		«addReferenceMethods()»
 		
-		// Attributes
+		// Getters and Setters
 		« FOR EAttribute attribute : this.classAttributes»
 		«addGettersAndSetters(attribute)»
 		«ENDFOR»
@@ -103,42 +107,26 @@ class EntityTemplate {
 	
 	def addDriverWrapperMethods() '''
 	public «this.modelClassName» getSingle(String Id) {
-		GenericEntity singleAnswer = driver.getSingle(resourceRoute+"/",Id);
+		GenericResource singleAnswer = driver.getSingle(resourceRoute+"/",Id);
 		«this.modelClassName» return«this.modelClassName» = null;
 		return«this.modelClassName» = mapSingleAnswer(singleAnswer);
 		return return«this.modelClassName»;
 	}
 	
-	public List<«this.modelClassName»> getCollection() {
-		List<GenericEntity> answer = driver.getCollection(resourceRoute);
+	public List<«this.modelClassName»> search(SearchQuery searchQuery) {
+		List<GenericResource> answer = driver.getCollection(resourceRoute, searchQuery);
 		List<«this.modelClassName»> «this.modelClassName»Collection = mapAnswer(answer); 
 		return «this.modelClassName»Collection;
-	}
-	
-	public void setPagination(int offset, int page) {
-		driver.addPagination(offset, page);
-	}
-	
-	public void setFilter(String fieldName, String value) {
-		driver.addFilter(fieldName, value);
-	}
-	
-	public void setOrder(String fieldName, String sortType) {
-		driver.addSorter(fieldName, sortType);
-	}
-	
-	public void addEmbededReference(String referenceName) {
-		driver.addEmbedReference(referenceName);
 	}
 	
 	'''
 	
 	def addGettersAndSetters(EAttribute attribute) '''
-	public «attribute.getEAttributeType().getInstanceTypeName()» get_«attribute.getName()» () {
+	public «attribute.getEAttributeType().getInstanceClass().getSimpleName()» get«attribute.getName().FirstUpperCase.camelCase» () {
 		return 	this.«attribute.getName()»;
 	}
 	
-	public void set_«attribute.getName()» («attribute.getEAttributeType().getInstanceTypeName()» value) {
+	public void set«attribute.getName().FirstUpperCase.camelCase» («attribute.getEAttributeType().getInstanceClass().getSimpleName()» value) {
 		this.«attribute.getName()» = value;
 	}
 	
@@ -153,7 +141,7 @@ class EntityTemplate {
 	
 	def mapAnswer() '''
 		
-	protected List<«this.modelClassName»> mapAnswer(List<GenericEntity> answer) {
+	private List<«this.modelClassName»> mapAnswer(List<GenericResource> answer) {
 		
 		List<«this.modelClassName»> «this.modelClassName»Collection = new ArrayList<«this.modelClassName»>();
 		answer.forEach((singleAnswer) -> {
@@ -164,7 +152,7 @@ class EntityTemplate {
 		
 	}
 	
-	protected «this.modelClassName» mapSingleAnswer(GenericEntity singleAnswer) {
+	private «this.modelClassName» mapSingleAnswer(GenericResource singleAnswer) {
 		
 		«this.modelClassName» returnInstance = new «this.modelClassName»();
 		
@@ -186,20 +174,20 @@ class EntityTemplate {
 			«ENDFOR»
 			« FOR EReference reference: this.classReferences » 
 				«IF this.fieldClassesName.contains(reference.getEReferenceType().getName())»
-				 if(attribute.getName().equals("«reference.getName()»")) {
+				if(attribute.getName().equals("«reference.getName()»")) {
 				 	if (attribute.getValue()!= null) {
 				 	JsonElement elm = parser.parse(attribute.getValue());
 				 « val fieldClass = eFieldPackage.getEClassifier(reference.getEReferenceType().getName()) as EClass»
 				 « FOR attribute : fieldClass.getEAllAttributes()»
-				 	if(!elm.getAsJsonObject().get("«attribute.getName()»").isJsonNull()) {
+					if(!elm.getAsJsonObject().get("«attribute.getName()»").isJsonNull()) {
 					 	«IF attribute.getEAttributeType().getInstanceTypeName().contains("Integer")  »	
-					 	returnInstance.«reference.getEReferenceType().getName()».set«attribute.getName().FirstUpperCase»(Integer.parseInt(elm.getAsJsonObject().get("«attribute.getName()»").toString()));
+						 	returnInstance.«reference.getEReferenceType().getName()».set«attribute.getName().FirstUpperCase»(Integer.parseInt(elm.getAsJsonObject().get("«attribute.getName()»").toString()));
 				 		«ELSEIF attribute.getEAttributeType().getInstanceTypeName().contains("String") »
-					 	returnInstance.«reference.getEReferenceType().getName()».set«attribute.getName().FirstUpperCase»(elm.getAsJsonObject().get("«attribute.getName()»").toString());
+						 	returnInstance.«reference.getEReferenceType().getName()».set«attribute.getName().FirstUpperCase»(elm.getAsJsonObject().get("«attribute.getName()»").toString());
 						«ELSEIF attribute.getEAttributeType().getInstanceTypeName().contains("boolean") »
-					 	returnInstance.«reference.getEReferenceType().getName()».set«attribute.getName().FirstUpperCase»(Boolean.parseBoolean(elm.getAsJsonObject().get("«attribute.getName()»").toString()));
+						 	returnInstance.«reference.getEReferenceType().getName()».set«attribute.getName().FirstUpperCase»(Boolean.parseBoolean(elm.getAsJsonObject().get("«attribute.getName()»").toString()));
 						«ELSEIF attribute.getEAttributeType().getInstanceTypeName().contains("Date") »
-					 	returnInstance.«reference.getEReferenceType().getName()».set«attribute.getName().FirstUpperCase»(new DateTime(elm.getAsJsonObject().get("«attribute.getName()»").toString()).toDate());
+					 		returnInstance.«reference.getEReferenceType().getName()».set«attribute.getName().FirstUpperCase»(new DateTime(elm.getAsJsonObject().get("«attribute.getName()»").toString()).toDate());
 						«ENDIF»
 					}
 				 «ENDFOR»
@@ -213,7 +201,7 @@ class EntityTemplate {
 		« FOR EReference reference: this.classReferences » 
 			«IF(this.modelClasses.contains(reference.getEReferenceType().getName())) »
 			if(reference.getName().equals("«reference.getName().toString()»")) {
-			  returnInstance.«reference.getName().toString».add(reference.getValue());
+				returnInstance.«reference.getName().toString».add(reference.getValue());
 			}
 			«ENDIF»
 		«ENDFOR»
@@ -223,37 +211,39 @@ class EntityTemplate {
 	'''
 			
 	def addAttribute(EAttribute attribute) '''
-	private «attribute.getEAttributeType().getInstanceTypeName()» «attribute.getName()»;
+	private «attribute.getEAttributeType().getInstanceClass().getSimpleName()» «attribute.getName()»;
 	'''	
 	
 	def addReference(EReference reference) '''
 	«IF(this.modelClasses.contains(reference.getEReferenceType().getName())) »
-	public List<String> «reference.getName().toString()»  = new ArrayList<String>();
+	private List<String> «reference.getName().toString()»  = new ArrayList<String>();
 	«ENDIF»
 	«IF(this.fieldClassesName.contains(reference.getEReferenceType().getName())) »
-	public «reference.getEReferenceType().getName()» «reference.getName().toString()»  = new «reference.getEReferenceType().getName()»();
+	private «reference.getEReferenceType().getName()» «reference.getName().toString()»  = new «reference.getEReferenceType().getName()»();
 	«ENDIF»
 	'''
 		
 	def addReferenceMethods()'''
 	« FOR EReference reference: this.classReferences » 
 	«IF(this.modelClasses.contains(reference.getEReferenceType().getName())) »
-	public List<«reference.getEReferenceType().getName()»> get_«reference.getName()» () {
-
+	
+	public List<«reference.getEReferenceType().getName()»> get«reference.getName().FirstUpperCase.camelCase» () {
 		List<«reference.getEReferenceType().getName()»> referenceList = new ArrayList<«reference.getEReferenceType().getName()»>();
 		this.«reference.getName()».forEach((element) -> {
 			«reference.getEReferenceType().getName()» referencedEntity = new «reference.getEReferenceType().getName()»();
 			referenceList.add(referencedEntity.getSingle(element));
 		});
 		return referenceList;
-
 	}
 	«ENDIF»
 	«ENDFOR»
 	'''
 		
 	def FirstUpperCase(String in){
-		val out = in.substring(0, 1).toUpperCase() + in.substring(1);
-		return out
+		return in.substring(0, 1).toUpperCase() + in.substring(1);
+	}
+	
+	def camelCase(String in){
+		return CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL, in)
 	}			
 }

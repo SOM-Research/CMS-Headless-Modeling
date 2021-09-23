@@ -4,7 +4,7 @@ import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.xtend2.lib.StringConcatenation;
 
 @SuppressWarnings("all")
-public class GenericEntityTemplate {
+public class GenericResourceTemplate {
   public CharSequence generateGenericEntity(final EPackage thePackage) {
     StringConcatenation _builder = new StringConcatenation();
     _builder.newLine();
@@ -19,7 +19,7 @@ public class GenericEntityTemplate {
     _builder.append("import java.util.List;");
     _builder.newLine();
     _builder.newLine();
-    _builder.append("public class GenericEntity {");
+    _builder.append("public class GenericResource {");
     _builder.newLine();
     _builder.append("\t");
     _builder.newLine();

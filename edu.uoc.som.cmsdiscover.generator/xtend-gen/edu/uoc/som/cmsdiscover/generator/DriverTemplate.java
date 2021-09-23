@@ -44,6 +44,9 @@ public class DriverTemplate {
     _builder.append("import java.io.IOException;");
     _builder.newLine();
     _builder.append("\t");
+    _builder.append("import java.io.UnsupportedEncodingException;");
+    _builder.newLine();
+    _builder.append("\t");
     _builder.append("import java.net.URI;");
     _builder.newLine();
     _builder.append("\t");
@@ -107,31 +110,11 @@ public class DriverTemplate {
     _builder.append("\t");
     _builder.newLine();
     _builder.append("\t");
-    _builder.append("// FilterRequest");
     _builder.newLine();
     _builder.append("\t");
-    _builder.append("String filterQuery = \"\";");
-    _builder.newLine();
-    _builder.append("\t");
-    _builder.append("// SortingRequest");
-    _builder.newLine();
-    _builder.append("\t");
-    _builder.append("String sorterQuery = \"\";");
-    _builder.newLine();
-    _builder.append("\t");
-    _builder.append("// EmbeddingRequest");
-    _builder.newLine();
-    _builder.append("\t");
-    _builder.append("String embedQuery = \"\";");
-    _builder.newLine();
-    _builder.append("\t");
-    _builder.append("// Pagination");
-    _builder.newLine();
-    _builder.append("\t");
-    _builder.append("String paginationQuery = \"\";");
-    _builder.newLine();
-    _builder.append("\t");
-    _builder.newLine();
+    CharSequence _addGetSearchQuery = this.addGetSearchQuery();
+    _builder.append(_addGetSearchQuery, "\t");
+    _builder.newLineIfNotEmpty();
     _builder.append("\t");
     CharSequence _addSingleGetter = this.addSingleGetter();
     _builder.append(_addSingleGetter, "\t");
@@ -142,93 +125,25 @@ public class DriverTemplate {
     CharSequence _addCollectionGetter = this.addCollectionGetter();
     _builder.append(_addCollectionGetter, "\t");
     _builder.newLineIfNotEmpty();
+    _builder.append("\t\t");
+    _builder.newLine();
+    _builder.append("\t");
+    CharSequence _addDrupalRequester = this.addDrupalRequester();
+    _builder.append(_addDrupalRequester, "\t");
+    _builder.newLineIfNotEmpty();
     _builder.append("\t");
     _builder.newLine();
-    {
-      boolean _contains = this.cmsTechnology.contains("Drupal");
-      if (_contains) {
-        _builder.append("\t");
-        CharSequence _addDrupalFilterBuilder = this.addDrupalFilterBuilder();
-        _builder.append(_addDrupalFilterBuilder, "\t");
-        _builder.newLineIfNotEmpty();
-        _builder.append("\t");
-        _builder.newLine();
-        _builder.append("\t");
-        CharSequence _addDrupalSorterBuilder = this.addDrupalSorterBuilder();
-        _builder.append(_addDrupalSorterBuilder, "\t");
-        _builder.newLineIfNotEmpty();
-        _builder.append("\t");
-        _builder.newLine();
-        _builder.append("\t");
-        CharSequence _addDrupalEmbedding = this.addDrupalEmbedding();
-        _builder.append(_addDrupalEmbedding, "\t");
-        _builder.newLineIfNotEmpty();
-        _builder.append("\t");
-        _builder.newLine();
-        _builder.append("\t");
-        CharSequence _addDrupalPagination = this.addDrupalPagination();
-        _builder.append(_addDrupalPagination, "\t");
-        _builder.newLineIfNotEmpty();
-        _builder.append("\t");
-        _builder.newLine();
-        _builder.append("\t");
-        CharSequence _addDrupalSessionManager = this.addDrupalSessionManager();
-        _builder.append(_addDrupalSessionManager, "\t");
-        _builder.newLineIfNotEmpty();
-        _builder.append("\t");
-        _builder.append("\t");
-        _builder.newLine();
-        _builder.append("\t");
-        CharSequence _addDrupalRequester = this.addDrupalRequester();
-        _builder.append(_addDrupalRequester, "\t");
-        _builder.newLineIfNotEmpty();
-        _builder.append("\t");
-        _builder.newLine();
-        _builder.append("\t");
-        CharSequence _addDrupalMapAnswer = this.addDrupalMapAnswer();
-        _builder.append(_addDrupalMapAnswer, "\t");
-        _builder.newLineIfNotEmpty();
-        _builder.append("\t");
-        _builder.newLine();
-        _builder.append("\t");
-        CharSequence _addDrupalSingleMapAnswer = this.addDrupalSingleMapAnswer();
-        _builder.append(_addDrupalSingleMapAnswer, "\t");
-        _builder.newLineIfNotEmpty();
-        _builder.newLine();
-      }
-    }
-    {
-      boolean _contains_1 = this.cmsTechnology.contains("Wordpress");
-      if (_contains_1) {
-        _builder.append("\t");
-        this.addWordpressFilterBuilder();
-        _builder.newLineIfNotEmpty();
-        _builder.append("\t");
-        _builder.append("\t");
-        _builder.newLine();
-        _builder.append("\t");
-        this.addWordpressSorterBuilder();
-        _builder.newLineIfNotEmpty();
-        _builder.append("\t");
-        _builder.append("\t");
-        _builder.newLine();
-        _builder.append("\t");
-        this.addWordpressEmbedding();
-        _builder.newLineIfNotEmpty();
-        _builder.append("\t");
-        _builder.append("\t");
-        _builder.newLine();
-        _builder.append("\t");
-        this.addWordpressSessionManager();
-        _builder.newLineIfNotEmpty();
-        _builder.append("\t");
-        _builder.append("\t\t");
-        _builder.newLine();
-        _builder.append("\t");
-        this.addWordpressRequester();
-        _builder.newLineIfNotEmpty();
-      }
-    }
+    _builder.append("\t");
+    CharSequence _addDrupalMapAnswer = this.addDrupalMapAnswer();
+    _builder.append(_addDrupalMapAnswer, "\t");
+    _builder.newLineIfNotEmpty();
+    _builder.append("\t");
+    _builder.newLine();
+    _builder.append("\t");
+    CharSequence _addDrupalSingleMapAnswer = this.addDrupalSingleMapAnswer();
+    _builder.append(_addDrupalSingleMapAnswer, "\t");
+    _builder.newLineIfNotEmpty();
+    _builder.newLine();
     _builder.append("\t");
     _builder.append("}");
     _builder.newLine();
@@ -236,15 +151,27 @@ public class DriverTemplate {
     return _builder;
   }
   
+  public CharSequence addGetSearchQuery() {
+    StringConcatenation _builder = new StringConcatenation();
+    _builder.append("public SearchQuery getSearchQuery() {");
+    _builder.newLine();
+    _builder.append("\t");
+    _builder.append("return new SearchQuery();");
+    _builder.newLine();
+    _builder.append("}");
+    _builder.newLine();
+    return _builder;
+  }
+  
   public CharSequence addSingleGetter() {
     StringConcatenation _builder = new StringConcatenation();
-    _builder.append("public GenericEntity getSingle(String resourceRoute, String Id) {");
+    _builder.append("public GenericResource getSingle(String resourceRoute, String Id) {");
     _builder.newLine();
     _builder.append("\t\t");
-    _builder.append("JsonElement answer = resourceRequest(resourceRoute+Id,\"GET\");");
+    _builder.append("JsonElement answer = resourceRequest(resourceRoute+Id,\"GET\", new SearchQuery());");
     _builder.newLine();
     _builder.append("\t\t");
-    _builder.append("GenericEntity returnEntity = mapSingleAnswer(answer.getAsJsonObject().get(\"data\"));");
+    _builder.append("GenericResource returnEntity = mapSingleAnswer(answer.getAsJsonObject().get(\"data\"));");
     _builder.newLine();
     _builder.append("\t\t");
     _builder.append("return returnEntity;");
@@ -257,13 +184,13 @@ public class DriverTemplate {
   
   public CharSequence addCollectionGetter() {
     StringConcatenation _builder = new StringConcatenation();
-    _builder.append("public List<GenericEntity> getCollection(String resourceRoute) {");
+    _builder.append("public List<GenericResource> getCollection(String resourceRoute, SearchQuery searchQuery) {");
     _builder.newLine();
     _builder.append("\t");
-    _builder.append("JsonElement answer = resourceRequest(resourceRoute,\"GET\");");
+    _builder.append("JsonElement answer = resourceRequest(resourceRoute,\"GET\", searchQuery);");
     _builder.newLine();
     _builder.append("\t");
-    _builder.append("List<GenericEntity> entityCollection = mapAnswer(answer); ");
+    _builder.append("List<GenericResource> entityCollection = mapAnswer(answer); ");
     _builder.newLine();
     _builder.append("\t");
     _builder.append("return entityCollection;");
@@ -275,13 +202,13 @@ public class DriverTemplate {
   
   public CharSequence addDrupalSingleMapAnswer() {
     StringConcatenation _builder = new StringConcatenation();
-    _builder.append("private GenericEntity mapSingleAnswer(JsonElement res) {");
+    _builder.append("private GenericResource mapSingleAnswer(JsonElement res) {");
     _builder.newLine();
     _builder.append("\t\t");
     _builder.append("// TODO Auto-generated method stub");
     _builder.newLine();
     _builder.append("\t\t");
-    _builder.append("GenericEntity genericInstance = new GenericEntity();");
+    _builder.append("GenericResource genericInstance = new GenericResource();");
     _builder.newLine();
     _builder.append("\t\t");
     _builder.newLine();
@@ -474,18 +401,18 @@ public class DriverTemplate {
   
   public CharSequence addDrupalMapAnswer() {
     StringConcatenation _builder = new StringConcatenation();
-    _builder.append("private List<GenericEntity> mapAnswer(JsonElement res) {");
+    _builder.append("private List<GenericResource> mapAnswer(JsonElement res) {");
     _builder.newLine();
     _builder.append("\t");
     _builder.append("// TODO Auto-generated method stub");
     _builder.newLine();
     _builder.append("\t");
-    _builder.append("GenericEntity generic = new GenericEntity();");
+    _builder.append("GenericResource generic = new GenericResource();");
     _builder.newLine();
     _builder.append("\t");
     _builder.newLine();
     _builder.append("\t");
-    _builder.append("List<GenericEntity> entityCollection = new ArrayList<GenericEntity>();");
+    _builder.append("List<GenericResource> entityCollection = new ArrayList<GenericResource>();");
     _builder.newLine();
     _builder.append("\t");
     _builder.append("res.getAsJsonObject().get(\"data\").getAsJsonArray().forEach((content) -> {");
@@ -506,135 +433,9 @@ public class DriverTemplate {
     return _builder;
   }
   
-  public void addWordpressRequester() {
-    throw new UnsupportedOperationException("TODO: auto-generated method stub");
-  }
-  
-  public void addWordpressSessionManager() {
-    throw new UnsupportedOperationException("TODO: auto-generated method stub");
-  }
-  
-  public void addWordpressEmbedding() {
-    throw new UnsupportedOperationException("TODO: auto-generated method stub");
-  }
-  
-  public void addWordpressSorterBuilder() {
-    throw new UnsupportedOperationException("TODO: auto-generated method stub");
-  }
-  
-  public void addWordpressFilterBuilder() {
-    throw new UnsupportedOperationException("TODO: auto-generated method stub");
-  }
-  
-  public CharSequence addDrupalPagination() {
-    StringConcatenation _builder = new StringConcatenation();
-    _builder.append("public void addPagination(int pageOffset, int pageLimit) {");
-    _builder.newLine();
-    _builder.append("\t");
-    _builder.append("if ((pageOffset != 0) && (pageLimit != 0)) this.paginationQuery = \"&page[offset]=\"+pageOffset+\"&page[limit]=\"+pageLimit;");
-    _builder.newLine();
-    _builder.append("\t");
-    _builder.append("if (pageOffset != 0) this.paginationQuery = \"&page[offset]=\"+pageOffset;");
-    _builder.newLine();
-    _builder.append("\t");
-    _builder.append("if (pageLimit != 0) this.paginationQuery = \"&page[limit]=\"+pageLimit;");
-    _builder.newLine();
-    _builder.append("}");
-    _builder.newLine();
-    return _builder;
-  }
-  
-  public CharSequence addDrupalSessionManager() {
-    StringConcatenation _builder = new StringConcatenation();
-    _builder.append("@Override");
-    _builder.newLine();
-    _builder.append("public void manageConsumer(String user, String password) {");
-    _builder.newLine();
-    _builder.append("\t");
-    _builder.append("// TODO Auto-generated method stub");
-    _builder.newLine();
-    _builder.append("\t");
-    _builder.newLine();
-    _builder.append("}");
-    _builder.newLine();
-    return _builder;
-  }
-  
-  public CharSequence addDrupalEmbedding() {
-    StringConcatenation _builder = new StringConcatenation();
-    _builder.append("public void addEmbedReference(String referenceName) {");
-    _builder.newLine();
-    _builder.append("\t");
-    _builder.append("this.embedQuery = \"&include=\"+referenceName;");
-    _builder.newLine();
-    _builder.append("}");
-    _builder.newLine();
-    return _builder;
-  }
-  
-  public CharSequence addDrupalSorterBuilder() {
-    StringConcatenation _builder = new StringConcatenation();
-    _builder.append("public void addSorter(String fieldName, String sortType) {");
-    _builder.newLine();
-    _builder.append("\t");
-    _builder.append("if(sortType.contains(\"ASC\")) {");
-    _builder.newLine();
-    _builder.append("\t\t");
-    _builder.append("this.sorterQuery = \"&sort=\"+fieldName;");
-    _builder.newLine();
-    _builder.append("\t");
-    _builder.append("}");
-    _builder.newLine();
-    _builder.append("\t");
-    _builder.append("else {");
-    _builder.newLine();
-    _builder.append("\t\t");
-    _builder.append("this.sorterQuery = \"&sort=-\"+fieldName;");
-    _builder.newLine();
-    _builder.append("\t");
-    _builder.append("}");
-    _builder.newLine();
-    _builder.append("}");
-    _builder.newLine();
-    return _builder;
-  }
-  
-  public CharSequence addDrupalFilterBuilder() {
-    StringConcatenation _builder = new StringConcatenation();
-    _builder.append("public void addFilter(String fieldName, String value) {");
-    _builder.newLine();
-    _builder.append("\t");
-    _builder.append("String filter;");
-    _builder.newLine();
-    _builder.append("\t");
-    _builder.append("try {");
-    _builder.newLine();
-    _builder.append("\t\t");
-    _builder.append("filter = URLEncoder.encode(value, StandardCharsets.UTF_8.toString());");
-    _builder.newLine();
-    _builder.append("\t\t");
-    _builder.append("this.filterQuery = this.filterQuery + \"&filter[\"+fieldName+\"]=\"+filter;");
-    _builder.newLine();
-    _builder.append("\t");
-    _builder.append("} catch (UnsupportedEncodingException e1) {");
-    _builder.newLine();
-    _builder.append("\t\t");
-    _builder.append("// TODO Auto-generated catch block");
-    _builder.newLine();
-    _builder.append("\t\t");
-    _builder.append("e1.printStackTrace();");
-    _builder.newLine();
-    _builder.append("\t");
-    _builder.append("}");
-    _builder.newLine();
-    _builder.append("}");
-    _builder.newLine();
-    return _builder;
-  }
-  
   public CharSequence addDrupalRequester() {
     StringConcatenation _builder = new StringConcatenation();
-    _builder.append("public JsonElement resourceRequest(String resource, String method) {");
+    _builder.append("public JsonElement resourceRequest(String resource, String method, SearchQuery searchQuery) {");
     _builder.newLine();
     _builder.newLine();
     _builder.append("\t");
@@ -648,7 +449,7 @@ public class DriverTemplate {
     _builder.append("// create a request");
     _builder.newLine();
     _builder.append("\t");
-    _builder.append("HttpRequest request = HttpRequest.newBuilder().uri(URI.create(this.cmsUrl + resource +\"?\"+ this.filterQuery + this.paginationQuery + this.sorterQuery + this.embedQuery))");
+    _builder.append("HttpRequest request = HttpRequest.newBuilder().uri(URI.create(this.cmsUrl + resource +\"?\"+ searchQuery.filterQuery + searchQuery.paginationQuery + searchQuery.sorterQuery + searchQuery.embedQuery))");
     _builder.newLine();
     _builder.append("\t\t");
     _builder.append(".method(method, HttpRequest.BodyPublishers.noBody()).header(\"accept\", \"application/json\")");

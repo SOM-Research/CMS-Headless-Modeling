@@ -5,8 +5,10 @@ import edu.uoc.som.cmsdiscover.generator.DriverInterface;
 import edu.uoc.som.cmsdiscover.generator.DriverTemplate;
 import edu.uoc.som.cmsdiscover.generator.EntityTemplate;
 import edu.uoc.som.cmsdiscover.generator.FieldTemplate;
-import edu.uoc.som.cmsdiscover.generator.GenericEntityTemplate;
+import edu.uoc.som.cmsdiscover.generator.GenericResourceTemplate;
 import edu.uoc.som.cmsdiscover.generator.PomTemplate;
+import edu.uoc.som.cmsdiscover.generator.SearchQueryInterface;
+import edu.uoc.som.cmsdiscover.generator.SearchQueryTemplate;
 import edu.uoc.som.cmsdiscover.generator.TestsTemplate;
 import java.io.ByteArrayInputStream;
 import java.util.Map;
@@ -40,7 +42,11 @@ public class CodeGenerator {
   
   private DriverInterface interfaceTemplate = new DriverInterface();
   
-  private GenericEntityTemplate genericTemplate = new GenericEntityTemplate();
+  private GenericResourceTemplate genericTemplate = new GenericResourceTemplate();
+  
+  private SearchQueryInterface searchQueryInterface = new SearchQueryInterface();
+  
+  private SearchQueryTemplate searchQueryTemplate = new SearchQueryTemplate();
   
   private FieldTemplate fieldTemplate = new FieldTemplate();
   
@@ -156,24 +162,36 @@ public class CodeGenerator {
       ByteArrayInputStream _byteArrayInputStream_1 = new ByteArrayInputStream(_bytes_1);
       NullProgressMonitor _nullProgressMonitor_2 = new NullProgressMonitor();
       resultDriver.create(_byteArrayInputStream_1, IResource.FORCE, _nullProgressMonitor_2);
-      final CharSequence genericAttribute = this.genericTemplate.generateGenericAttribute(input);
-      final IFile resultAttribute = driversFolder.getFile("GenericAttribute.java");
-      byte[] _bytes_2 = genericAttribute.toString().getBytes();
+      final CharSequence searchTeamplate = this.searchQueryTemplate.generate(this.thePackage.getName());
+      final IFile resultSearchTemplate = driversFolder.getFile("SearchQuery.java");
+      byte[] _bytes_2 = searchTeamplate.toString().getBytes();
       ByteArrayInputStream _byteArrayInputStream_2 = new ByteArrayInputStream(_bytes_2);
       NullProgressMonitor _nullProgressMonitor_3 = new NullProgressMonitor();
-      resultAttribute.create(_byteArrayInputStream_2, IResource.FORCE, _nullProgressMonitor_3);
-      final CharSequence genericReference = this.genericTemplate.generateGenericReference(input);
-      final IFile resultReference = driversFolder.getFile("GenericReference.java");
-      byte[] _bytes_3 = genericReference.toString().getBytes();
+      resultSearchTemplate.create(_byteArrayInputStream_2, IResource.FORCE, _nullProgressMonitor_3);
+      final CharSequence searchInterface = this.searchQueryInterface.generate(this.thePackage.getName());
+      final IFile resultSearchInterface = driversFolder.getFile("SearchQueryInterface.java");
+      byte[] _bytes_3 = searchInterface.toString().getBytes();
       ByteArrayInputStream _byteArrayInputStream_3 = new ByteArrayInputStream(_bytes_3);
       NullProgressMonitor _nullProgressMonitor_4 = new NullProgressMonitor();
-      resultReference.create(_byteArrayInputStream_3, IResource.FORCE, _nullProgressMonitor_4);
-      final CharSequence genericEntity = this.genericTemplate.generateGenericEntity(input);
-      final IFile resultEntity = driversFolder.getFile("GenericEntity.java");
-      byte[] _bytes_4 = genericEntity.toString().getBytes();
+      resultSearchInterface.create(_byteArrayInputStream_3, IResource.FORCE, _nullProgressMonitor_4);
+      final CharSequence genericAttribute = this.genericTemplate.generateGenericAttribute(input);
+      final IFile resultAttribute = driversFolder.getFile("GenericAttribute.java");
+      byte[] _bytes_4 = genericAttribute.toString().getBytes();
       ByteArrayInputStream _byteArrayInputStream_4 = new ByteArrayInputStream(_bytes_4);
       NullProgressMonitor _nullProgressMonitor_5 = new NullProgressMonitor();
-      resultEntity.create(_byteArrayInputStream_4, IResource.FORCE, _nullProgressMonitor_5);
+      resultAttribute.create(_byteArrayInputStream_4, IResource.FORCE, _nullProgressMonitor_5);
+      final CharSequence genericReference = this.genericTemplate.generateGenericReference(input);
+      final IFile resultReference = driversFolder.getFile("GenericReference.java");
+      byte[] _bytes_5 = genericReference.toString().getBytes();
+      ByteArrayInputStream _byteArrayInputStream_5 = new ByteArrayInputStream(_bytes_5);
+      NullProgressMonitor _nullProgressMonitor_6 = new NullProgressMonitor();
+      resultReference.create(_byteArrayInputStream_5, IResource.FORCE, _nullProgressMonitor_6);
+      final CharSequence genericEntity = this.genericTemplate.generateGenericEntity(input);
+      final IFile resultEntity = driversFolder.getFile("GenericResource.java");
+      byte[] _bytes_6 = genericEntity.toString().getBytes();
+      ByteArrayInputStream _byteArrayInputStream_6 = new ByteArrayInputStream(_bytes_6);
+      NullProgressMonitor _nullProgressMonitor_7 = new NullProgressMonitor();
+      resultEntity.create(_byteArrayInputStream_6, IResource.FORCE, _nullProgressMonitor_7);
     } catch (Throwable _e) {
       throw Exceptions.sneakyThrow(_e);
     }
