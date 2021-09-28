@@ -5,6 +5,8 @@ class TestsTemplate {
 		def getTest() '''
 package generated.middleware.Umami_Food_Magazine_API___JSON_API;
 
+import generated.middleware.Umami_Food_Magazine_API___JSON_API.drivers.SearchQuery;
+
 import java.util.List;
 
 public class mainTest {

@@ -9,6 +9,9 @@ public class TestsTemplate {
     _builder.append("package generated.middleware.Umami_Food_Magazine_API___JSON_API;");
     _builder.newLine();
     _builder.newLine();
+    _builder.append("import generated.middleware.Umami_Food_Magazine_API___JSON_API.drivers.SearchQuery;");
+    _builder.newLine();
+    _builder.newLine();
     _builder.append("import java.util.List;");
     _builder.newLine();
     _builder.newLine();
