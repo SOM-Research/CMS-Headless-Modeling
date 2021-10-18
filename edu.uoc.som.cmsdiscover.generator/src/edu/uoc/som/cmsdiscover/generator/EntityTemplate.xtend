@@ -12,7 +12,6 @@ import com.google.common.base.CaseFormat;
 
 class EntityTemplate {
 	
-	String cmsTechnology
 	String modelClassName
 	EClass modelClass
 	EList<EAttribute> classAttributes
@@ -35,9 +34,7 @@ class EntityTemplate {
 		this.fieldClassesName = eFieldPackage.EClassifiers.filter(EClass).map[name];
 		this.eFieldPackage = eFieldPackage;
 		this.packageName = packageName
-		for (Annotation : this.Annotations) {
-			if (Annotation.getKey().contains("cmsTechnology")) this.cmsTechnology = Annotation.getValue();
-		}
+
 	}
 		
 	def generateEntitiesClasses() '''
@@ -57,11 +54,7 @@ class EntityTemplate {
 	import «packageName».drivers.GenericResource;
 	import «packageName».drivers.SearchQuery;
 	import «packageName».drivers.DriverInterface;
-	«IF this.cmsTechnology.contains("Drupal")»
-	import «packageName».drivers.DrupalDriver;
-	«ELSEIF this.cmsTechnology.contains("Wordpress")»
-	import «packageName».drivers.WordpressDriver;
-	«ENDIF»
+
 		
 	public class «this.modelClassName» {
 			
@@ -107,7 +100,7 @@ class EntityTemplate {
 	
 	def addDriverWrapperMethods() '''
 	public «this.modelClassName» getSingle(String Id) {
-		GenericResource singleAnswer = driver.getSingle(resourceRoute+"/",Id);
+		GenericResource singleAnswer = driver.getSingle(resourceRoute,Id);
 		«this.modelClassName» return«this.modelClassName» = null;
 		return«this.modelClassName» = mapSingleAnswer(singleAnswer);
 		return return«this.modelClassName»;
@@ -132,8 +125,8 @@ class EntityTemplate {
 	
 	'''	
 	def addConstructor() '''
-	public «this.modelClassName»() {
-		this.driver = new «this.cmsTechnology»Driver();
+	public «this.modelClassName»(DriverInterface driver) {
+		this.driver = driver;
 		this.parser = new JsonParser();
 	}
 	'''
@@ -141,7 +134,7 @@ class EntityTemplate {
 	
 	def mapAnswer() '''
 		
-	private List<«this.modelClassName»> mapAnswer(List<GenericResource> answer) {
+	List<«this.modelClassName»> mapAnswer(List<GenericResource> answer) {
 		
 		List<«this.modelClassName»> «this.modelClassName»Collection = new ArrayList<«this.modelClassName»>();
 		answer.forEach((singleAnswer) -> {
@@ -152,22 +145,21 @@ class EntityTemplate {
 		
 	}
 	
-	private «this.modelClassName» mapSingleAnswer(GenericResource singleAnswer) {
+	«this.modelClassName» mapSingleAnswer(GenericResource singleAnswer) {
 		
-		«this.modelClassName» returnInstance = new «this.modelClassName»();
 		
 		singleAnswer.attributesList.forEach((attribute) -> {
 			« FOR EAttribute attribute: this.classAttributes »
 				if(attribute.getName().equals("«attribute.getName()»")) {
 					if (attribute.getValue()!= null) {
 				«IF attribute.getEAttributeType().getInstanceTypeName().contains("Integer")  »	
-					 returnInstance.«attribute.getName()» = Integer.parseInt(attribute.getValue());
+					 this.«attribute.getName()» = Integer.parseInt(attribute.getValue());
 				«ELSEIF attribute.getEAttributeType().getInstanceTypeName().contains("String") »
-					 returnInstance.«attribute.getName()» = attribute.getValue().toString();
+					 this.«attribute.getName()» = attribute.getValue().toString();
 				«ELSEIF attribute.getEAttributeType().getInstanceTypeName().contains("boolean") »
-					 returnInstance.«attribute.getName()» = Boolean.parseBoolean(attribute.getValue());
+					 this.«attribute.getName()» = Boolean.parseBoolean(attribute.getValue());
 				«ELSEIF attribute.getEAttributeType().getInstanceTypeName().contains("Date") »
-					 returnInstance.«attribute.getName()» = new DateTime(attribute.getValue().replace("\"", "")).toDate();
+					 this.«attribute.getName()» = new DateTime(attribute.getValue().replace("\"", "")).toDate();
 				«ENDIF»
 					}
 				}
@@ -181,13 +173,13 @@ class EntityTemplate {
 				 « FOR attribute : fieldClass.getEAllAttributes()»
 					if(!elm.getAsJsonObject().get("«attribute.getName()»").isJsonNull()) {
 					 	«IF attribute.getEAttributeType().getInstanceTypeName().contains("Integer")  »	
-						 	returnInstance.«reference.getEReferenceType().getName()».set«attribute.getName().FirstUpperCase»(Integer.parseInt(elm.getAsJsonObject().get("«attribute.getName()»").toString()));
+						 	this.«reference.getEReferenceType().getName()».set«attribute.getName().FirstUpperCase»(Integer.parseInt(elm.getAsJsonObject().get("«attribute.getName()»").toString()));
 				 		«ELSEIF attribute.getEAttributeType().getInstanceTypeName().contains("String") »
-						 	returnInstance.«reference.getEReferenceType().getName()».set«attribute.getName().FirstUpperCase»(elm.getAsJsonObject().get("«attribute.getName()»").toString());
+						 	this.«reference.getEReferenceType().getName()».set«attribute.getName().FirstUpperCase»(elm.getAsJsonObject().get("«attribute.getName()»").toString());
 						«ELSEIF attribute.getEAttributeType().getInstanceTypeName().contains("boolean") »
-						 	returnInstance.«reference.getEReferenceType().getName()».set«attribute.getName().FirstUpperCase»(Boolean.parseBoolean(elm.getAsJsonObject().get("«attribute.getName()»").toString()));
+						 	this.«reference.getEReferenceType().getName()».set«attribute.getName().FirstUpperCase»(Boolean.parseBoolean(elm.getAsJsonObject().get("«attribute.getName()»").toString()));
 						«ELSEIF attribute.getEAttributeType().getInstanceTypeName().contains("Date") »
-					 		returnInstance.«reference.getEReferenceType().getName()».set«attribute.getName().FirstUpperCase»(new DateTime(elm.getAsJsonObject().get("«attribute.getName()»").toString()).toDate());
+					 		this.«reference.getEReferenceType().getName()».set«attribute.getName().FirstUpperCase»(new DateTime(elm.getAsJsonObject().get("«attribute.getName()»").toString()).toDate());
 						«ENDIF»
 					}
 				 «ENDFOR»
@@ -201,12 +193,12 @@ class EntityTemplate {
 		« FOR EReference reference: this.classReferences » 
 			«IF(this.modelClasses.contains(reference.getEReferenceType().getName())) »
 			if(reference.getName().equals("«reference.getName().toString()»")) {
-				returnInstance.«reference.getName().toString».add(reference.getValue());
+				this.«reference.getName().toString».add(reference.getValue());
 			}
 			«ENDIF»
 		«ENDFOR»
 		});
-		return returnInstance;
+		return this;
 	}
 	'''
 			
@@ -230,7 +222,7 @@ class EntityTemplate {
 	public List<«reference.getEReferenceType().getName()»> get«reference.getName().FirstUpperCase.camelCase» () {
 		List<«reference.getEReferenceType().getName()»> referenceList = new ArrayList<«reference.getEReferenceType().getName()»>();
 		this.«reference.getName()».forEach((element) -> {
-			«reference.getEReferenceType().getName()» referencedEntity = new «reference.getEReferenceType().getName()»();
+			«reference.getEReferenceType().getName()» referencedEntity = new «reference.getEReferenceType().getName()»(driver);
 			referenceList.add(referencedEntity.getSingle(element));
 		});
 		return referenceList;

@@ -1,5 +1,6 @@
 package edu.uoc.som.cmsdiscover.generator;
 
+import com.google.common.base.Objects;
 import java.util.Map;
 import org.eclipse.emf.common.util.EMap;
 import org.eclipse.emf.ecore.EPackage;
@@ -96,18 +97,58 @@ public class DriverTemplate {
     _builder.newLine();
     {
       for(final Map.Entry<String, String> Annotation : this.sourceCmsInformation) {
-        _builder.append("\t");
-        _builder.append("public static final String ");
-        String _key = Annotation.getKey();
-        _builder.append(_key, "\t");
-        _builder.append(" = \"");
-        String _value = Annotation.getValue();
-        _builder.append(_value, "\t");
-        _builder.append("\";");
-        _builder.newLineIfNotEmpty();
+        {
+          String _key = Annotation.getKey();
+          boolean _notEquals = (!Objects.equal(_key, this.cmsTechnology));
+          if (_notEquals) {
+            _builder.append("\t");
+            _builder.append("private String ");
+            String _key_1 = Annotation.getKey();
+            _builder.append(_key_1, "\t");
+            _builder.append(";");
+            _builder.newLineIfNotEmpty();
+          }
+        }
       }
     }
     _builder.append("\t");
+    _builder.newLine();
+    _builder.append("\t");
+    _builder.newLine();
+    _builder.append("\t");
+    _builder.append(this.cmsTechnology, "\t");
+    _builder.append("Driver(String cmsURL, String conumerUser, String conumserPass) {");
+    _builder.newLineIfNotEmpty();
+    _builder.append("\t\t");
+    _builder.append("this.cmsUrl = cmsURL;");
+    _builder.newLine();
+    _builder.append("\t\t");
+    _builder.append("this.consumerPass = consumerPass;");
+    _builder.newLine();
+    _builder.append("\t\t");
+    _builder.append("this.consumerUser = consumerUser;");
+    _builder.newLine();
+    _builder.append("\t");
+    _builder.append("}");
+    _builder.newLine();
+    _builder.append("\t");
+    _builder.newLine();
+    _builder.append("\t");
+    _builder.append("public static ");
+    _builder.append(this.cmsTechnology, "\t");
+    _builder.append("Driver getInstance(String cmsURL, String conumerUser, String conumserPass) {");
+    _builder.newLineIfNotEmpty();
+    _builder.append("\t\t");
+    _builder.append(this.cmsTechnology, "\t\t");
+    _builder.append("Driver instance = new ");
+    _builder.append(this.cmsTechnology, "\t\t");
+    _builder.append("Driver(cmsURL, conumerUser, conumserPass);");
+    _builder.newLineIfNotEmpty();
+    _builder.append("\t\t");
+    _builder.append("return instance;");
+    _builder.newLine();
+    _builder.append("\t");
+    _builder.append("}");
     _builder.newLine();
     _builder.append("\t");
     _builder.newLine();
@@ -168,7 +209,7 @@ public class DriverTemplate {
     _builder.append("public GenericResource getSingle(String resourceRoute, String Id) {");
     _builder.newLine();
     _builder.append("\t\t");
-    _builder.append("JsonElement answer = resourceRequest(resourceRoute+Id,\"GET\", new SearchQuery());");
+    _builder.append("JsonElement answer = resourceRequest(resourceRoute+\"/\"+Id,\"GET\", new SearchQuery());");
     _builder.newLine();
     _builder.append("\t\t");
     _builder.append("GenericResource returnEntity = mapSingleAnswer(answer.getAsJsonObject().get(\"data\"));");

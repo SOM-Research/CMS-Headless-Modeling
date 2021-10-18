@@ -9,6 +9,7 @@ import edu.uoc.som.cmsdiscover.generator.GenericResourceTemplate;
 import edu.uoc.som.cmsdiscover.generator.PomTemplate;
 import edu.uoc.som.cmsdiscover.generator.SearchQueryInterface;
 import edu.uoc.som.cmsdiscover.generator.SearchQueryTemplate;
+import edu.uoc.som.cmsdiscover.generator.SiteManagerTemplate;
 import edu.uoc.som.cmsdiscover.generator.TestsTemplate;
 import java.io.ByteArrayInputStream;
 import java.util.Map;
@@ -72,69 +73,75 @@ public class CodeGenerator {
         final Iterable<String> fieldClassesName = IterableExtensions.<EClass, String>map(Iterables.<EClass>filter(this.thePackage.getESubpackages().get(0).getEClassifiers(), EClass.class), _function_1);
         final EMap<String, String> sourceCmsInformation = this.thePackage.getEAnnotations().get(0).getDetails();
         this.generateDrivers(input, srcGenFolder);
+        final SiteManagerTemplate siteManagerTemplate = new SiteManagerTemplate(this.thePackage, eClasses);
+        final CharSequence siteManagerContent = siteManagerTemplate.generateClass();
+        String _substring = this.thePackage.getName().substring(0, 10);
+        String _plus = (_substring + ".java");
+        final IFile siteManagerFile = srcGenFolder.getFile(_plus);
+        byte[] _bytes = siteManagerContent.toString().getBytes();
+        ByteArrayInputStream _byteArrayInputStream = new ByteArrayInputStream(_bytes);
+        NullProgressMonitor _nullProgressMonitor = new NullProgressMonitor();
+        siteManagerFile.create(_byteArrayInputStream, IResource.FORCE, _nullProgressMonitor);
         InputOutput.<String>println("Generating");
         for (final EClass modelClass : eClasses) {
           {
             final EList<EClass> superClasses = modelClass.getESuperTypes();
             final EMap<String, String> classAnnotation = modelClass.getEAnnotations().get(0).getDetails();
-            for (final Map.Entry<String, String> detail : sourceCmsInformation) {
-              classAnnotation.put(detail.getKey(), detail.getValue());
-            }
             String _name = this.thePackage.getName();
-            String _plus = ("generated.middleware." + _name);
-            final EntityTemplate template = new EntityTemplate(modelClass, classAnnotation, classesName, eFieldPackage, _plus);
+            String _plus_1 = ("generated.middleware." + _name);
+            final EntityTemplate template = new EntityTemplate(modelClass, classAnnotation, classesName, eFieldPackage, _plus_1);
             final CharSequence content = template.generateEntitiesClasses();
             String _name_1 = modelClass.getName();
-            String _plus_1 = (_name_1 + ".java");
-            final IFile resultFile = srcGenFolder.getFile(_plus_1);
-            byte[] _bytes = content.toString().getBytes();
-            ByteArrayInputStream _byteArrayInputStream = new ByteArrayInputStream(_bytes);
-            NullProgressMonitor _nullProgressMonitor = new NullProgressMonitor();
-            resultFile.create(_byteArrayInputStream, IResource.FORCE, _nullProgressMonitor);
+            String _plus_2 = (_name_1 + ".java");
+            final IFile resultFile = srcGenFolder.getFile(_plus_2);
+            byte[] _bytes_1 = content.toString().getBytes();
+            ByteArrayInputStream _byteArrayInputStream_1 = new ByteArrayInputStream(_bytes_1);
+            NullProgressMonitor _nullProgressMonitor_1 = new NullProgressMonitor();
+            resultFile.create(_byteArrayInputStream_1, IResource.FORCE, _nullProgressMonitor_1);
           }
         }
         final IFolder srcGenField = srcGenFolder.getFolder("customAttributes");
         boolean _exists = srcGenField.exists();
         boolean _not = (!_exists);
         if (_not) {
-          NullProgressMonitor _nullProgressMonitor = new NullProgressMonitor();
-          srcGenField.create(true, true, _nullProgressMonitor);
+          NullProgressMonitor _nullProgressMonitor_1 = new NullProgressMonitor();
+          srcGenField.create(true, true, _nullProgressMonitor_1);
         }
         Iterable<EClass> _filter = Iterables.<EClass>filter(eFieldPackage.getEClassifiers(), EClass.class);
         for (final EClass fieldClass : _filter) {
           {
             String _name = this.thePackage.getName();
-            String _plus = ("generated.middleware." + _name);
-            String _plus_1 = (_plus + ".customAttributes");
-            final CharSequence fieldTemplate = this.fieldTemplate.generate(fieldClass, _plus_1);
+            String _plus_1 = ("generated.middleware." + _name);
+            String _plus_2 = (_plus_1 + ".customAttributes");
+            final CharSequence fieldTemplate = this.fieldTemplate.generate(fieldClass, _plus_2);
             String _name_1 = fieldClass.getName();
-            String _plus_2 = (_name_1 + ".java");
-            final IFile fieldFile = srcGenField.getFile(_plus_2);
-            byte[] _bytes = fieldTemplate.toString().getBytes();
-            ByteArrayInputStream _byteArrayInputStream = new ByteArrayInputStream(_bytes);
-            NullProgressMonitor _nullProgressMonitor_1 = new NullProgressMonitor();
-            fieldFile.create(_byteArrayInputStream, IResource.FORCE, _nullProgressMonitor_1);
+            String _plus_3 = (_name_1 + ".java");
+            final IFile fieldFile = srcGenField.getFile(_plus_3);
+            byte[] _bytes_1 = fieldTemplate.toString().getBytes();
+            ByteArrayInputStream _byteArrayInputStream_1 = new ByteArrayInputStream(_bytes_1);
+            NullProgressMonitor _nullProgressMonitor_2 = new NullProgressMonitor();
+            fieldFile.create(_byteArrayInputStream_1, IResource.FORCE, _nullProgressMonitor_2);
           }
         }
-        final IFolder testFolder = project.getFolder("test");
+        final IFolder testFolder = srcGenFolder.getFolder("tests");
         boolean _exists_1 = testFolder.exists();
         boolean _not_1 = (!_exists_1);
         if (_not_1) {
-          NullProgressMonitor _nullProgressMonitor_1 = new NullProgressMonitor();
-          testFolder.create(true, true, _nullProgressMonitor_1);
+          NullProgressMonitor _nullProgressMonitor_2 = new NullProgressMonitor();
+          testFolder.create(true, true, _nullProgressMonitor_2);
         }
-        final IFile testFile = srcGenFolder.getFile("mainTest.java");
+        final IFile testFile = testFolder.getFile("mainTest.java");
         final CharSequence testcontent = this.testsTemplate.getTest();
-        byte[] _bytes = testcontent.toString().getBytes();
-        ByteArrayInputStream _byteArrayInputStream = new ByteArrayInputStream(_bytes);
-        NullProgressMonitor _nullProgressMonitor_2 = new NullProgressMonitor();
-        testFile.create(_byteArrayInputStream, IResource.FORCE, _nullProgressMonitor_2);
-        final IFile pomFile = project.getFile("pom.xml");
-        final CharSequence pomContent = this.pomTemplate.getPom();
-        byte[] _bytes_1 = pomContent.toString().getBytes();
+        byte[] _bytes_1 = testcontent.toString().getBytes();
         ByteArrayInputStream _byteArrayInputStream_1 = new ByteArrayInputStream(_bytes_1);
         NullProgressMonitor _nullProgressMonitor_3 = new NullProgressMonitor();
-        pomFile.create(_byteArrayInputStream_1, IResource.FORCE, _nullProgressMonitor_3);
+        testFile.create(_byteArrayInputStream_1, IResource.FORCE, _nullProgressMonitor_3);
+        final IFile pomFile = project.getFile("pom.xml");
+        final CharSequence pomContent = this.pomTemplate.getPom();
+        byte[] _bytes_2 = pomContent.toString().getBytes();
+        ByteArrayInputStream _byteArrayInputStream_2 = new ByteArrayInputStream(_bytes_2);
+        NullProgressMonitor _nullProgressMonitor_4 = new NullProgressMonitor();
+        pomFile.create(_byteArrayInputStream_2, IResource.FORCE, _nullProgressMonitor_4);
       }
     } catch (Throwable _e) {
       throw Exceptions.sneakyThrow(_e);

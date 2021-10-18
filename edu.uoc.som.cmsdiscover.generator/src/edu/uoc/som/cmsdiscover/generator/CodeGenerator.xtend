@@ -35,20 +35,23 @@ class CodeGenerator {
 
 		if (input !== null && input instanceof EPackage) {
 			thePackage = input as EPackage;
-
-
 			val eClasses = thePackage.EClassifiers.filter(EClass);
-	
 			val classesName = eClasses.map[name]
 
 			// Add field classes
 			val eFieldPackage = thePackage.getESubpackages().get(0)
-	
 			val fieldClassesName = thePackage.getESubpackages().get(0).EClassifiers.filter(EClass).map[name]
 			val sourceCmsInformation = thePackage.EAnnotations.get(0).details
 
 			// Generate Drivers
 			generateDrivers(input, srcGenFolder)
+			
+			// Generate Site Manager
+			val siteManagerTemplate = new SiteManagerTemplate(thePackage, eClasses);
+			val siteManagerContent = siteManagerTemplate.generateClass();
+			val siteManagerFile = srcGenFolder.getFile(thePackage.getName().substring(0,10) + ".java")
+				siteManagerFile.create(new ByteArrayInputStream(siteManagerContent.toString().getBytes()), IResource.FORCE,
+					new NullProgressMonitor())
 
 			println("Generating")
 
@@ -56,9 +59,6 @@ class CodeGenerator {
 			for (EClass modelClass : eClasses) {
 				val superClasses = modelClass.getESuperTypes()
 				val classAnnotation = modelClass.EAnnotations.get(0).details
-				for (detail : sourceCmsInformation) {
-					classAnnotation.put(detail.key, detail.value)
-				}
 				// Call the generator
 				val template = new EntityTemplate(modelClass, classAnnotation, classesName, eFieldPackage,
 					"generated.middleware." + thePackage.getName());
@@ -80,10 +80,11 @@ class CodeGenerator {
 			}
 
 			// Generate Test
-			val testFolder = project.getFolder("test")
+
+			val testFolder = srcGenFolder.getFolder("tests")
 			if(!testFolder.exists()) testFolder.create(true, true, new NullProgressMonitor());
 
-			val testFile = srcGenFolder.getFile("mainTest.java")
+			val testFile = testFolder.getFile("mainTest.java")
 			val testcontent = testsTemplate.getTest();
 			testFile.create(new ByteArrayInputStream(testcontent.toString().getBytes()), IResource.FORCE,
 				new NullProgressMonitor())

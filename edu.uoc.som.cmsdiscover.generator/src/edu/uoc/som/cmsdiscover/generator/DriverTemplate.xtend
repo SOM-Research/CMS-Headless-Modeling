@@ -42,9 +42,22 @@ class DriverTemplate {
 				
 			// STATIC VALUES
 			«FOR Annotation : this.sourceCmsInformation»
-				public static final String «Annotation.getKey()» = "«Annotation.getValue»";
+				«IF Annotation.getKey() != cmsTechnology »
+				private String «Annotation.getKey()»;
+				«ENDIF»
 			«ENDFOR»
 			
+			
+			«this.cmsTechnology»Driver(String cmsURL, String conumerUser, String conumserPass) {
+				this.cmsUrl = cmsURL;
+				this.consumerPass = consumerPass;
+				this.consumerUser = consumerUser;
+			}
+			
+			public static «this.cmsTechnology»Driver getInstance(String cmsURL, String conumerUser, String conumserPass) {
+				«this.cmsTechnology»Driver instance = new «this.cmsTechnology»Driver(cmsURL, conumerUser, conumserPass);
+				return instance;
+			}
 			
 			«addGetSearchQuery()»
 			«addSingleGetter()»
@@ -69,7 +82,7 @@ class DriverTemplate {
 	
 	def addSingleGetter() '''
 	public GenericResource getSingle(String resourceRoute, String Id) {
-			JsonElement answer = resourceRequest(resourceRoute+Id,"GET", new SearchQuery());
+			JsonElement answer = resourceRequest(resourceRoute+"/"+Id,"GET", new SearchQuery());
 			GenericResource returnEntity = mapSingleAnswer(answer.getAsJsonObject().get("data"));
 			return returnEntity;
 		}

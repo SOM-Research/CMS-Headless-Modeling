@@ -18,8 +18,6 @@ import org.eclipse.xtext.xbase.lib.ListExtensions;
 
 @SuppressWarnings("all")
 public class EntityTemplate {
-  private String cmsTechnology;
-  
   private String modelClassName;
   
   private EClass modelClass;
@@ -51,12 +49,6 @@ public class EntityTemplate {
     this.fieldClassesName = IterableExtensions.<EClass, String>map(Iterables.<EClass>filter(eFieldPackage.getEClassifiers(), EClass.class), _function);
     this.eFieldPackage = eFieldPackage;
     this.packageName = packageName;
-    for (final Map.Entry<String, String> Annotation : this.Annotations) {
-      boolean _contains = Annotation.getKey().contains("cmsTechnology");
-      if (_contains) {
-        this.cmsTechnology = Annotation.getValue();
-      }
-    }
   }
   
   public CharSequence generateEntitiesClasses() {
@@ -99,23 +91,7 @@ public class EntityTemplate {
     _builder.append(this.packageName);
     _builder.append(".drivers.DriverInterface;");
     _builder.newLineIfNotEmpty();
-    {
-      boolean _contains = this.cmsTechnology.contains("Drupal");
-      if (_contains) {
-        _builder.append("import ");
-        _builder.append(this.packageName);
-        _builder.append(".drivers.DrupalDriver;");
-        _builder.newLineIfNotEmpty();
-      } else {
-        boolean _contains_1 = this.cmsTechnology.contains("Wordpress");
-        if (_contains_1) {
-          _builder.append("import ");
-          _builder.append(this.packageName);
-          _builder.append(".drivers.WordpressDriver;");
-          _builder.newLineIfNotEmpty();
-        }
-      }
-    }
+    _builder.newLine();
     _builder.append("\t");
     _builder.newLine();
     _builder.append("public class ");
@@ -256,7 +232,7 @@ public class EntityTemplate {
     _builder.append(" getSingle(String Id) {");
     _builder.newLineIfNotEmpty();
     _builder.append("\t");
-    _builder.append("GenericResource singleAnswer = driver.getSingle(resourceRoute+\"/\",Id);");
+    _builder.append("GenericResource singleAnswer = driver.getSingle(resourceRoute,Id);");
     _builder.newLine();
     _builder.append("\t");
     _builder.append(this.modelClassName, "\t");
@@ -345,13 +321,11 @@ public class EntityTemplate {
     StringConcatenation _builder = new StringConcatenation();
     _builder.append("public ");
     _builder.append(this.modelClassName);
-    _builder.append("() {");
+    _builder.append("(DriverInterface driver) {");
     _builder.newLineIfNotEmpty();
     _builder.append("\t");
-    _builder.append("this.driver = new ");
-    _builder.append(this.cmsTechnology, "\t");
-    _builder.append("Driver();");
-    _builder.newLineIfNotEmpty();
+    _builder.append("this.driver = driver;");
+    _builder.newLine();
     _builder.append("\t");
     _builder.append("this.parser = new JsonParser();");
     _builder.newLine();
@@ -364,7 +338,7 @@ public class EntityTemplate {
     StringConcatenation _builder = new StringConcatenation();
     _builder.append("\t");
     _builder.newLine();
-    _builder.append("private List<");
+    _builder.append("List<");
     _builder.append(this.modelClassName);
     _builder.append("> mapAnswer(List<GenericResource> answer) {");
     _builder.newLineIfNotEmpty();
@@ -401,18 +375,11 @@ public class EntityTemplate {
     _builder.append("}");
     _builder.newLine();
     _builder.newLine();
-    _builder.append("private ");
     _builder.append(this.modelClassName);
     _builder.append(" mapSingleAnswer(GenericResource singleAnswer) {");
     _builder.newLineIfNotEmpty();
     _builder.append("\t");
     _builder.newLine();
-    _builder.append("\t");
-    _builder.append(this.modelClassName, "\t");
-    _builder.append(" returnInstance = new ");
-    _builder.append(this.modelClassName, "\t");
-    _builder.append("();");
-    _builder.newLineIfNotEmpty();
     _builder.append("\t");
     _builder.newLine();
     _builder.append("\t");
@@ -434,7 +401,7 @@ public class EntityTemplate {
           boolean _contains = attribute.getEAttributeType().getInstanceTypeName().contains("Integer");
           if (_contains) {
             _builder.append("\t\t");
-            _builder.append("returnInstance.");
+            _builder.append("this.");
             String _name_1 = attribute.getName();
             _builder.append(_name_1, "\t\t");
             _builder.append(" = Integer.parseInt(attribute.getValue());");
@@ -443,7 +410,7 @@ public class EntityTemplate {
             boolean _contains_1 = attribute.getEAttributeType().getInstanceTypeName().contains("String");
             if (_contains_1) {
               _builder.append("\t\t");
-              _builder.append("returnInstance.");
+              _builder.append("this.");
               String _name_2 = attribute.getName();
               _builder.append(_name_2, "\t\t");
               _builder.append(" = attribute.getValue().toString();");
@@ -452,7 +419,7 @@ public class EntityTemplate {
               boolean _contains_2 = attribute.getEAttributeType().getInstanceTypeName().contains("boolean");
               if (_contains_2) {
                 _builder.append("\t\t");
-                _builder.append("returnInstance.");
+                _builder.append("this.");
                 String _name_3 = attribute.getName();
                 _builder.append(_name_3, "\t\t");
                 _builder.append(" = Boolean.parseBoolean(attribute.getValue());");
@@ -461,7 +428,7 @@ public class EntityTemplate {
                 boolean _contains_3 = attribute.getEAttributeType().getInstanceTypeName().contains("Date");
                 if (_contains_3) {
                   _builder.append("\t\t");
-                  _builder.append("returnInstance.");
+                  _builder.append("this.");
                   String _name_4 = attribute.getName();
                   _builder.append(_name_4, "\t\t");
                   _builder.append(" = new DateTime(attribute.getValue().replace(\"\\\"\", \"\")).toDate();");
@@ -512,7 +479,7 @@ public class EntityTemplate {
                 {
                   boolean _contains_5 = attribute_1.getEAttributeType().getInstanceTypeName().contains("Integer");
                   if (_contains_5) {
-                    _builder.append("returnInstance.");
+                    _builder.append("this.");
                     String _name_7 = reference.getEReferenceType().getName();
                     _builder.append(_name_7);
                     _builder.append(".set");
@@ -526,7 +493,7 @@ public class EntityTemplate {
                   } else {
                     boolean _contains_6 = attribute_1.getEAttributeType().getInstanceTypeName().contains("String");
                     if (_contains_6) {
-                      _builder.append("returnInstance.");
+                      _builder.append("this.");
                       String _name_9 = reference.getEReferenceType().getName();
                       _builder.append(_name_9);
                       _builder.append(".set");
@@ -540,7 +507,7 @@ public class EntityTemplate {
                     } else {
                       boolean _contains_7 = attribute_1.getEAttributeType().getInstanceTypeName().contains("boolean");
                       if (_contains_7) {
-                        _builder.append("returnInstance.");
+                        _builder.append("this.");
                         String _name_11 = reference.getEReferenceType().getName();
                         _builder.append(_name_11);
                         _builder.append(".set");
@@ -555,7 +522,7 @@ public class EntityTemplate {
                         boolean _contains_8 = attribute_1.getEAttributeType().getInstanceTypeName().contains("Date");
                         if (_contains_8) {
                           _builder.append(" \t");
-                          _builder.append("returnInstance.");
+                          _builder.append("this.");
                           String _name_13 = reference.getEReferenceType().getName();
                           _builder.append(_name_13, " \t");
                           _builder.append(".set");
@@ -604,7 +571,7 @@ public class EntityTemplate {
             _builder.newLineIfNotEmpty();
             _builder.append("\t");
             _builder.append("\t");
-            _builder.append("returnInstance.");
+            _builder.append("this.");
             String _string_1 = reference_1.getName().toString();
             _builder.append(_string_1, "\t\t");
             _builder.append(".add(reference.getValue());");
@@ -620,7 +587,7 @@ public class EntityTemplate {
     _builder.append("});");
     _builder.newLine();
     _builder.append("\t");
-    _builder.append("return returnInstance;");
+    _builder.append("return this;");
     _builder.newLine();
     _builder.append("}");
     _builder.newLine();
@@ -708,7 +675,7 @@ public class EntityTemplate {
             _builder.append(" referencedEntity = new ");
             String _name_5 = reference.getEReferenceType().getName();
             _builder.append(_name_5, "\t\t");
-            _builder.append("();");
+            _builder.append("(driver);");
             _builder.newLineIfNotEmpty();
             _builder.append("\t\t");
             _builder.append("referenceList.add(referencedEntity.getSingle(element));");

@@ -3,8 +3,11 @@ package edu.uoc.som.cmsdiscover.generator
 class TestsTemplate {
 	
 		def getTest() '''
-package generated.middleware.Umami_Food_Magazine_API___JSON_API;
+package generated.middleware.Umami_Food_Magazine_API___JSON_API.tests;
 
+import generated.middleware.Umami_Food_Magazine_API___JSON_API.Recipe;
+import generated.middleware.Umami_Food_Magazine_API___JSON_API.Umami_Food;
+import generated.middleware.Umami_Food_Magazine_API___JSON_API.Tags;
 import generated.middleware.Umami_Food_Magazine_API___JSON_API.drivers.SearchQuery;
 
 import java.util.List;
@@ -12,21 +15,23 @@ import java.util.List;
 public class mainTest {
 
 	public static void main(String[] args) {
-		Recipe recipe = new Recipe();
+		Umami_Food siteManager = new Umami_Food();
+		SearchQuery searchQuery = siteManager.getSearchQuery();
 		
-		// Search Feature
-		List<Recipe> fullSearch = recipe.search(new SearchQuery());
-		System.out.println(fullSearch.get(3).getTitle());
+		// Simple search
+		List<Recipe> recipeList = siteManager.searchRecipe(searchQuery);
+		System.out.println(recipeList.get(3).getTitle());
 		
-		// Search with Filters
-		List<Recipe> filteredSearch = recipe.search(new SearchQuery().addFilter("field_cooking_time", "30"));
-		System.out.println(filteredSearch.get(0).getTitle());
+		// Search with filters
+		searchQuery.addFilter("field_cooking_time", "30");
+		List<Recipe> recipeFilteredList = siteManager.searchRecipe(searchQuery);
+		System.out.println(recipeFilteredList.get(0).getTitle());
 		
-		// Search Single
-		Recipe singleRecipe = recipe.getSingle(fullSearch.get(1).getUuid());
+		// Get Single recipe
+		Recipe singleRecipe = siteManager.getRecipeById(recipeFilteredList.get(0).getUuid());
 		System.out.println(singleRecipe.getTitle());
 		
-		// Navigation
+		// Navigation though entities
 		List<Tags> tags = singleRecipe.getFieldTags();
 		tags.forEach((tag) ->{
 			System.out.println(tag.getName());
