@@ -21,7 +21,7 @@ public class TestsTemplate {
     _builder.append("import java.util.List;");
     _builder.newLine();
     _builder.newLine();
-    _builder.append("public class mainTest {");
+    _builder.append("public class MainTest {");
     _builder.newLine();
     _builder.newLine();
     _builder.append("\t");

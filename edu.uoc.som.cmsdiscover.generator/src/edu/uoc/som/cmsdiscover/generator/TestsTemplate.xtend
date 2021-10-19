@@ -12,7 +12,7 @@ import generated.middleware.Umami_Food_Magazine_API___JSON_API.drivers.SearchQue
 
 import java.util.List;
 
-public class mainTest {
+public class MainTest {
 
 	public static void main(String[] args) {
 		Umami_Food siteManager = new Umami_Food();

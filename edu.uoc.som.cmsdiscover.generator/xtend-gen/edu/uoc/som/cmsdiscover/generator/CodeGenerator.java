@@ -130,7 +130,7 @@ public class CodeGenerator {
           NullProgressMonitor _nullProgressMonitor_2 = new NullProgressMonitor();
           testFolder.create(true, true, _nullProgressMonitor_2);
         }
-        final IFile testFile = testFolder.getFile("mainTest.java");
+        final IFile testFile = testFolder.getFile("MainTest.java");
         final CharSequence testcontent = this.testsTemplate.getTest();
         byte[] _bytes_1 = testcontent.toString().getBytes();
         ByteArrayInputStream _byteArrayInputStream_1 = new ByteArrayInputStream(_bytes_1);

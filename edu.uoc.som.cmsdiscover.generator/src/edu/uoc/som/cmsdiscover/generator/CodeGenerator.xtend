@@ -84,7 +84,7 @@ class CodeGenerator {
 			val testFolder = srcGenFolder.getFolder("tests")
 			if(!testFolder.exists()) testFolder.create(true, true, new NullProgressMonitor());
 
-			val testFile = testFolder.getFile("mainTest.java")
+			val testFile = testFolder.getFile("MainTest.java")
 			val testcontent = testsTemplate.getTest();
 			testFile.create(new ByteArrayInputStream(testcontent.toString().getBytes()), IResource.FORCE,
 				new NullProgressMonitor())
