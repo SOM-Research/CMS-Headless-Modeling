@@ -37,6 +37,7 @@ class DriverTemplate {
 			import java.util.Map.Entry;
 			import java.nio.charset.StandardCharsets;
 			import java.net.URLEncoder;
+			import generated.middleware.«thePackage.getName()».drivers.SearchQueryInterface.ImmutableSearchQuery;
 				
 			public class «this.cmsTechnology»Driver implements DriverInterface {
 				
@@ -82,14 +83,14 @@ class DriverTemplate {
 	
 	def addSingleGetter() '''
 	public GenericResource getSingle(String resourceRoute, String Id) {
-			JsonElement answer = resourceRequest(resourceRoute+"/"+Id,"GET", new SearchQuery());
+			JsonElement answer = resourceRequest(resourceRoute+"/"+Id,"GET", new SearchQuery().build());
 			GenericResource returnEntity = mapSingleAnswer(answer.getAsJsonObject().get("data"));
 			return returnEntity;
 		}
 	'''
 	
 	def addCollectionGetter() '''
-	public List<GenericResource> getCollection(String resourceRoute, SearchQuery searchQuery) {
+	public List<GenericResource> getCollection(String resourceRoute, ImmutableSearchQuery searchQuery) {
 		JsonElement answer = resourceRequest(resourceRoute,"GET", searchQuery);
 		List<GenericResource> entityCollection = mapAnswer(answer); 
 		return entityCollection;
@@ -183,7 +184,7 @@ class DriverTemplate {
 	
 
 	def addDrupalRequester() '''
-		public JsonElement resourceRequest(String resource, String method, SearchQuery searchQuery) {
+		public JsonElement resourceRequest(String resource, String method, ImmutableSearchQuery searchQuery) {
 		
 			// create a client
 			HttpClient client = HttpClient.newHttpClient();

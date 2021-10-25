@@ -91,6 +91,10 @@ public class EntityTemplate {
     _builder.append(this.packageName);
     _builder.append(".drivers.DriverInterface;");
     _builder.newLineIfNotEmpty();
+    _builder.append("import ");
+    _builder.append(this.packageName);
+    _builder.append(".drivers.SearchQueryInterface.ImmutableSearchQuery;");
+    _builder.newLineIfNotEmpty();
     _builder.newLine();
     _builder.append("\t");
     _builder.newLine();
@@ -151,14 +155,32 @@ public class EntityTemplate {
     _builder.append("\t");
     _builder.newLine();
     _builder.append("\t");
+    _builder.append("// Filters");
+    _builder.newLine();
+    {
+      for(final EAttribute attribute_1 : this.classAttributes) {
+        _builder.append("\t");
+        _builder.append("public static String FILTER_");
+        String _allCaps = this.allCaps(attribute_1.getName());
+        _builder.append(_allCaps, "\t");
+        _builder.append(" = \"");
+        String _name = attribute_1.getName();
+        _builder.append(_name, "\t");
+        _builder.append("\";");
+        _builder.newLineIfNotEmpty();
+      }
+    }
+    _builder.append("\t");
+    _builder.newLine();
+    _builder.append("\t");
     _builder.newLine();
     _builder.append("\t");
     _builder.append("// Attributes");
     _builder.newLine();
     {
-      for(final EAttribute attribute_1 : this.classAttributes) {
+      for(final EAttribute attribute_2 : this.classAttributes) {
         _builder.append("\t");
-        CharSequence _addAttribute = this.addAttribute(attribute_1);
+        CharSequence _addAttribute = this.addAttribute(attribute_2);
         _builder.append(_addAttribute, "\t");
         _builder.newLineIfNotEmpty();
       }
@@ -210,9 +232,9 @@ public class EntityTemplate {
     _builder.append("// Getters and Setters");
     _builder.newLine();
     {
-      for(final EAttribute attribute_2 : this.classAttributes) {
+      for(final EAttribute attribute_3 : this.classAttributes) {
         _builder.append("\t");
-        CharSequence _addGettersAndSetters = this.addGettersAndSetters(attribute_2);
+        CharSequence _addGettersAndSetters = this.addGettersAndSetters(attribute_3);
         _builder.append(_addGettersAndSetters, "\t");
         _builder.newLineIfNotEmpty();
       }
@@ -255,7 +277,7 @@ public class EntityTemplate {
     _builder.newLine();
     _builder.append("public List<");
     _builder.append(this.modelClassName);
-    _builder.append("> search(SearchQuery searchQuery) {");
+    _builder.append("> search(ImmutableSearchQuery searchQuery) {");
     _builder.newLineIfNotEmpty();
     _builder.append("\t");
     _builder.append("List<GenericResource> answer = driver.getCollection(resourceRoute, searchQuery);");
@@ -703,5 +725,9 @@ public class EntityTemplate {
   
   public String camelCase(final String in) {
     return CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL, in);
+  }
+  
+  public String allCaps(final String in) {
+    return CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.UPPER_UNDERSCORE, in).toUpperCase();
   }
 }

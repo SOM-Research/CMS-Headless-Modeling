@@ -39,6 +39,7 @@ class SiteManagerTemplate {
 	import java.util.List;
 	import java.util.ArrayList;
 	import generated.middleware.«packageName».drivers.SearchQuery;
+	import generated.middleware.«packageName».drivers.SearchQueryInterface.ImmutableSearchQuery;
 	import generated.middleware.«packageName».drivers.DriverInterface;
 	import generated.middleware.«packageName».drivers.GenericResource;
 	«IF this.cmsTechnology.contains("Drupal")»
@@ -82,7 +83,7 @@ class SiteManagerTemplate {
 			return entity;
 		}
 		
-		public List<«modelClass.getName»> search«modelClass.getName»(SearchQuery searchQuery){
+		public List<«modelClass.getName»> search«modelClass.getName»(ImmutableSearchQuery searchQuery){
 			List<GenericResource> answer = driver.getCollection("«modelClass.EAnnotations.get(0).details.get("resourceRoute")»", searchQuery);
 			List<«modelClass.getName»> entityCollection = new ArrayList<«modelClass.getName»>();
 			answer.forEach((singleAnswer) -> {

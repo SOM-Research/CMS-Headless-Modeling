@@ -64,6 +64,10 @@ class SearchQueryTemplate {
 				return this;
 				
 			}
+			
+			public ImmutableSearchQuery build() {
+				return new ImmutableSearchQuery(filterQuery,sorterQuery,embedQuery,paginationQuery);
+			}
 		
 		}
 	'''}

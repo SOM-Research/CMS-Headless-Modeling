@@ -170,6 +170,17 @@ public class SearchQueryTemplate {
     _builder.append("\t");
     _builder.append("}");
     _builder.newLine();
+    _builder.append("\t");
+    _builder.newLine();
+    _builder.append("\t");
+    _builder.append("public ImmutableSearchQuery build() {");
+    _builder.newLine();
+    _builder.append("\t\t");
+    _builder.append("return new ImmutableSearchQuery(filterQuery,sorterQuery,embedQuery,paginationQuery);");
+    _builder.newLine();
+    _builder.append("\t");
+    _builder.append("}");
+    _builder.newLine();
     _builder.newLine();
     _builder.append("}");
     _builder.newLine();

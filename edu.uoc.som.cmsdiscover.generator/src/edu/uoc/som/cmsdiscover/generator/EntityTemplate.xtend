@@ -54,6 +54,7 @@ class EntityTemplate {
 	import «packageName».drivers.GenericResource;
 	import «packageName».drivers.SearchQuery;
 	import «packageName».drivers.DriverInterface;
+	import «packageName».drivers.SearchQueryInterface.ImmutableSearchQuery;
 
 		
 	public class «this.modelClassName» {
@@ -68,6 +69,11 @@ class EntityTemplate {
 	
 		
 		private List<String> attributesList = Arrays.asList(«FOR String attribute : this.classAttributes.map[name] SEPARATOR ","»"«attribute»"«ENDFOR»);
+		
+		// Filters
+		« FOR EAttribute attribute : this.classAttributes»
+		public static String FILTER_«attribute.getName().allCaps()» = "«attribute.getName()»";
+		«ENDFOR»
 		
 		
 		// Attributes
@@ -106,7 +112,7 @@ class EntityTemplate {
 		return return«this.modelClassName»;
 	}
 	
-	public List<«this.modelClassName»> search(SearchQuery searchQuery) {
+	public List<«this.modelClassName»> search(ImmutableSearchQuery searchQuery) {
 		List<GenericResource> answer = driver.getCollection(resourceRoute, searchQuery);
 		List<«this.modelClassName»> «this.modelClassName»Collection = mapAnswer(answer); 
 		return «this.modelClassName»Collection;
@@ -237,5 +243,9 @@ class EntityTemplate {
 	
 	def camelCase(String in){
 		return CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL, in)
+	}
+	
+	def allCaps(String in){
+		return CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.UPPER_UNDERSCORE, in).toUpperCase();
 	}			
 }

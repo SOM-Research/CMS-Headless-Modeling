@@ -83,6 +83,12 @@ public class DriverTemplate {
     _builder.append("\t");
     _builder.append("import java.net.URLEncoder;");
     _builder.newLine();
+    _builder.append("\t");
+    _builder.append("import generated.middleware.");
+    String _name_1 = this.thePackage.getName();
+    _builder.append(_name_1, "\t");
+    _builder.append(".drivers.SearchQueryInterface.ImmutableSearchQuery;");
+    _builder.newLineIfNotEmpty();
     _builder.append("\t\t");
     _builder.newLine();
     _builder.append("\t");
@@ -209,7 +215,7 @@ public class DriverTemplate {
     _builder.append("public GenericResource getSingle(String resourceRoute, String Id) {");
     _builder.newLine();
     _builder.append("\t\t");
-    _builder.append("JsonElement answer = resourceRequest(resourceRoute+\"/\"+Id,\"GET\", new SearchQuery());");
+    _builder.append("JsonElement answer = resourceRequest(resourceRoute+\"/\"+Id,\"GET\", new SearchQuery().build());");
     _builder.newLine();
     _builder.append("\t\t");
     _builder.append("GenericResource returnEntity = mapSingleAnswer(answer.getAsJsonObject().get(\"data\"));");
@@ -225,7 +231,7 @@ public class DriverTemplate {
   
   public CharSequence addCollectionGetter() {
     StringConcatenation _builder = new StringConcatenation();
-    _builder.append("public List<GenericResource> getCollection(String resourceRoute, SearchQuery searchQuery) {");
+    _builder.append("public List<GenericResource> getCollection(String resourceRoute, ImmutableSearchQuery searchQuery) {");
     _builder.newLine();
     _builder.append("\t");
     _builder.append("JsonElement answer = resourceRequest(resourceRoute,\"GET\", searchQuery);");
@@ -476,7 +482,7 @@ public class DriverTemplate {
   
   public CharSequence addDrupalRequester() {
     StringConcatenation _builder = new StringConcatenation();
-    _builder.append("public JsonElement resourceRequest(String resource, String method, SearchQuery searchQuery) {");
+    _builder.append("public JsonElement resourceRequest(String resource, String method, ImmutableSearchQuery searchQuery) {");
     _builder.newLine();
     _builder.newLine();
     _builder.append("\t");

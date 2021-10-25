@@ -19,12 +19,12 @@ public class MainTest {
 		SearchQuery searchQuery = siteManager.getSearchQuery();
 		
 		// Simple search
-		List<Recipe> recipeList = siteManager.searchRecipe(searchQuery);
+		List<Recipe> recipeList = siteManager.searchRecipe(searchQuery.build());
 		System.out.println(recipeList.get(3).getTitle());
 		
 		// Search with filters
-		searchQuery.addFilter("field_cooking_time", "30");
-		List<Recipe> recipeFilteredList = siteManager.searchRecipe(searchQuery);
+		searchQuery.addFilter(Recipe.FILTER_FIELD_COOKING_TIME, "30");
+		List<Recipe> recipeFilteredList = siteManager.searchRecipe(searchQuery.build());
 		System.out.println(recipeFilteredList.get(0).getTitle());
 		
 		// Get Single recipe
@@ -41,6 +41,7 @@ public class MainTest {
 		System.out.println("Final");
 		
 	}
+
 
 }
 

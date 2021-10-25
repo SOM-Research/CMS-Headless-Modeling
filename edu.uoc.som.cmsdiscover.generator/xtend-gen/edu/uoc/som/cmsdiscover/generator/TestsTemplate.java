@@ -39,7 +39,7 @@ public class TestsTemplate {
     _builder.append("// Simple search");
     _builder.newLine();
     _builder.append("\t\t");
-    _builder.append("List<Recipe> recipeList = siteManager.searchRecipe(searchQuery);");
+    _builder.append("List<Recipe> recipeList = siteManager.searchRecipe(searchQuery.build());");
     _builder.newLine();
     _builder.append("\t\t");
     _builder.append("System.out.println(recipeList.get(3).getTitle());");
@@ -50,10 +50,10 @@ public class TestsTemplate {
     _builder.append("// Search with filters");
     _builder.newLine();
     _builder.append("\t\t");
-    _builder.append("searchQuery.addFilter(\"field_cooking_time\", \"30\");");
+    _builder.append("searchQuery.addFilter(Recipe.FILTER_FIELD_COOKING_TIME, \"30\");");
     _builder.newLine();
     _builder.append("\t\t");
-    _builder.append("List<Recipe> recipeFilteredList = siteManager.searchRecipe(searchQuery);");
+    _builder.append("List<Recipe> recipeFilteredList = siteManager.searchRecipe(searchQuery.build());");
     _builder.newLine();
     _builder.append("\t\t");
     _builder.append("System.out.println(recipeFilteredList.get(0).getTitle());");
@@ -97,6 +97,7 @@ public class TestsTemplate {
     _builder.newLine();
     _builder.append("\t");
     _builder.append("}");
+    _builder.newLine();
     _builder.newLine();
     _builder.newLine();
     _builder.append("}");
