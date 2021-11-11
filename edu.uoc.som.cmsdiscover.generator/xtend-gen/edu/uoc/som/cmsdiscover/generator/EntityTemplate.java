@@ -85,15 +85,11 @@ public class EntityTemplate {
     _builder.newLineIfNotEmpty();
     _builder.append("import ");
     _builder.append(this.packageName);
-    _builder.append(".drivers.SearchQuery;");
-    _builder.newLineIfNotEmpty();
-    _builder.append("import ");
-    _builder.append(this.packageName);
     _builder.append(".drivers.DriverInterface;");
     _builder.newLineIfNotEmpty();
     _builder.append("import ");
     _builder.append(this.packageName);
-    _builder.append(".drivers.SearchQueryInterface.ImmutableSearchQuery;");
+    _builder.append(".drivers.SearchQueryInterface.SearchQuery;");
     _builder.newLineIfNotEmpty();
     _builder.newLine();
     _builder.append("\t");
@@ -277,7 +273,7 @@ public class EntityTemplate {
     _builder.newLine();
     _builder.append("public List<");
     _builder.append(this.modelClassName);
-    _builder.append("> search(ImmutableSearchQuery searchQuery) {");
+    _builder.append("> search(SearchQuery searchQuery) {");
     _builder.newLineIfNotEmpty();
     _builder.append("\t");
     _builder.append("List<GenericResource> answer = driver.getCollection(resourceRoute, searchQuery);");

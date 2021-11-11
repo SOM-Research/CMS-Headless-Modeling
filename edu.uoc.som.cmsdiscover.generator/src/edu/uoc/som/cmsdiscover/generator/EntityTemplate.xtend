@@ -52,9 +52,8 @@ class EntityTemplate {
 	import org.joda.time.DateTime;
 	import «packageName».customAttributes.*;
 	import «packageName».drivers.GenericResource;
-	import «packageName».drivers.SearchQuery;
 	import «packageName».drivers.DriverInterface;
-	import «packageName».drivers.SearchQueryInterface.ImmutableSearchQuery;
+	import «packageName».drivers.SearchQueryInterface.SearchQuery;
 
 		
 	public class «this.modelClassName» {
@@ -112,7 +111,7 @@ class EntityTemplate {
 		return return«this.modelClassName»;
 	}
 	
-	public List<«this.modelClassName»> search(ImmutableSearchQuery searchQuery) {
+	public List<«this.modelClassName»> search(SearchQuery searchQuery) {
 		List<GenericResource> answer = driver.getCollection(resourceRoute, searchQuery);
 		List<«this.modelClassName»> «this.modelClassName»Collection = mapAnswer(answer); 
 		return «this.modelClassName»Collection;

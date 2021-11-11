@@ -117,7 +117,7 @@ class CodeGenerator {
 			
 		// Generate SearchQuery Inteface
 		val searchTeamplate = searchQueryTemplate.generate(thePackage.getName());
-		val resultSearchTemplate = driversFolder.getFile("SearchQuery.java")
+		val resultSearchTemplate = driversFolder.getFile("SearchQueryBuilder.java")
 		resultSearchTemplate.create(new ByteArrayInputStream(searchTeamplate.toString().getBytes()), IResource.FORCE,
 			new NullProgressMonitor())
 		// Generate SearchQuery Inteface

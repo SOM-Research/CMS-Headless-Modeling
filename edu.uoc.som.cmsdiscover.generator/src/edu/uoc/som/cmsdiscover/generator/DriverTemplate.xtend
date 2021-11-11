@@ -37,7 +37,7 @@ class DriverTemplate {
 			import java.util.Map.Entry;
 			import java.nio.charset.StandardCharsets;
 			import java.net.URLEncoder;
-			import generated.middleware.«thePackage.getName()».drivers.SearchQueryInterface.ImmutableSearchQuery;
+			import generated.middleware.«thePackage.getName()».drivers.SearchQueryInterface.SearchQuery;
 				
 			public class «this.cmsTechnology»Driver implements DriverInterface {
 				
@@ -76,21 +76,21 @@ class DriverTemplate {
 	'''
 	
 	def addGetSearchQuery() '''
-	public SearchQuery getSearchQuery() {
-		return new SearchQuery();
+	public SearchQueryBuilder getSearchQueryBuilder() {
+			return new SearchQueryBuilder();
 	}
 	'''
 	
 	def addSingleGetter() '''
 	public GenericResource getSingle(String resourceRoute, String Id) {
-			JsonElement answer = resourceRequest(resourceRoute+"/"+Id,"GET", new SearchQuery().build());
+			JsonElement answer = resourceRequest(resourceRoute+"/"+Id,"GET", new SearchQueryBuilder().build());
 			GenericResource returnEntity = mapSingleAnswer(answer.getAsJsonObject().get("data"));
 			return returnEntity;
 		}
 	'''
 	
 	def addCollectionGetter() '''
-	public List<GenericResource> getCollection(String resourceRoute, ImmutableSearchQuery searchQuery) {
+	public List<GenericResource> getCollection(String resourceRoute, SearchQuery searchQuery) {
 		JsonElement answer = resourceRequest(resourceRoute,"GET", searchQuery);
 		List<GenericResource> entityCollection = mapAnswer(answer); 
 		return entityCollection;
@@ -184,13 +184,50 @@ class DriverTemplate {
 	
 
 	def addDrupalRequester() '''
-		public JsonElement resourceRequest(String resource, String method, ImmutableSearchQuery searchQuery) {
+		public JsonElement resourceRequest(String resource, String method, SearchQuery searchQuery) {
+		
+			String filters = "";
+			for (Entry<String, String> entry : searchQuery.filterQuery.entrySet()) {
+				try {
+					String filter = URLEncoder.encode(entry.getValue(), StandardCharsets.UTF_8.toString());
+					filters = filters + "&filter["+entry.getKey()+"]="+filter;
+				} catch (UnsupportedEncodingException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+			}
+			
+			String sorters = "";
+			for (Entry<String, String> entry : searchQuery.sorterQuery.entrySet()) {
+				if(entry.getValue().contains("ASC")) {
+					sorters = sorters + "&sort="+entry.getKey();
+				}
+				else {
+					sorters = sorters + "&sort=-"+entry.getKey();
+				}	
+			}
+			
+			String embeds = "";
+			for (Entry<String, String> entry : searchQuery.embedQuery.entrySet()) {
+				
+				embeds = "&include="+entry.getValue();
+			}
+			
+			String pagination = "";
+			for (Entry<Integer, Integer> entry : searchQuery.pagination.entrySet()) {
+				
+				
+				if ((entry.getKey() != 0) && (entry.getValue() != 0)) pagination = "&page[offset]="+entry.getKey()+"&page[limit]="+entry.getValue();
+				if (entry.getKey() != 0) pagination = "&page[offset]="+entry.getKey();
+				if (entry.getValue() != 0) pagination = "&page[limit]="+entry.getValue();
+				
+			}
 		
 			// create a client
 			HttpClient client = HttpClient.newHttpClient();
 		
 			// create a request
-			HttpRequest request = HttpRequest.newBuilder().uri(URI.create(this.cmsUrl + resource +"?"+ searchQuery.filterQuery + searchQuery.paginationQuery + searchQuery.sorterQuery + searchQuery.embedQuery))
+			HttpRequest request = HttpRequest.newBuilder().uri(URI.create(this.cmsUrl + resource +"?"+ filters + pagination + sorters + embeds))
 				.method(method, HttpRequest.BodyPublishers.noBody()).header("accept", "application/json")
 				//.header("Authorization", basicAuth(this.consumerUser, this.consumerPass))
 				.build();

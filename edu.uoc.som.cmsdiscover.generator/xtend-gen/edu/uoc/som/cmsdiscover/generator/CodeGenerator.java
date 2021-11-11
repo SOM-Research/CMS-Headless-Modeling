@@ -170,7 +170,7 @@ public class CodeGenerator {
       NullProgressMonitor _nullProgressMonitor_2 = new NullProgressMonitor();
       resultDriver.create(_byteArrayInputStream_1, IResource.FORCE, _nullProgressMonitor_2);
       final CharSequence searchTeamplate = this.searchQueryTemplate.generate(this.thePackage.getName());
-      final IFile resultSearchTemplate = driversFolder.getFile("SearchQuery.java");
+      final IFile resultSearchTemplate = driversFolder.getFile("SearchQueryBuilder.java");
       byte[] _bytes_2 = searchTeamplate.toString().getBytes();
       ByteArrayInputStream _byteArrayInputStream_2 = new ByteArrayInputStream(_bytes_2);
       NullProgressMonitor _nullProgressMonitor_3 = new NullProgressMonitor();

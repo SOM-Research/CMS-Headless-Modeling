@@ -13,7 +13,7 @@ public class DriverInterface {
     _builder.newLine();
     _builder.append("import generated.middleware.");
     _builder.append(packageName);
-    _builder.append(".drivers.SearchQueryInterface.ImmutableSearchQuery;");
+    _builder.append(".drivers.SearchQueryInterface.SearchQuery;");
     _builder.newLineIfNotEmpty();
     _builder.append("import com.google.gson.JsonElement;");
     _builder.newLine();
@@ -23,13 +23,13 @@ public class DriverInterface {
     _builder.append("public interface DriverInterface {");
     _builder.newLine();
     _builder.newLine();
-    _builder.append("public JsonElement resourceRequest(String resource, String method, ImmutableSearchQuery searchQuery);");
+    _builder.append("public JsonElement resourceRequest(String resource, String method, SearchQuery searchQuery);");
     _builder.newLine();
-    _builder.append("public List<GenericResource> getCollection(String resourceRoute, ImmutableSearchQuery searchQuery);");
+    _builder.append("public List<GenericResource> getCollection(String resourceRoute, SearchQuery searchQuery);");
     _builder.newLine();
     _builder.append("public GenericResource getSingle(String resourceRoute, String Id);");
     _builder.newLine();
-    _builder.append("public SearchQuery getSearchQuery();");
+    _builder.append("public SearchQueryBuilder getSearchQueryBuilder();");
     _builder.newLine();
     _builder.newLine();
     _builder.append("}");

@@ -8,7 +8,7 @@ package generated.middleware.Umami_Food_Magazine_API___JSON_API.tests;
 import generated.middleware.Umami_Food_Magazine_API___JSON_API.Recipe;
 import generated.middleware.Umami_Food_Magazine_API___JSON_API.Umami_Food;
 import generated.middleware.Umami_Food_Magazine_API___JSON_API.Tags;
-import generated.middleware.Umami_Food_Magazine_API___JSON_API.drivers.SearchQuery;
+import generated.middleware.Umami_Food_Magazine_API___JSON_API.drivers.SearchQueryBuilder;
 
 import java.util.List;
 
@@ -16,7 +16,7 @@ public class MainTest {
 
 	public static void main(String[] args) {
 		Umami_Food siteManager = new Umami_Food();
-		SearchQuery searchQuery = siteManager.getSearchQuery();
+		SearchQueryBuilder searchQuery = siteManager.getSearchQueryBuilder();
 		
 		// Simple search
 		List<Recipe> recipeList = siteManager.searchRecipe(searchQuery.build());

@@ -49,11 +49,11 @@ public class SiteManagerTemplate {
     _builder.newLine();
     _builder.append("import generated.middleware.");
     _builder.append(this.packageName);
-    _builder.append(".drivers.SearchQuery;");
+    _builder.append(".drivers.SearchQueryBuilder;");
     _builder.newLineIfNotEmpty();
     _builder.append("import generated.middleware.");
     _builder.append(this.packageName);
-    _builder.append(".drivers.SearchQueryInterface.ImmutableSearchQuery;");
+    _builder.append(".drivers.SearchQueryInterface.SearchQuery;");
     _builder.newLineIfNotEmpty();
     _builder.append("import generated.middleware.");
     _builder.append(this.packageName);
@@ -127,10 +127,10 @@ public class SiteManagerTemplate {
     _builder.append("\t");
     _builder.newLine();
     _builder.append("\t");
-    _builder.append("public SearchQuery getSearchQuery() {");
+    _builder.append("public SearchQueryBuilder getSearchQueryBuilder() {");
     _builder.newLine();
     _builder.append("\t\t");
-    _builder.append("return driver.getSearchQuery();");
+    _builder.append("return driver.getSearchQueryBuilder();");
     _builder.newLine();
     _builder.append("\t");
     _builder.append("}");
@@ -194,7 +194,7 @@ public class SiteManagerTemplate {
     _builder.append("> search");
     String _name_5 = modelClass.getName();
     _builder.append(_name_5);
-    _builder.append("(ImmutableSearchQuery searchQuery){");
+    _builder.append("(SearchQuery searchQuery){");
     _builder.newLineIfNotEmpty();
     _builder.append("\t");
     _builder.append("List<GenericResource> answer = driver.getCollection(\"");

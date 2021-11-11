@@ -15,7 +15,7 @@ public class TestsTemplate {
     _builder.newLine();
     _builder.append("import generated.middleware.Umami_Food_Magazine_API___JSON_API.Tags;");
     _builder.newLine();
-    _builder.append("import generated.middleware.Umami_Food_Magazine_API___JSON_API.drivers.SearchQuery;");
+    _builder.append("import generated.middleware.Umami_Food_Magazine_API___JSON_API.drivers.SearchQueryBuilder;");
     _builder.newLine();
     _builder.newLine();
     _builder.append("import java.util.List;");
@@ -31,7 +31,7 @@ public class TestsTemplate {
     _builder.append("Umami_Food siteManager = new Umami_Food();");
     _builder.newLine();
     _builder.append("\t\t");
-    _builder.append("SearchQuery searchQuery = siteManager.getSearchQuery();");
+    _builder.append("SearchQueryBuilder searchQuery = siteManager.getSearchQueryBuilder();");
     _builder.newLine();
     _builder.append("\t\t");
     _builder.newLine();
