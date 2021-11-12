@@ -40,16 +40,18 @@ public class WordpressSchemaExtractor {
 	String host;
 	String description;
 	String basePath = "/wp-json";
+	String JWToken;
 
 	EPackage genericModelEPackage;
 	Map<String, List<String>> metaModelHelper = new HashMap<String, List<String>>();
 	List<String> namespaces = new ArrayList<String>();
 
-	public WordpressSchemaExtractor(URL url, String user, String pass) {
+	public WordpressSchemaExtractor(URL url, String user, String pass, String JWTToken) {
 
 		apiUrl = url;
 		userName = user;
 		password = pass;
+		JWToken = JWTToken;
 		// Init Ecore.
 		coreFactory = EcoreFactory.eINSTANCE;
 		corePackage = EcorePackage.eINSTANCE;
@@ -282,11 +284,16 @@ public class WordpressSchemaExtractor {
 		var client = HttpClient.newHttpClient();
 
 		// create a request
-		var request = HttpRequest.newBuilder().uri(URI.create(apiUrl + "/wp-json" + singleResource))
-				.method(method, HttpRequest.BodyPublishers.noBody()).header("accept", "application/json")
-				.header("Authorization", basicAuth(userName, password))
-				.build();
-
+		var requestBuilder = HttpRequest.newBuilder().uri(URI.create(apiUrl + "/wp-json" + singleResource))
+				.method(method, HttpRequest.BodyPublishers.noBody()).header("accept", "application/json");
+		
+		if (JWToken == null) {	
+			requestBuilder.header("Authorization", basicAuth(userName, password));
+		} else {
+			requestBuilder.header("Authorization", "Bearer "+ JWToken);
+		}
+		
+		HttpRequest request = requestBuilder.build();
 		// use the client to send the request
 		try {
 			request.method();
@@ -309,9 +316,42 @@ public class WordpressSchemaExtractor {
 		return null;
 	}
 
+	public JsonElement siteAuthentication() {
+
+		// create a client
+		var client = HttpClient.newHttpClient();
+		
+
+		// create a request
+		var request = HttpRequest.newBuilder().uri(URI.create(apiUrl + "wp-json/jwt-auth/v1/token"))
+				.method("POST", HttpRequest.BodyPublishers.ofString("username=xatkit,password=xatkit")).header("accept", "application/json")
+				.build();
+
+		// use the client to send the request
+		try {
+			request.method();
+			var response = client.send(request, BodyHandlers.ofString());
+			if (response.statusCode() == 200) {
+				JsonElement res = new JsonParser().parse(response.body());
+				return res;
+			} else {
+				return null;
+			}
+
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
 	private static String basicAuth(String username, String password) {
 		return "Basic " + Base64.getEncoder().encodeToString((username + ":" + password).getBytes());
 	}
+	
 
 	/***
 	 * @param title Create EPackage dynamically

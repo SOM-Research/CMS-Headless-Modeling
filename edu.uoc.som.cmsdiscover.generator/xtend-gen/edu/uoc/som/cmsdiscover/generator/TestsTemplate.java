@@ -4,19 +4,31 @@ import org.eclipse.xtend2.lib.StringConcatenation;
 
 @SuppressWarnings("all")
 public class TestsTemplate {
-  public CharSequence getTest() {
+  public CharSequence getTest(final String PackageName, final String siteManagerName) {
     StringConcatenation _builder = new StringConcatenation();
-    _builder.append("package generated.middleware.Umami_Food_Magazine_API___JSON_API.tests;");
+    _builder.append("package ");
+    _builder.append(PackageName);
+    _builder.append(".tests;");
+    _builder.newLineIfNotEmpty();
     _builder.newLine();
-    _builder.newLine();
-    _builder.append("import generated.middleware.Umami_Food_Magazine_API___JSON_API.Recipe;");
-    _builder.newLine();
-    _builder.append("import generated.middleware.Umami_Food_Magazine_API___JSON_API.Umami_Food;");
-    _builder.newLine();
-    _builder.append("import generated.middleware.Umami_Food_Magazine_API___JSON_API.Tags;");
-    _builder.newLine();
-    _builder.append("import generated.middleware.Umami_Food_Magazine_API___JSON_API.drivers.SearchQueryBuilder;");
-    _builder.newLine();
+    _builder.append("import ");
+    _builder.append(PackageName);
+    _builder.append(".Recipe;");
+    _builder.newLineIfNotEmpty();
+    _builder.append("import ");
+    _builder.append(PackageName);
+    _builder.append(".");
+    _builder.append(siteManagerName);
+    _builder.append(";");
+    _builder.newLineIfNotEmpty();
+    _builder.append("import ");
+    _builder.append(PackageName);
+    _builder.append(".Tags;");
+    _builder.newLineIfNotEmpty();
+    _builder.append("import ");
+    _builder.append(PackageName);
+    _builder.append(".drivers.SearchQueryBuilder;");
+    _builder.newLineIfNotEmpty();
     _builder.newLine();
     _builder.append("import java.util.List;");
     _builder.newLine();
@@ -28,8 +40,11 @@ public class TestsTemplate {
     _builder.append("public static void main(String[] args) {");
     _builder.newLine();
     _builder.append("\t\t");
-    _builder.append("Umami_Food siteManager = new Umami_Food();");
-    _builder.newLine();
+    _builder.append(siteManagerName, "\t\t");
+    _builder.append(" siteManager = new ");
+    _builder.append(siteManagerName, "\t\t");
+    _builder.append("();");
+    _builder.newLineIfNotEmpty();
     _builder.append("\t\t");
     _builder.append("SearchQueryBuilder searchQuery = siteManager.getSearchQueryBuilder();");
     _builder.newLine();

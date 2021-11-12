@@ -7,17 +7,15 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.core.runtime.Plugin;
-import org.osgi.framework.BundleContext;
-
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EClass;
+import org.eclipse.emf.ecore.EClassifier;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EStructuralFeature;
-import org.eclipse.emf.ecore.EClassifier;
+import org.osgi.framework.BundleContext;
 
-
-import edu.uoc.com.cmsdiscover.drupal.*;
-import edu.uoc.com.cmsdiscover.wordpress.*;
+import edu.uoc.com.cmsdiscover.drupal.DrupalSchemaExtractor;
+import edu.uoc.com.cmsdiscover.wordpress.WordpressSchemaExtractor;
 import edu.uoc.som.cmsdiscover.GenericModel.GenericModelPackage;
 
 public class CmsDiscover extends Plugin {
@@ -69,7 +67,7 @@ public class CmsDiscover extends Plugin {
 		return genericModelHelper;
 	}
 
-	public void buildExtendModel(URL url, String user, String pass, String tech, String ModelResultPath) {
+	public void buildExtendModel(URL url, String user, String pass, String JWTToken , String tech, String ModelResultPath) {
 
 		System.out.println(
 				"******************* Recieved Values: " + url + " user:" + user + " pass:" + pass + " tech:" + tech);
@@ -95,7 +93,7 @@ public class CmsDiscover extends Plugin {
 		} else if (tech.contains("w")) {
 			System.out.println("******************* Extracting model from a Wordpress based site");
 			// Change this to your Wordpress URL.
-			WordpressSchemaExtractor WordpressExtractor = new WordpressSchemaExtractor(url, user, pass);
+			WordpressSchemaExtractor WordpressExtractor = new WordpressSchemaExtractor(url, user, pass, JWTToken);
 			EPackage ExtendedModel = WordpressExtractor.ModelExtractor(genericEPackage, genericModelHelper);
 			// Save the model.
 			theModelSerializer.serializeModel(ExtendedModel, ModelResultPath);

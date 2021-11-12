@@ -85,7 +85,7 @@ class CodeGenerator {
 			if(!testFolder.exists()) testFolder.create(true, true, new NullProgressMonitor());
 
 			val testFile = testFolder.getFile("MainTest.java")
-			val testcontent = testsTemplate.getTest();
+			val testcontent = testsTemplate.getTest("generated.middleware." + thePackage.getName(),thePackage.getName().substring(0,10));
 			testFile.create(new ByteArrayInputStream(testcontent.toString().getBytes()), IResource.FORCE,
 				new NullProgressMonitor())
 

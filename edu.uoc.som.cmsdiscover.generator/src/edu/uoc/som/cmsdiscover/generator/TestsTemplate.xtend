@@ -2,20 +2,20 @@ package edu.uoc.som.cmsdiscover.generator
 
 class TestsTemplate {
 	
-		def getTest() '''
-package generated.middleware.Umami_Food_Magazine_API___JSON_API.tests;
+		def getTest(String PackageName, String siteManagerName) '''
+package «PackageName».tests;
 
-import generated.middleware.Umami_Food_Magazine_API___JSON_API.Recipe;
-import generated.middleware.Umami_Food_Magazine_API___JSON_API.Umami_Food;
-import generated.middleware.Umami_Food_Magazine_API___JSON_API.Tags;
-import generated.middleware.Umami_Food_Magazine_API___JSON_API.drivers.SearchQueryBuilder;
+import «PackageName».Recipe;
+import «PackageName».«siteManagerName»;
+import «PackageName».Tags;
+import «PackageName».drivers.SearchQueryBuilder;
 
 import java.util.List;
 
 public class MainTest {
 
 	public static void main(String[] args) {
-		Umami_Food siteManager = new Umami_Food();
+		«siteManagerName» siteManager = new «siteManagerName»();
 		SearchQueryBuilder searchQuery = siteManager.getSearchQueryBuilder();
 		
 		// Simple search

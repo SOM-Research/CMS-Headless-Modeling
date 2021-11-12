@@ -131,7 +131,9 @@ public class CodeGenerator {
           testFolder.create(true, true, _nullProgressMonitor_2);
         }
         final IFile testFile = testFolder.getFile("MainTest.java");
-        final CharSequence testcontent = this.testsTemplate.getTest();
+        String _name = this.thePackage.getName();
+        String _plus_1 = ("generated.middleware." + _name);
+        final CharSequence testcontent = this.testsTemplate.getTest(_plus_1, this.thePackage.getName().substring(0, 10));
         byte[] _bytes_1 = testcontent.toString().getBytes();
         ByteArrayInputStream _byteArrayInputStream_1 = new ByteArrayInputStream(_bytes_1);
         NullProgressMonitor _nullProgressMonitor_3 = new NullProgressMonitor();
