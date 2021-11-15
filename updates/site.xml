@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <site>
-   <description name="Headless CMS Discoverer" url="https://som-research.github.io/cms-headless-modeling/updates/">
-      Eclipse Modeling Framework plugin able to model CMS Sites using the data exposed by its default REST API. Compatible with Drupal (JSON:API) and Wordpress
+   <description name="CMS Discoverer" url="https://som-research.github.io/cms-headless-modeling/updates/">
+      An Eclipse plugin to boost the integration of java apps with Headless CMS (WordPress or Drupal). Extract and discover the content inside the CMS, and generate, automatically, a java library in charge of the communication between the apps.
    </description>
-   <feature url="features/edu.uoc.som.cmsdiscover.feature_0.1.0.202111121740.jar" id="edu.uoc.som.cmsdiscover.feature" version="0.1.0.202111121740">
+   <feature url="features/edu.uoc.som.cmsdiscover.feature_0.1.0.202111151159.jar" id="edu.uoc.som.cmsdiscover.feature" version="0.1.0.202111151159">
       <category name="CMS Discover"/>
    </feature>
    <category-def name="CMS Discover" label="CMS Discover">
       <description>
-         Eclipse Modeling Framework plugin able to model CMS Sites using the data exposed by its default REST API. Compatible with Drupal (JSON:API) and Wordpress
+         An Eclipse plugin to boost the integration of java apps with Headless CMS (WordPress or Drupal). Extract and discover the content inside the CMS, and generate, automatically, a java library in charge of the communication between the apps.
       </description>
    </category-def>
 </site>
