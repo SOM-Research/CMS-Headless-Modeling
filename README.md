@@ -10,13 +10,6 @@ A prototype tool that boosts the integration of Headless CMS into MDE apps. This
 
 The java library is built as a maven artifact and ready to be integrated to your consumer app. This tool is built as a Eclipse Plug-in and can be used following the instructions of this file.
 
-
-## Background of the tool
-
-The main objective of this tool is to reduce the cost of the integration of Headless CMS in Enterprise IT ecosystems. To achieve this, we have proposed a generic model for Headless CMS. Here is the proposed generic model that serves as central piece of this tool.
-
-![Headless CMS generic model](doc/global-model.png)
-
 ## Prerequisites and supported technologies
 
 * The toolkit requires [Eclipse 4.12 (2019-06)](https://download.eclipse.org/eclipse/downloads/drops4/R-4.12-201906051800/) or [above](https://download.eclipse.org/eclipse/downloads/).
@@ -114,6 +107,14 @@ tags.forEach((tag) ->{
 });
 ```
 
+
+## Research Background of the tool
+
+This tool is the outcome of a research paper currently under development. 
+
+The extraction and generation process are based in the following proposed global CMS model. 
+
+![Headless CMS generic model](doc/global-model.png)
 
 ## Project Content and Credits
 
