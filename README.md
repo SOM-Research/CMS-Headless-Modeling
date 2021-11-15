@@ -15,7 +15,7 @@ The java library is built as a maven artifact and ready to be integrated to your
 
 The main objective of this tool is to reduce the cost of the integration of Headless CMS in Enterprise IT ecosystems. To achieve this, we have proposed a generic model for Headless CMS. Here is the proposed generic model that serves as central piece of this tool.
 
-![Headless CMS generic model](doc/genericModelcamel-1.png)
+![Headless CMS generic model](doc/global-model.png)
 
 ## Prerequisites and supported technologies
 
@@ -69,13 +69,13 @@ Once you have your eclipse application with this plugin installed, you should ha
 8 - Then, refresh your project folder. You will see a model like the following example:
 
 
-![New Project Wizard - Step 1](doc/exampleWPecore.png)
+![New Project Wizard - Step 1](doc/exampleSite.png)
 
 ### Genearting the connector java library
 
 Navigate to the .ecore file created in the root of the selected project. Click right button and search for "Generate CMS Connector"
 
-![Generate-connector](doc/cmsConnector.png)
+![Generate-connector](doc/generateButton.png)
 
 Then a new project with the code will be created. Inside the packages "tests" there are some basic usage examples as:
 
