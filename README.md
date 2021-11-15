@@ -75,7 +75,7 @@ Once you have your eclipse application with this plugin installed, you should ha
 
 Navigate to the .ecore file created in the root of the selected project. Click right button and search for "Generate CMS Connector"
 
-![Generate-connector](doc/generateButton.png)
+![Generate-connector](doc/GenerateButton.png)
 
 Then a new project with the code will be created. Inside the packages "tests" there are some basic usage examples as:
 
