@@ -3,7 +3,7 @@
    <description name="CMS Discoverer" url="https://som-research.github.io/cms-headless-modeling/updates/">
       An Eclipse plugin to boost the integration of java apps with Headless CMS (WordPress or Drupal). Extract and discover the content inside the CMS, and generate, automatically, a java library in charge of the communication between the apps.
    </description>
-   <feature url="features/edu.uoc.som.cmsdiscover.feature_0.1.0.202111151755.jar" id="edu.uoc.som.cmsdiscover.feature" version="0.1.0.202111151755">
+   <feature url="features/edu.uoc.som.cmsdiscover.feature_0.1.0.202111151818.jar" id="edu.uoc.som.cmsdiscover.feature" version="0.1.0.202111151818">
       <category name="CMS Discover"/>
    </feature>
    <category-def name="CMS Discover" label="CMS Discover">
