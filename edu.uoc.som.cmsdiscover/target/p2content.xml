@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <units size='1'>
-  <unit id='edu.uoc.som.cmsdiscover' version='0.1.0.202108170937' generation='2'>
-    <update id='edu.uoc.som.cmsdiscover' range='[0.0.0,0.1.0.202108170937)' severity='0'/>
+  <unit id='edu.uoc.som.cmsdiscover' version='0.1.0.202111191149' generation='2'>
+    <update id='edu.uoc.som.cmsdiscover' range='[0.0.0,0.1.0.202111191149)' severity='0'/>
     <properties size='5'>
       <property name='org.eclipse.equinox.p2.name' value='Cmsdiscover'/>
       <property name='org.eclipse.equinox.p2.provider' value='SOM - UOC'/>
@@ -10,10 +10,10 @@
       <property name='maven-version' value='0.1.0-SNAPSHOT'/>
     </properties>
     <provides size='5'>
-      <provided namespace='org.eclipse.equinox.p2.iu' name='edu.uoc.som.cmsdiscover' version='0.1.0.202108170937'/>
-      <provided namespace='osgi.bundle' name='edu.uoc.som.cmsdiscover' version='0.1.0.202108170937'/>
+      <provided namespace='org.eclipse.equinox.p2.iu' name='edu.uoc.som.cmsdiscover' version='0.1.0.202111191149'/>
+      <provided namespace='osgi.bundle' name='edu.uoc.som.cmsdiscover' version='0.1.0.202111191149'/>
       <provided namespace='java.package' name='edu.uoc.com.cmsdiscover' version='0.0.0'/>
-      <provided namespace='osgi.identity' name='edu.uoc.som.cmsdiscover' version='0.1.0.202108170937'>
+      <provided namespace='osgi.identity' name='edu.uoc.som.cmsdiscover' version='0.1.0.202111191149'>
         <properties size='1'>
           <property name='type' value='osgi.bundle'/>
         </properties>
@@ -35,13 +35,13 @@
       </requiredProperties>
     </requires>
     <artifacts size='1'>
-      <artifact classifier='osgi.bundle' id='edu.uoc.som.cmsdiscover' version='0.1.0.202108170937'/>
+      <artifact classifier='osgi.bundle' id='edu.uoc.som.cmsdiscover' version='0.1.0.202111191149'/>
     </artifacts>
     <touchpoint id='org.eclipse.equinox.p2.osgi' version='1.0.0'/>
     <touchpointData size='1'>
       <instructions size='1'>
         <instruction key='manifest'>
-          Bundle-SymbolicName: edu.uoc.som.cmsdiscover;singleton:=true&#xA;Bundle-Version: 0.1.0.202108170937&#xA;
+          Bundle-SymbolicName: edu.uoc.som.cmsdiscover;singleton:=true&#xA;Bundle-Version: 0.1.0.202111191149&#xA;
         </instruction>
       </instructions>
     </touchpointData>

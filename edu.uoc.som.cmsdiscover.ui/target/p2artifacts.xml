@@ -1,10 +1,10 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <?artifactRepository version='1.1.0'?>
 <artifacts size='1'>
-  <artifact classifier='osgi.bundle' id='edu.uoc.som.cmsdiscover.ui' version='0.1.0.202108170937'>
+  <artifact classifier='osgi.bundle' id='edu.uoc.som.cmsdiscover.ui' version='0.1.0.202111191149'>
     <properties size='5'>
-      <property name='artifact.size' value='21706'/>
-      <property name='download.size' value='21706'/>
+      <property name='artifact.size' value='23353'/>
+      <property name='download.size' value='23353'/>
       <property name='maven-groupId' value='edu.uoc.som.cmsdiscover'/>
       <property name='maven-artifactId' value='edu.uoc.som.cmsdiscover.ui'/>
       <property name='maven-version' value='0.1.0-SNAPSHOT'/>

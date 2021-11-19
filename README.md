@@ -16,6 +16,8 @@ The java library is built as a maven artifact and ready to be integrated to your
 
 * The toolkit requires [EMF 2.10 (2015-01)](http://download.eclipse.org/modeling/emf/emf/builds/release/2.10/index.html) or [above](https://download.eclipse.org/eclipse/downloads/).
 
+* The toolkit requires [Maven for Eclipse Integration](https://download.eclipse.org/technology/m2e/releases/1.9) or above
+
 * For Drupal: 
   - [JSON:API](https://www.drupal.org/project/jsonapi) - Drupal core 8.1 or above.
   - <a href=https://www.drupal.org/project/openapi_jsonapi> Open API for JSON API </a> activated

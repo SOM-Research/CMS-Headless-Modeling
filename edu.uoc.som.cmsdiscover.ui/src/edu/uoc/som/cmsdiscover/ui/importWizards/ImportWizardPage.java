@@ -7,7 +7,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URI;
-import java.net.URL;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse.BodyHandlers;
@@ -260,7 +259,6 @@ public class ImportWizardPage extends WizardNewFileCreationPage {
 
 		// use the client to send the request
 		try {
-			URL passUrl = new URL(url);
 			URI uri = URI.create(url);
 			// create a request
 			var request = HttpRequest.newBuilder().uri(uri).method("GET", HttpRequest.BodyPublishers.noBody()).build();

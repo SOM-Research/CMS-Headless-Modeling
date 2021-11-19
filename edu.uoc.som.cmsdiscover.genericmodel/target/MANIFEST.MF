@@ -4,7 +4,7 @@ Bundle-Name: %pluginName
 Bundle-SymbolicName: edu.uoc.som.cmsdiscover.genericmodel;singleton:=tru
  e
 Automatic-Module-Name: edu.uoc.som.cmsdiscover.genericmodel
-Bundle-Version: 0.1.0.202108170937
+Bundle-Version: 0.1.0.202111191149
 Bundle-ClassPath: .
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin
@@ -25,4 +25,5 @@ Export-Package: edu.uoc.som.cmsdiscover.GenericModel,edu.uoc.som.cmsdisc
  Model.user.util,edu.uoc.som.cmsdiscover.GenericModel.util
 Require-Bundle: org.eclipse.core.runtime,org.eclipse.emf.ecore;visibilit
  y:=reexport
+Bundle-ActivationPolicy: lazy
 

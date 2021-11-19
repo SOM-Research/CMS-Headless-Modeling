@@ -132,7 +132,7 @@ public class DriverTemplate {
     _builder.append("this.consumerPass = consumerPass;");
     _builder.newLine();
     _builder.append("\t\t");
-    _builder.append("this.consumerUser = consumerUser;");
+    _builder.append("this.consumerUser = consumerUser; ");
     _builder.newLine();
     _builder.append("\t");
     _builder.append("}");

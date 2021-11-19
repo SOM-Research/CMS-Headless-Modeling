@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<site>
+   <feature id="edu.uoc.som.cmsdiscover.feature">
+      <category name="edu.uoc.som.cmsdiscover.update"/>
+   </feature>
+   <category-def name="edu.uoc.som.cmsdiscover.update" label="CMS Discover"/>
+</site>

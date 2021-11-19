@@ -12,13 +12,7 @@ public class SiteManagerTemplate {
   
   private EMap<String, String> Annotations;
   
-  private Iterable<String> modelClasses;
-  
   private String packageName;
-  
-  private Iterable<String> fieldClassesName;
-  
-  private EPackage eFieldPackage;
   
   private Iterable<EClass> eClasses;
   

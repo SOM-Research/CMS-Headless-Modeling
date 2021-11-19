@@ -68,17 +68,17 @@ public class ImportWizard extends Wizard implements INewWizard {
 					
 				} else if (response.statusCode() == 403 ) {
 					messageBox.setMessage("Unauthorized to acces to the API specification. Please, set `Acces API Docs` permission to anonymous users for Drupal");
-					int result = messageBox.open();
+					messageBox.open();
 					return false;
 					
 				}
 				else if (response.statusCode() == 404) { 
 					messageBox.setMessage("API not found, ensure that required API plugins are enabled: `json_api_openapi` for Drupal");
-					int result = messageBox.open();
+					messageBox.open();
 					return false;
 				} else {
 					messageBox.setMessage("API OpenAPI not reachable, please check your URL and your permissions ");
-					int result = messageBox.open();
+					messageBox.open();
 					return false;
 				}
 			} else {
@@ -119,14 +119,14 @@ public class ImportWizard extends Wizard implements INewWizard {
 							JWTToken = res.getAsJsonObject().get("token").getAsString();
 						} else {
 							messageBox.setMessage("There is an issue with your credentails or you should enable API authentication, using basic auth, or JWT Authentication for WP-API pluguin");
-							int result = messageBox.open();
+							messageBox.open();
 							return false;
 						}
 					 }
 						
 				} else {
 					messageBox.setMessage("For WordPress case, user and password are required ");
-					int result = messageBox.open();
+					messageBox.open();
 					return false;
 				}				
 				// if not get the token
@@ -139,12 +139,12 @@ public class ImportWizard extends Wizard implements INewWizard {
 		} 
 		catch (IOException e) {
 			messageBox.setMessage("There was problems with your credentials");
-			int result = messageBox.open();
+			messageBox.open();
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (InterruptedException e) {
 			messageBox.setMessage("There was problems with your credentials");
-			int result = messageBox.open();
+			messageBox.open();
 			// TODO Auto-generated catch block
 			//e.printStackTrace();
 			return false;

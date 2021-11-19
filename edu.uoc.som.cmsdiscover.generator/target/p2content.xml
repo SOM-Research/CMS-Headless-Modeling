@@ -1,0 +1,53 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<units size='1'>
+  <unit id='edu.uoc.som.cmsdiscover.generator' version='1.0.0.202111191149' generation='2'>
+    <update id='edu.uoc.som.cmsdiscover.generator' range='[0.0.0,1.0.0.202111191149)' severity='0'/>
+    <properties size='4'>
+      <property name='org.eclipse.equinox.p2.name' value='Generator'/>
+      <property name='maven-groupId' value='edu.uoc.som.cmsdiscover'/>
+      <property name='maven-artifactId' value='edu.uoc.som.cmsdiscover.generator'/>
+      <property name='maven-version' value='1.0.0-SNAPSHOT'/>
+    </properties>
+    <provides size='5'>
+      <provided namespace='org.eclipse.equinox.p2.iu' name='edu.uoc.som.cmsdiscover.generator' version='1.0.0.202111191149'/>
+      <provided namespace='osgi.bundle' name='edu.uoc.som.cmsdiscover.generator' version='1.0.0.202111191149'/>
+      <provided namespace='java.package' name='edu.uoc.som.cmsdiscover.generator' version='0.0.0'/>
+      <provided namespace='osgi.identity' name='edu.uoc.som.cmsdiscover.generator' version='1.0.0.202111191149'>
+        <properties size='1'>
+          <property name='type' value='osgi.bundle'/>
+        </properties>
+      </provided>
+      <provided namespace='org.eclipse.equinox.p2.eclipse.type' name='bundle' version='1.0.0'/>
+    </provides>
+    <requires size='13'>
+      <required namespace='osgi.bundle' name='org.eclipse.core.runtime' range='0.0.0'/>
+      <required namespace='osgi.bundle' name='org.eclipse.ui' range='0.0.0'/>
+      <required namespace='osgi.bundle' name='org.eclipse.core.runtime' range='0.0.0'/>
+      <required namespace='osgi.bundle' name='com.google.guava' range='0.0.0'/>
+      <required namespace='osgi.bundle' name='org.eclipse.core.resources' range='3.13.700'/>
+      <required namespace='osgi.bundle' name='org.eclipse.emf.ecore.xmi' range='2.16.0'/>
+      <required namespace='osgi.bundle' name='org.eclipse.emf.ecore' range='2.16.0'/>
+      <required namespace='osgi.bundle' name='org.eclipse.xtend' range='2.2.0'/>
+      <required namespace='osgi.bundle' name='org.eclipse.xtext.xbase.lib' range='2.25.0'/>
+      <required namespace='osgi.bundle' name='org.eclipse.jdt.core' range='3.22.0'/>
+      <required namespace='osgi.bundle' name='org.eclipse.jdt.launching' range='3.17.100'/>
+      <required namespace='osgi.bundle' name='org.eclipse.m2e.core' range='1.9.1'/>
+      <requiredProperties namespace='osgi.ee' match='(&amp;(osgi.ee=JavaSE)(version=11))'>
+        <description>
+          edu.uoc.som.cmsdiscover.generator
+        </description>
+      </requiredProperties>
+    </requires>
+    <artifacts size='1'>
+      <artifact classifier='osgi.bundle' id='edu.uoc.som.cmsdiscover.generator' version='1.0.0.202111191149'/>
+    </artifacts>
+    <touchpoint id='org.eclipse.equinox.p2.osgi' version='1.0.0'/>
+    <touchpointData size='1'>
+      <instructions size='1'>
+        <instruction key='manifest'>
+          Bundle-SymbolicName: edu.uoc.som.cmsdiscover.generator;singleton:=true&#xA;Bundle-Version: 1.0.0.202111191149&#xA;
+        </instruction>
+      </instructions>
+    </touchpointData>
+  </unit>
+</units>

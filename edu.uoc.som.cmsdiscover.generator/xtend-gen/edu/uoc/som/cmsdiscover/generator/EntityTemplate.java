@@ -235,7 +235,7 @@ public class EntityTemplate {
         _builder.newLineIfNotEmpty();
       }
     }
-    _builder.append("\t\t");
+    _builder.append("\t");
     _builder.newLine();
     _builder.append("}");
     _builder.newLine();
@@ -457,7 +457,6 @@ public class EntityTemplate {
           }
         }
         _builder.append("\t\t");
-        _builder.append("\t");
         _builder.append("}");
         _builder.newLine();
         _builder.append("\t\t");
@@ -470,85 +469,95 @@ public class EntityTemplate {
         {
           boolean _contains_4 = IterableExtensions.contains(this.fieldClassesName, reference.getEReferenceType().getName());
           if (_contains_4) {
-            _builder.append("\t");
+            _builder.append("\t\t");
             _builder.append("if(attribute.getName().equals(\"");
             String _name_5 = reference.getName();
-            _builder.append(_name_5, "\t");
+            _builder.append(_name_5, "\t\t");
             _builder.append("\")) {");
             _builder.newLineIfNotEmpty();
-            _builder.append("\t \t");
+            _builder.append("\t\t");
+            _builder.append(" \t");
             _builder.append("if (attribute.getValue()!= null) {");
             _builder.newLine();
-            _builder.append("\t \t");
+            _builder.append("\t\t");
+            _builder.append(" \t");
             _builder.append("JsonElement elm = parser.parse(attribute.getValue());");
             _builder.newLine();
-            _builder.append("\t ");
+            _builder.append("\t\t");
             EClassifier _eClassifier = this.eFieldPackage.getEClassifier(reference.getEReferenceType().getName());
             final EClass fieldClass = ((EClass) _eClassifier);
             _builder.newLineIfNotEmpty();
             {
               EList<EAttribute> _eAllAttributes = fieldClass.getEAllAttributes();
               for(final EAttribute attribute_1 : _eAllAttributes) {
+                _builder.append("\t\t");
                 _builder.append("if(!elm.getAsJsonObject().get(\"");
                 String _name_6 = attribute_1.getName();
-                _builder.append(_name_6);
+                _builder.append(_name_6, "\t\t");
                 _builder.append("\").isJsonNull()) {");
                 _builder.newLineIfNotEmpty();
                 {
                   boolean _contains_5 = attribute_1.getEAttributeType().getInstanceTypeName().contains("Integer");
                   if (_contains_5) {
+                    _builder.append("\t\t");
+                    _builder.append(" \t");
                     _builder.append("this.");
                     String _name_7 = reference.getEReferenceType().getName();
-                    _builder.append(_name_7);
+                    _builder.append(_name_7, "\t\t \t");
                     _builder.append(".set");
                     String _FirstUpperCase = this.FirstUpperCase(attribute_1.getName());
-                    _builder.append(_FirstUpperCase);
+                    _builder.append(_FirstUpperCase, "\t\t \t");
                     _builder.append("(Integer.parseInt(elm.getAsJsonObject().get(\"");
                     String _name_8 = attribute_1.getName();
-                    _builder.append(_name_8);
+                    _builder.append(_name_8, "\t\t \t");
                     _builder.append("\").toString()));");
                     _builder.newLineIfNotEmpty();
                   } else {
                     boolean _contains_6 = attribute_1.getEAttributeType().getInstanceTypeName().contains("String");
                     if (_contains_6) {
+                      _builder.append("\t\t");
+                      _builder.append(" \t");
                       _builder.append("this.");
                       String _name_9 = reference.getEReferenceType().getName();
-                      _builder.append(_name_9);
+                      _builder.append(_name_9, "\t\t \t");
                       _builder.append(".set");
                       String _FirstUpperCase_1 = this.FirstUpperCase(attribute_1.getName());
-                      _builder.append(_FirstUpperCase_1);
+                      _builder.append(_FirstUpperCase_1, "\t\t \t");
                       _builder.append("(elm.getAsJsonObject().get(\"");
                       String _name_10 = attribute_1.getName();
-                      _builder.append(_name_10);
+                      _builder.append(_name_10, "\t\t \t");
                       _builder.append("\").toString());");
                       _builder.newLineIfNotEmpty();
                     } else {
                       boolean _contains_7 = attribute_1.getEAttributeType().getInstanceTypeName().contains("boolean");
                       if (_contains_7) {
+                        _builder.append("\t\t");
+                        _builder.append(" \t");
                         _builder.append("this.");
                         String _name_11 = reference.getEReferenceType().getName();
-                        _builder.append(_name_11);
+                        _builder.append(_name_11, "\t\t \t");
                         _builder.append(".set");
                         String _FirstUpperCase_2 = this.FirstUpperCase(attribute_1.getName());
-                        _builder.append(_FirstUpperCase_2);
+                        _builder.append(_FirstUpperCase_2, "\t\t \t");
                         _builder.append("(Boolean.parseBoolean(elm.getAsJsonObject().get(\"");
                         String _name_12 = attribute_1.getName();
-                        _builder.append(_name_12);
+                        _builder.append(_name_12, "\t\t \t");
                         _builder.append("\").toString()));");
                         _builder.newLineIfNotEmpty();
                       } else {
                         boolean _contains_8 = attribute_1.getEAttributeType().getInstanceTypeName().contains("Date");
                         if (_contains_8) {
+                          _builder.append("\t\t");
                           _builder.append(" \t");
                           _builder.append("this.");
                           String _name_13 = reference.getEReferenceType().getName();
-                          _builder.append(_name_13, " \t");
+                          _builder.append(_name_13, "\t\t \t");
                           _builder.append(".set");
                           String _FirstUpperCase_3 = this.FirstUpperCase(attribute_1.getName());
-                          _builder.append(_FirstUpperCase_3, " \t");
+                          _builder.append(_FirstUpperCase_3, "\t\t \t");
                           _builder.append("(new DateTime(elm.getAsJsonObject().get(\"");
                           String _name_14 = attribute_1.getName();
-                          _builder.append(_name_14, " \t");
+                          _builder.append(_name_14, "\t\t \t");
                           _builder.append("\").toString()).toDate());");
                           _builder.newLineIfNotEmpty();
                         }
@@ -556,20 +565,22 @@ public class EntityTemplate {
                     }
                   }
                 }
+                _builder.append("\t\t");
                 _builder.append("}");
                 _builder.newLine();
               }
             }
-            _builder.append("\t \t");
+            _builder.append("\t\t");
             _builder.append("}");
             _builder.newLine();
+            _builder.append("\t\t");
             _builder.append("}");
             _builder.newLine();
           }
         }
       }
     }
-    _builder.append("\t");
+    _builder.append("\t\t");
     _builder.append("});");
     _builder.newLine();
     _builder.newLine();
@@ -607,6 +618,7 @@ public class EntityTemplate {
     _builder.append("\t");
     _builder.append("return this;");
     _builder.newLine();
+    _builder.append("\t");
     _builder.append("}");
     _builder.newLine();
     return _builder;

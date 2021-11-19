@@ -13,16 +13,12 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.ILog;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.emf.ecore.EClass;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.emf.ecore.EPackage;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.ui.handlers.HandlerUtil;
-
-import com.google.common.base.CaseFormat;
-
 import org.eclipse.jdt.core.IAccessRule;
 import org.eclipse.jdt.core.IClasspathAttribute;
 import org.eclipse.jdt.core.IClasspathEntry;
@@ -32,13 +28,21 @@ import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.launching.LibraryLocation;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.ui.handlers.HandlerUtil;
+import org.osgi.framework.Bundle;
+import org.osgi.framework.FrameworkUtil;
 
 public class GeneratorHandler extends AbstractHandler implements IHandler {
-	
+
 	private EPackage extendedModel;
 	private IFolder srcGenFolder;
 
 	private CodeGenerator generator = new CodeGenerator();
+	
+	private static final Bundle BUNDLE = FrameworkUtil.getBundle(GeneratorHandler.class);
+	private static final ILog LOGGER = Platform.getLog(BUNDLE);
 
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
@@ -55,8 +59,7 @@ public class GeneratorHandler extends AbstractHandler implements IHandler {
 				IProject project = generateProject(file.getWorkspace(), extendedModel.getName());
 
 				generator.doGenerate(extendedModel, srcGenFolder, project);
-			
-			
+
 			}
 		}
 		return null;
@@ -71,7 +74,7 @@ public class GeneratorHandler extends AbstractHandler implements IHandler {
 				project.create(monitor);
 				project.open(monitor);
 				IProjectDescription description = project.getDescription();
-				description.setNatureIds(new String[] { JavaCore.NATURE_ID , "org.eclipse.m2e.core.maven2Nature" });
+				description.setNatureIds(new String[] { JavaCore.NATURE_ID, "org.eclipse.m2e.core.maven2Nature" });
 				project.setDescription(description, monitor);
 				// src
 				IFolder src = project.getFolder("src");
@@ -87,7 +90,7 @@ public class GeneratorHandler extends AbstractHandler implements IHandler {
 				IFolder srcMainJava = srcMain.getFolder("java");
 				if (!srcMainJava.exists())
 					srcMainJava.create(true, true, monitor);
-				
+
 				IJavaProject javaProject = JavaCore.create(project);
 				javaProject.setOutputLocation(src.getFullPath(), monitor);
 
@@ -110,13 +113,15 @@ public class GeneratorHandler extends AbstractHandler implements IHandler {
 				entries.add(mavenEntry);
 
 				javaProject.setRawClasspath(entries.toArray(new IClasspathEntry[entries.size()]), null);
-				
+
 				// Let's create our target/classes output folder
 				IFolder target = project.getFolder("target");
-				if (!target.exists()) target.create(true, true, monitor);
+				if (!target.exists())
+					target.create(true, true, monitor);
 
 				IFolder classes = target.getFolder("classes");
-				if (!classes.exists()) classes.create(true, true, monitor);
+				if (!classes.exists())
+					classes.create(true, true, monitor);
 
 				// Let's add target/classes as our output folder for compiled ".class"
 				javaProject.setOutputLocation(classes.getFullPath(), monitor);
@@ -132,40 +137,40 @@ public class GeneratorHandler extends AbstractHandler implements IHandler {
 						new Path[] {}, classes.getFullPath());
 
 				javaProject.setRawClasspath(newEntries, null);
-				
 
-				
 				try {
-				IFolder generated = srcMainJava.getFolder("generated");
-				if (!generated.exists())
-					generated.create(true, true, new NullProgressMonitor());
+					IFolder generated = srcMainJava.getFolder("generated");
+					if (!generated.exists())
+						generated.create(true, true, new NullProgressMonitor());
 
-				IFolder connector = generated.getFolder("middleware");
-				if (!connector.exists())
-					connector.create(true, true, new NullProgressMonitor());
+					IFolder connector = generated.getFolder("middleware");
+					if (!connector.exists())
+						connector.create(true, true, new NullProgressMonitor());
 
-				this.srcGenFolder = connector.getFolder(extendedModel.getName());
-				if (!srcGenFolder.exists())
-					this.srcGenFolder.create(true, true, new NullProgressMonitor());
-				
-				
-				} catch (CoreException e) { 
-					e.getCause(); return
-					null; 
-				} 
-	
+					this.srcGenFolder = connector.getFolder(extendedModel.getName());
+					if (!srcGenFolder.exists())
+						this.srcGenFolder.create(true, true, new NullProgressMonitor());
+
+				} catch (CoreException e) {
+					log("srcCreation:", e);
+					return null;
+				}
 
 				return project;
 
 			} catch (CoreException e) {
 				// TODO Auto-generated catch block
-				e.printStackTrace();
+				log("projectCreation:", e);
 				return null;
 			}
 
 		}
 		return null;
 
+	}
+	
+	public static void log(String msg, Exception e) {
+	   LOGGER.log(new Status((e==null?Status.INFO:Status.ERROR), BUNDLE.getSymbolicName(), msg, e));
 	}
 
 }

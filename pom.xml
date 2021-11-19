@@ -94,6 +94,7 @@
     <module> edu.uoc.som.cmsdiscover.feature </module>
     <module> edu.uoc.som.cmsdiscover.platform </module>
     <module> edu.uoc.som.cmsdiscover.generator </module>
+    <module> edu.uoc.som.cmsdiscover.updates </module>
    <!--TODO ADD YOUR MODULES HERE-->
  </modules>
 </project>

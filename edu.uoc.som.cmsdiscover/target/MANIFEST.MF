@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Cmsdiscover
 Bundle-SymbolicName: edu.uoc.som.cmsdiscover;singleton:=true
-Bundle-Version: 0.1.0.202108170937
+Bundle-Version: 0.1.0.202111191149
 Bundle-Activator: edu.uoc.com.cmsdiscover.CmsDiscover
 Bundle-Vendor: SOM - UOC
 Require-Bundle: org.eclipse.core.runtime,org.eclipse.emf.common;bundle-v

@@ -1,16 +1,6 @@
 package edu.uoc.som.cmsdiscover.generator;
 
 import com.google.common.collect.Iterables;
-import edu.uoc.som.cmsdiscover.generator.DriverInterface;
-import edu.uoc.som.cmsdiscover.generator.DriverTemplate;
-import edu.uoc.som.cmsdiscover.generator.EntityTemplate;
-import edu.uoc.som.cmsdiscover.generator.FieldTemplate;
-import edu.uoc.som.cmsdiscover.generator.GenericResourceTemplate;
-import edu.uoc.som.cmsdiscover.generator.PomTemplate;
-import edu.uoc.som.cmsdiscover.generator.SearchQueryInterface;
-import edu.uoc.som.cmsdiscover.generator.SearchQueryTemplate;
-import edu.uoc.som.cmsdiscover.generator.SiteManagerTemplate;
-import edu.uoc.som.cmsdiscover.generator.TestsTemplate;
 import java.io.ByteArrayInputStream;
 import java.util.Map;
 import org.eclipse.core.resources.IFile;

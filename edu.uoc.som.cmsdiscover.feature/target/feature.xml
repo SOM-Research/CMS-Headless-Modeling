@@ -2,7 +2,7 @@
 <feature
       id="edu.uoc.som.cmsdiscover.feature"
       label="CMS Discover"
-      version="0.1.0.202108170937"
+      version="0.1.0.202111191149"
       provider-name="SOM Research Lab - UOC">
 
    <description url="https://github.com/SOM-Research/CMS-Headless-Modeling">
@@ -310,23 +310,29 @@ version(s), and exceptions or additional permissions here}.&quot;
 
    <plugin
          id="edu.uoc.som.cmsdiscover"
-         download-size="20"
-         install-size="40"
-         version="0.1.0.202108170937"
+         download-size="22"
+         install-size="43"
+         version="0.1.0.202111191149"
          unpack="false"/>
 
    <plugin
          id="edu.uoc.som.cmsdiscover.genericmodel"
-         download-size="136"
-         install-size="324"
-         version="0.1.0.202108170937"
+         download-size="137"
+         install-size="326"
+         version="0.1.0.202111191149"
          unpack="false"/>
 
    <plugin
          id="edu.uoc.som.cmsdiscover.ui"
-         download-size="21"
-         install-size="32"
-         version="0.1.0.202108170937"
+         download-size="22"
+         install-size="36"
+         version="0.1.0.202111191149"
          unpack="false"/>
+
+   <plugin
+         id="edu.uoc.som.cmsdiscover.generator"
+         download-size="233"
+         install-size="463"
+         version="1.0.0.202111191149"/>
 
 </feature>

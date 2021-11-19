@@ -98,13 +98,6 @@ public class DrupalSchemaExtractor {
 				this.basePath = entryValue.toString().replaceAll("\"", "");
 				break;
 			}
-			case ("paths"): {
-				// Get the paths of the resources
-				for (Map.Entry<String, JsonElement> path : entryValue.getAsJsonObject().entrySet()) {
-					// if (path.getKey() != null) _resource_paths.add(path.getKey());
-				}
-				break;
-			}
 			case ("definitions"): {
 				// Generate the entity model extracting de definitions
 				generateEntityModel(entryValue);
