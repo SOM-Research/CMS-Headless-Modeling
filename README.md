@@ -24,7 +24,7 @@ The java library is built as a maven artifact and ready to be integrated to your
   - Set Open API for JSON API available for anonymous request (not authentication supported by now)
 * For Wordpress:
   - A [REST API v2](https://developer.wordpress.org/rest-api/reference/) enabled - Wordpress core 4.7 or above
-  - Two of the following API authentication plugins
+  - One of the following API authentication plugins
     - [Basic auth] (https://github.com/WP-API/Basic-Auth)
     - [JWT auth] (https://es.wordpress.org/plugins/jwt-authentication-for-wp-rest-api/)
 
