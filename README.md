@@ -112,7 +112,7 @@ tags.forEach((tag) ->{
 
 ## Research Background of the tool
 
-This tool is the outcome of a research paper currently under development. 
+This tool is the outcome of the research paper: [Enabling CMS as a content source for model-driven projects](https://link.springer.com/chapter/10.1007/978-3-031-05760-1_30) presented in the [16th International Conference on Research Challenges in Information Science](https://www.rcis-conf.com/rcis2022/). 
 
 The extraction and generation process are based in the following proposed global CMS model. 
 
